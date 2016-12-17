@@ -1,0 +1,33 @@
+{
+    "name": "baytek/laravel-content",
+    "description": "Content Provider",
+    "license": "MIT",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Yvon Viger",
+            "email": "yvon@baytek.ca"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://gitlab.com/baytek/laravel-statusbit.git"
+        },
+        {
+            "type": "git",
+            "url": "https://gitlab.com/baytek/laravel-sortable.git"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Baytek\\LaravelContent\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=5.6.4",
+        "baytek/laravel-statusbit": "^1.0",
+        "baytek/laravel-sortable": "^1.0"
+    },
+    "minimum-stability": "dev"
+}
