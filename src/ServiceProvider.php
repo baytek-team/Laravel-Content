@@ -13,7 +13,7 @@ class ServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-    	//
+    	AliasLoader::getInstance()->alias('Form', 'Collective\Html\FormFacade');
     }
 
     /**
@@ -23,6 +23,7 @@ class ServiceProvider extends ServiceProvider
      */
     public function register()
     {
-    	//
+    	$this->app->register('Collective\Html\HtmlServiceProvider');
+
     }
 }

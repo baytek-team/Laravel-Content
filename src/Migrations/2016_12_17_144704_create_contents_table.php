@@ -16,6 +16,17 @@ class CreateContentsTable extends Migration
         Schema::create('contents', function (Blueprint $table) {
             $table->increments('id');
             $table->timestamps();
+            $table->softDeletes();
+
+            $table->integer('parent_id')->unsigned();
+            $table->foreign('parent_id')->references('id')->on('content');
+
+            $table->integer('status')->unsigned()->nullable()->default(0);
+            $table->integer('revision')->unsigned()->nullable()->default(0);
+
+            $table->string('language')->nullable();
+            $table->string('title')->nullable();
+            $table->text('content')->nullable();
         });
     }
 

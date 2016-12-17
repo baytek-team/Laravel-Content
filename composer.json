@@ -27,7 +27,9 @@
     "require": {
         "php": ">=5.6.4",
         "baytek/laravel-statusbit": "^1.0",
-        "baytek/laravel-sortable": "^1.0"
+        "baytek/laravel-sortable": "^1.0",
+        "baytek/laravel-menu": "^1.0",
+        "laravelcollective/html":"^5.3.0"
     },
     "minimum-stability": "dev"
 }

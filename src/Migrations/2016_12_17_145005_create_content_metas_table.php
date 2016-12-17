@@ -16,6 +16,20 @@ class CreateContentMetasTable extends Migration
         Schema::create('content_metas', function (Blueprint $table) {
             $table->increments('id');
             $table->timestamps();
+            $table->softDeletes();
+
+            $table->integer('content_id')->unsigned()->nullable();
+            $table->foreign('content_id')->references('id')->on('content');
+
+            $table->integer('meta_id')->unsigned()->nullable();
+            $table->foreign('meta_id')->references('id')->on('content_meta');
+
+            $table->integer('status')->unsigned()->nullable()->default(0);
+            $table->integer('revision')->unsigned()->nullable()->default(0);
+
+            $table->string('language')->nullable();
+            $table->string('key')->nullable();
+            $table->text('value')->nullable();
         });
     }
 
