@@ -44,9 +44,15 @@ class ContentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Generator $faker)
     {
-
+        //https://support.google.com/webmasters/answer/189077?hl=en
+        $content = new Content;
+        // LANG + ISO 3166-1 code
+        $content->language = 'en-CA'; //https://tools.ietf.org/html/rfc5646
+        $content->title = $faker->sentence();
+        $content->content = $faker->paragraph();
+        $content->save();
     }
 
     /**
@@ -55,13 +61,9 @@ class ContentController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Generator $faker)
+    public function store(Request $request)
     {
-        $content = new Content;
-        $content->language = 'en';
-        $content->title = $faker->title;
-        $content->content = '';
-        $content->save();
+
     }
 
     /**

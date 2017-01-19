@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateContentRelations extends Migration
+class CreateContentRelationsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -17,15 +17,15 @@ class CreateContentRelations extends Migration
             $table->increments('id');
 
             $table->integer('content_id')->unsigned()->nullable();
-            $table->foreign('content_id')->references('id')->on('content');
+            $table->foreign('content_id')->references('id')->on('contents');
 
             $table->integer('relation_id')->unsigned()->nullable();
-            $table->foreign('relation_id')->references('id')->on('content');
+            $table->foreign('relation_id')->references('id')->on('contents');
 
             $table->integer('relation_type_id')->unsigned()->nullable();
-            $table->foreign('relation_type_id')->references('id')->on('content');
+            $table->foreign('relation_type_id')->references('id')->on('contents');
             // or
-            $table->string('relation_type')->nullable();
+            // $table->string('relation_type')->nullable();
 
         });
     }

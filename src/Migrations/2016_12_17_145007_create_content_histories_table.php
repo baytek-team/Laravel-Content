@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateContentMetasTable extends Migration
+class CreateContentHistoriesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,19 +13,17 @@ class CreateContentMetasTable extends Migration
      */
     public function up()
     {
-        Schema::create('content_metas', function (Blueprint $table) {
+        Schema::create('content_histories', function (Blueprint $table) {
             $table->increments('id');
-            // $table->timestamps();
-            // $table->softDeletes();
+            $table->dateTime('touched_at');
 
             $table->integer('content_id')->unsigned()->nullable();
             $table->foreign('content_id')->references('id')->on('contents');
 
-            $table->integer('status')->unsigned()->nullable()->default(0);
+            $table->integer('user_id')->unsigned()->nullable();
+            $table->foreign('user_id')->references('id')->on('users');
 
-            $table->string('language')->nullable();
-            $table->string('key')->nullable();
-            $table->text('value')->nullable();
+            $table->string('note')->nullable();
         });
     }
 
@@ -36,6 +34,6 @@ class CreateContentMetasTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('content_metas');
+        Schema::dropIfExists('content_histories');
     }
 }
