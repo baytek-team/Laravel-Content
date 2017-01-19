@@ -46,13 +46,17 @@ class ContentController extends Controller
      */
     public function create(Generator $faker)
     {
-        //https://support.google.com/webmasters/answer/189077?hl=en
-        $content = new Content;
-        // LANG + ISO 3166-1 code
-        $content->language = 'en-CA'; //https://tools.ietf.org/html/rfc5646
-        $content->title = $faker->sentence();
-        $content->content = $faker->paragraph();
-        $content->save();
+        // //https://support.google.com/webmasters/answer/189077?hl=en
+        // $content = new Content;
+        // // LANG + ISO 3166-1 code
+        // $content->language = 'en-CA'; //https://tools.ietf.org/html/rfc5646
+        // $content->title = $faker->sentence();
+        // $content->content = $faker->paragraph();
+        // $content->save();
+
+        return view('Pretzel::content.create', [
+            'content' => (new Content)
+        ]);
     }
 
     /**
@@ -63,7 +67,11 @@ class ContentController extends Controller
      */
     public function store(Request $request)
     {
+        $content = new Content($request->all());
 
+        $content->save();
+
+        return redirect(action('\Baytek\LaravelContent\Controllers\ContentController@index'));
     }
 
     /**
@@ -72,9 +80,9 @@ class ContentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Content $content)
     {
-        //
+        return Content::firstOrFail($content);
     }
 
     /**
@@ -83,9 +91,11 @@ class ContentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Content $content)
     {
-        //
+        return view('Pretzel::content.edit', [
+            'content' => $content
+        ]);
     }
 
     /**
@@ -95,9 +105,13 @@ class ContentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Content $content)
     {
-        //
+        $content->update($request->all());
+
+        $content->save();
+
+        return redirect(action('\Baytek\LaravelContent\Controllers\ContentController@index'));
     }
 
     /**
@@ -106,7 +120,7 @@ class ContentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Content $content)
     {
         //
     }

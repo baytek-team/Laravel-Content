@@ -8,6 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Content extends Model
 {
+	protected $fillable = [
+		'status',
+		'language',
+		'title',
+		'content',
+	];
+
     public function meta()
     {
     	return $this->hasMany(ContentMeta::class);

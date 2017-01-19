@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Requests;
+namespace Baytek\LaravelContent\Requests;
 
 use Auth;
-use App\Http\Requests\FormRequest;
+use Illuminate\Foundation\Http\FormRequest;
 
 class RoleRequest extends FormRequest
 {
@@ -14,7 +14,8 @@ class RoleRequest extends FormRequest
      */
     public function authorize()
     {
-        return Auth::user()->hasPermissionTo('Manage Roles');
+        // return Auth::user()->hasPermissionTo('Manage Roles');
+        return true;
     }
 
     /**

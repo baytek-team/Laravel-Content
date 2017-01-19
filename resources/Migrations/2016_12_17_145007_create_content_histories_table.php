@@ -15,7 +15,7 @@ class CreateContentHistoriesTable extends Migration
     {
         Schema::create('content_histories', function (Blueprint $table) {
             $table->increments('id');
-            $table->dateTime('touched_at');
+            $table->timestamp('touched_at');
 
             $table->integer('content_id')->unsigned()->nullable();
             $table->foreign('content_id')->references('id')->on('contents');

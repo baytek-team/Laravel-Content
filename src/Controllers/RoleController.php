@@ -2,19 +2,26 @@
 
 namespace Baytek\LaravelContent\Controllers;
 
-use App\Http\Controllers\AppController;
-use App\Http\Requests\RoleRequest;
 use App\User;
 
+use Baytek\LaravelContent\Models\Content;
+use Baytek\LaravelContent\Models\ContentMeta;
+use Baytek\LaravelContent\Requests\RoleRequest;
+
 use Illuminate\Http\Request;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Routing\Controller;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
-class RoleController extends AppController
+class RoleController extends Controller
 {
 	public function index()
 	{
-		return view('app.admin.role.roles', [
+		return view('Pretzel::role.roles', [
 			'roles' => Role::all(),
 			'users' => User::all(),
 			'permissions' => Permission::all(),
@@ -43,7 +50,7 @@ class RoleController extends AppController
 			}
 		}
 
-		return redirect()->action('Admin\RoleController@index');
+		return redirect()->action('\Baytek\LaravelContent\Controllers\RoleController@index');
 	}
 
 	public function saveUserRoles(RoleRequest $post)
@@ -63,7 +70,7 @@ class RoleController extends AppController
 			}
 		}
 
-		return redirect()->action('Admin\RoleController@index');
+		return redirect()->action('\Baytek\LaravelContent\Controllers\RoleController@index');
 	}
 
 	public function saveUserPermissions(RoleRequest $post)
@@ -83,7 +90,7 @@ class RoleController extends AppController
 			}
 		}
 
-		return redirect()->action('Admin\RoleController@index');
+		return redirect()->action('\Baytek\LaravelContent\Controllers\RoleController@index');
 	}
 
 }

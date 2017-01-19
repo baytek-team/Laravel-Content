@@ -13,8 +13,10 @@ class ServiceProvider extends IlluminateServiceProvider
      */
     public function boot()
     {
-        $this->loadMigrationsFrom(__DIR__.'/Migrations');
-    	// AliasLoader::getInstance()->alias('Form', 'Collective\Html\FormFacade');
+        // AliasLoader::getInstance()->alias('Form', 'Collective\Html\FormFacade');
+        $this->loadRoutesFrom(__DIR__.'/Routes.php');
+        $this->loadMigrationsFrom(__DIR__.'/../resources/Migrations');
+        $this->loadViewsFrom(__DIR__.'/../resources/Views', 'Pretzel');
     }
 
     /**
