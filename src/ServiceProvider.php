@@ -2,9 +2,9 @@
 
 namespace Baytek\LaravelContent;
 
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
 
-class ServiceProvider extends ServiceProvider
+class ServiceProvider extends IlluminateServiceProvider
 {
     /**
      * Bootstrap the application services.
@@ -13,7 +13,8 @@ class ServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-    	AliasLoader::getInstance()->alias('Form', 'Collective\Html\FormFacade');
+        $this->loadMigrationsFrom(__DIR__.'/Migrations');
+    	// AliasLoader::getInstance()->alias('Form', 'Collective\Html\FormFacade');
     }
 
     /**
@@ -23,7 +24,7 @@ class ServiceProvider extends ServiceProvider
      */
     public function register()
     {
-    	$this->app->register('Collective\Html\HtmlServiceProvider');
+    	// $this->app->register('Collective\Html\HtmlServiceProvider');
 
     }
 }
