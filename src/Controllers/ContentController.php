@@ -4,6 +4,7 @@ namespace Baytek\LaravelContent\Controllers;
 
 use Baytek\LaravelContent\Models\Content;
 use Baytek\LaravelContent\Models\ContentMeta;
+use Baytek\LaravelContent\Models\ContentRelation;
 
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -36,7 +37,7 @@ class ContentController extends Controller
      */
     public function index()
     {
-        return Content::all();
+        return Content::with(['meta', 'relations'])->get();
     }
 
     /**
@@ -82,7 +83,9 @@ class ContentController extends Controller
      */
     public function show(Content $content)
     {
-        // dd($content->meta);
+
+        $content->load('meta', 'relations', 'relations.content', 'relations.relation', 'relations.relationType');
+
         return $content;
     }
 
@@ -108,8 +111,21 @@ class ContentController extends Controller
      */
     public function update(Request $request, Content $content)
     {
+        // dd($request->all());
 
-        //dd($request->all());
+        $meta = $request->only(['id', 'key', 'value']);
+
+        foreach($meta['id'] as $i => $id) {
+            ContentMeta::where('id', $id)
+                ->update([
+                    'key' => $meta['key'][$i],
+                    'value' => $meta['value'][$i]
+                ]);
+        }
+
+        // collect($meta['key'])->combine($meta['value'])->each(function($item){
+        //     dump($item);
+        // });
 
         $content->update($request->all());
 

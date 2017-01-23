@@ -2,8 +2,8 @@
 
 namespace Baytek\LaravelContent\Models;
 
-use Baytek\LaravelContent\ContentMeta;
-use Baytek\LaravelContent\ContentRelations;
+use Baytek\LaravelContent\Models\ContentMeta;
+use Baytek\LaravelContent\Models\ContentRelation;
 use Illuminate\Database\Eloquent\Model;
 
 class Content extends Model
@@ -22,6 +22,10 @@ class Content extends Model
 
     public function relations()
     {
-    	return $this->hasMany(ContentRelations::class);
+    	return $this->hasMany(ContentRelation::class);
+        // return $this->hasManyThrough(
+        //     ContentRelation::class, Content::class,
+        //     'id', 'content_id', 'id'
+        // );
     }
 }

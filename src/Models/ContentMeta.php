@@ -1,8 +1,8 @@
 <?php
 
-namespace Baytek\LaravelContent;
+namespace Baytek\LaravelContent\Models;
 
-use Baytek\LaravelContent\Content;
+use Baytek\LaravelContent\Models\Content;
 use Illuminate\Database\Eloquent\Model;
 
 class ContentMeta extends Model
@@ -12,6 +12,8 @@ class ContentMeta extends Model
 		'key',
 		'value',
 	];
+
+	public $timestamps = false;
 
     public function content()
     {

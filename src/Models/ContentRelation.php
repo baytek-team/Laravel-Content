@@ -1,8 +1,8 @@
 <?php
 
-namespace Baytek\LaravelContent;
+namespace Baytek\LaravelContent\Models;
 
-use Baytek\LaravelContent\Content;
+// use Baytek\LaravelContent\Models\Content;
 use Illuminate\Database\Eloquent\Model;
 
 class ContentRelation extends Model
@@ -14,6 +14,16 @@ class ContentRelation extends Model
 	];
 
     public function content()
+    {
+    	return $this->belongsTo(Content::class);
+    }
+
+    public function relation()
+    {
+    	return $this->belongsTo(Content::class);
+    }
+
+    public function relationType()
     {
     	return $this->belongsTo(Content::class);
     }

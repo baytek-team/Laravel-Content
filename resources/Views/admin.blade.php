@@ -21,7 +21,7 @@
         ]); ?>
     </script>
 </head>
-<body style="background-color: #befded">
+<body>
 
 {{-- @include('app.common.navigation.sidebar') --}}
 
