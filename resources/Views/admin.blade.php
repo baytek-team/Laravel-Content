@@ -11,8 +11,8 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Styles -->
-    <link href="/assets/vendor/bundle.css" rel="stylesheet">
-    <link href="/assets/css/app.css" rel="stylesheet">
+    <link href="/css/all.css" rel="stylesheet">
+    <link href="/css/app.css" rel="stylesheet">
 
     <!-- Scripts -->
     <script>
@@ -21,18 +21,17 @@
         ]); ?>
     </script>
 </head>
-<body>
+<body style="background-color: #befded">
 
 {{-- @include('app.common.navigation.sidebar') --}}
 
-<div id="page" class="pusher">
 
     {{-- @include('app.common.header.app') --}}
 
     {{-- @include('app.common.errors') --}}
 
-    <div id="content" class="ui container">
-        <div class=" ui container" @if (!isset($notifications) || $notifications->count() == 0) style="display: none" @endif>
+    <div id="app" class="ui container">
+        <!-- <div class=" ui container" @if (!isset($notifications) || $notifications->count() == 0) style="display: none" @endif>
             <div class="ui hidden divider"></div>
             <div class="row">
                 <div class="ui icon message">
@@ -49,25 +48,24 @@
             </div>
             <div class="ui hidden divider"></div>
             <div class="ui hidden divider"></div>
-        </div>
+        </div> -->
         @yield('content')
     </div>
 
     {{-- @include('app.common.footer') --}}
 
     <!--[if lte IE 10]>
-    <script src="/assets/js/dataset-shim.js"></script>
+    <script src="/js/dataset-shim.js"></script>
     <![endif]-->
 
     <!-- Scripts -->
-    <script src="/wp-includes/js/jquery/jquery.js?ver=1.12.4"></script>
-    <script src="/assets/vendor/bundle.js"></script>
-    <script src="/assets/js/app.js"></script>
+    <!-- <script src="/wp-includes/js/jquery/jquery.js?ver=1.12.4"></script> -->
+    <!-- <script src="/vendor/bundle.js"></script> -->
+    <script src="/js/all.js"></script>
 
     @yield('scripts')
 
     @if(isset($validation)) {!! $validation !!} @endif
 
-</div><!-- #page -->
 </body>
 </html>

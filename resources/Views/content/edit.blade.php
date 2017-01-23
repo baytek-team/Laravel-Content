@@ -6,8 +6,8 @@
         <h1 class="ui header">
             <i class="user icon"></i>
             <div class="content">
-                User Management
-                <div class="sub header">Manage the users of the claims application.</div>
+                Content Management
+                <div class="sub header">Manage the content of the application.</div>
             </div>
         </h1>
     </div>
@@ -24,11 +24,12 @@
         !! --}}
     </div>
 </div>
+
 <div class="ui hidden divider"></div>
-<div class="ui hidden divider"></div>
-<div id="registration" class="et_pb_column ui container">
+
+<div id="registration" class="ui container">
     <div class="ui hidden divider"></div>
-    <form action="{{action('\Baytek\LaravelContent\Controllers\ContentController@update', $content)}}" method="POST">
+    <form action="{{action('\Baytek\LaravelContent\Controllers\ContentController@update', $content)}}" method="POST" class="ui form">
         {{ csrf_field() }}
         {{ method_field('PUT') }}
 

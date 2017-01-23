@@ -82,7 +82,8 @@ class ContentController extends Controller
      */
     public function show(Content $content)
     {
-        return Content::firstOrFail($content);
+        // dd($content->meta);
+        return $content;
     }
 
     /**
@@ -107,6 +108,9 @@ class ContentController extends Controller
      */
     public function update(Request $request, Content $content)
     {
+
+        dd($request->all());
+
         $content->update($request->all());
 
         $content->save();
