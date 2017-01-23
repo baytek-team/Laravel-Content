@@ -41,7 +41,7 @@
         <div class="field actions">
             <a class="ui button" href="{{ action('\Baytek\LaravelContent\Controllers\ContentController@index') }}">Cancel</a>
             <button type="submit" class="ui right floated primary button">
-                Update User Information
+                Update Content
             </button>
         </div>
 

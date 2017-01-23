@@ -109,7 +109,7 @@ class ContentController extends Controller
     public function update(Request $request, Content $content)
     {
 
-        dd($request->all());
+        //dd($request->all());
 
         $content->update($request->all());
 
