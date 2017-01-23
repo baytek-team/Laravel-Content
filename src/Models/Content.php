@@ -15,6 +15,21 @@ class Content extends Model
 		'content',
 	];
 
+    public static $eager = [
+        'meta',
+        'relations',
+        // 'relations.content',
+        'relations.relation',
+        'relations.relationType'
+    ];
+
+    public $types = [
+        'content',
+        'content-type',
+        'relation-type',
+    ];
+
+
     public function meta()
     {
     	return $this->hasMany(ContentMeta::class);

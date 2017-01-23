@@ -26,9 +26,10 @@ class ContentController extends Controller
     	]
     ];
 
-    public function __construct() {
-        $this->authorizeResource(Content::class);
-    }
+    // public function __construct()
+    // {
+    //     $this->authorizeResource(Content::class);
+    // }
 
     /**
      * Display a listing of the resource.
@@ -37,7 +38,7 @@ class ContentController extends Controller
      */
     public function index()
     {
-        return Content::with(['meta', 'relations'])->get();
+        return Content::with(Content::$eager)->get();
     }
 
     /**
@@ -47,14 +48,6 @@ class ContentController extends Controller
      */
     public function create(Generator $faker)
     {
-        // //https://support.google.com/webmasters/answer/189077?hl=en
-        // $content = new Content;
-        // // LANG + ISO 3166-1 code
-        // $content->language = 'en-CA'; //https://tools.ietf.org/html/rfc5646
-        // $content->title = $faker->sentence();
-        // $content->content = $faker->paragraph();
-        // $content->save();
-
         return view('Pretzel::content.create', [
             'content' => (new Content)
         ]);
@@ -83,10 +76,7 @@ class ContentController extends Controller
      */
     public function show(Content $content)
     {
-
-        $content->load('meta', 'relations', 'relations.content', 'relations.relation', 'relations.relationType');
-
-        return $content;
+        return $content->load(Content::$eager);
     }
 
     /**
@@ -97,8 +87,20 @@ class ContentController extends Controller
      */
     public function edit(Content $content)
     {
+
+        // $relationTypes = DB::table('really_long_table_name AS t')
+        // $relationTypes = Content::select('types.id', 'types.status', 'types.revision', 'types.language', 'types.title')
+        //     ->leftJoin('content_relations AS relations', 'contents.id', '=', 'relations.content_id')
+        //     ->leftJoin('contents AS types', 'types.id', '=', 'relations.relation_id')
+        //     ->get();
+
+        //     dd($relationTypes);
+
+
         return view('Pretzel::content.edit', [
-            'content' => $content
+            'contents' => Content::select('id', 'status', 'revision', 'language', 'title')->get(),
+            // 'relationTypes' => $relationTypes,
+            'content' => $content,
         ]);
     }
 

@@ -4,7 +4,7 @@
 <div class="ui two column stackable grid">
     <div class="ten wide column">
         <h1 class="ui header">
-            <i class="user icon"></i>
+            <i class="browser icon"></i>
             <div class="content">
                 Content Management
                 <div class="sub header">Create the content for the application.</div>

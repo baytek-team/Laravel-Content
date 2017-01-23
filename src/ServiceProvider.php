@@ -4,9 +4,7 @@ namespace Baytek\LaravelContent;
 
 use Baytek\LaravelContent\Models\Content;
 use Baytek\LaravelContent\Policies\ContentPolicy;
-//use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
 
-use App\Policies\PostPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider;
 
