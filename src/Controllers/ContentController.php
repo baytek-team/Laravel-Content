@@ -26,7 +26,7 @@ class ContentController extends Controller
     ];
 
     public function __construct() {
-
+        $this->authorizeResource(Content::class);
     }
 
     /**

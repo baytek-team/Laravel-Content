@@ -2,10 +2,21 @@
 
 namespace Baytek\LaravelContent;
 
-use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
+use Baytek\LaravelContent\Models\Content;
+use Baytek\LaravelContent\Policies\ContentPolicy;
+//use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
 
-class ServiceProvider extends IlluminateServiceProvider
+use App\Policies\PostPolicy;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Foundation\Support\Providers\AuthServiceProvider;
+
+class ServiceProvider extends AuthServiceProvider
 {
+
+    protected $policies = [
+        Content::class => ContentPolicy::class,
+    ];
+
     /**
      * Bootstrap the application services.
      *
@@ -14,9 +25,12 @@ class ServiceProvider extends IlluminateServiceProvider
     public function boot()
     {
         // AliasLoader::getInstance()->alias('Form', 'Collective\Html\FormFacade');
+        $this->registerPolicies();
         $this->loadRoutesFrom(__DIR__.'/Routes.php');
         $this->loadMigrationsFrom(__DIR__.'/../resources/Migrations');
         $this->loadViewsFrom(__DIR__.'/../resources/Views', 'Pretzel');
+
+        //dd($this->policies);
     }
 
     /**
