@@ -63,6 +63,46 @@
     <!-- <script src="/vendor/bundle.js"></script> -->
     <script src="/js/all.js"></script>
 
+    <script>
+        ;+function($){
+            $('.ui.dropdown').dropdown();
+            $('.button').popup();
+            $('.ui.progress').progress();
+            $('.menu .item').tab();
+
+            function UiCloneRow() {
+                isEmpty = $(this).parent().find('input').filter(function() {
+                    return !this.value;
+                }).length;
+
+                if(isEmpty) {
+                    return false;
+                }
+
+                result = $(this).parent().clone(true, true).insertAfter($(this).parent());
+
+                result.find('input').val('');
+
+                $(this).parent()
+                    .find('.add-row')
+                        .addClass('negative')
+                        .addClass('remove-row')
+                        .removeClass('add-row')
+                        .removeClass('positive')
+                    .find('i.icon')
+                        .addClass('remove')
+                        .removeClass('add')
+            }
+
+            function UiRemoveRow() {
+                $(this).parent().remove();
+            }
+
+            $('.add-row').on('click', UiCloneRow);
+            $('.remove-row').on('click', UiRemoveRow);
+        }(window.jQuery);
+    </script>
+
     @yield('scripts')
 
     @if(isset($validation)) {!! $validation !!} @endif

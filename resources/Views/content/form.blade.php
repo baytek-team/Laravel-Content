@@ -7,18 +7,18 @@
 	<textarea id="content" name="content" placeholder="Content">{{ old('content', $content->content) }}</textarea>
 </div>
 
-@if($content->meta->count())
+
+<button type="button" class="ui left floated basic positive button add-row">
+    Add Metadata
+</button>
 <h4 class="ui horizontal divider header">
 	<i class="tags icon"></i>
 	Metadata
-	{{-- <button type="submit" class="ui right floated green button">
-	    Add Metadata
-	</button> --}}
 </h4>
-@endif
+
+<input type="hidden" name="meta_ids" value="{{ json_encode($content->meta->pluck('id')) }}">
 
 @foreach($content->meta as $meta)
-{{-- ALMOST A TABLE --}}
 @if($meta == $content->meta->first())
 <div class="two fields">
 	<div class="field">
@@ -31,58 +31,111 @@
 @endif
 
 <div class="two fields">
-	<input type="hidden" name="id[]" value="{{ $meta->id }}">
 	<div class="field{{ $errors->has('key') ? ' error' : '' }}">
-		<input type="text" id="meta_key_{{ $meta->key }}" name="key[]" placeholder="Meta Key" value="{{ $meta->key }}">
+		<input type="text" name="key[{{$meta->id}}]" placeholder="Meta Key" value="{{ $meta->key }}">
 	</div>
 	<div class="field{{ $errors->has('content') ? ' error' : '' }}">
-		<textarea id="meta_value_{{ $meta->key }}" name="value[]" rows="1" placeholder="Meta Value">{{ $meta->value }}</textarea>
+		<input type="text" name="value[{{$meta->id}}]" placeholder="Meta Value" value="{{ $meta->value }}">
 	</div>
-	<button type="submit" class="ui right floated red button">
-	    X
+	<button type="button" class="ui right floated negative icon button remove-row">
+	    <i class="remove icon"></i>
 	</button>
 </div>
 @endforeach
 
-@if($content->relations->count())
+<div class="two fields">
+	<div class="field{{ $errors->has('key') ? ' error' : '' }}">
+		<input type="text" name="key[]" placeholder="Meta Key" value="">
+	</div>
+	<div class="field{{ $errors->has('content') ? ' error' : '' }}">
+		<input type="text" name="value[]" placeholder="Meta Value" value="">
+	</div>
+	<button type="button" class="ui right floated positive icon button add-row">
+	    <i class="add icon"></i>
+	</button>
+</div>
+
+
+<button type="button" class="ui left floated basic positive button add-row">
+    Add Relationship
+</button>
 <h4 class="ui horizontal divider header">
 	<i class="users icon"></i>
 	Relationships
 </h4>
-@endif
+
+<input type="hidden" name="relation_ids" value="{{ json_encode($content->relations->pluck('id')) }}">
 
 @foreach($content->relations as $relation)
+
+@if($relation == $content->relations->first())
 <div class="three fields">
-	<input type="hidden" name="id[]" value="{{ $relation->id }}">
+	<div class="field">
+		<label>Content</label>
+	</div>
+	<div class="field">
+		<label>Relation</label>
+	</div>
+	<div class="field">
+		<label>Relation Type</label>
+	</div>
+</div>
+@endif
+
+<div class="three fields">
 	<div class="field{{ $errors->has('key') ? ' error' : '' }}">
-		{{-- @if($relation == $content->relations->first())<label>Content</label>@endif --}}
-		<!-- <input type="text" id="relation_key_{{ $relation->content_id }}" name="key[]" placeholder="relation Key" value="{{ $relation->content->title }}"> -->
-		<select id="" name="content" class="ui dropdown">
+		<select name="content_id[{{$relation->id}}]" class="ui dropdown disabled">
 			@foreach($contents as $item)
-			<option value="{{ $item->id }}"@if($relation->content_id == $item->id) selected="selected"@endif>{{ $item->title }}</option>
+			<option value="{{ $item->id }}"@if($content->id == $item->id) selected="selected"@endif>{{ $item->title }}</option>
 			@endforeach
 		</select>
 	</div>
 	<div class="field{{ $errors->has('content') ? ' error' : '' }}">
-		{{-- @if($relation == $content->relations->first())<label>Content</label>@endif --}}
-		<!-- <textarea id="relation_value_{{ $relation->relation_id }}" name="value[]" rows="1" placeholder="relation Value">{{ $relation->relation->title }}</textarea> -->
-		<select id="" name="relation" class="ui dropdown">
+		<select name="relation_id[{{$relation->id}}]" class="ui dropdown">
 			@foreach($contents as $item)
 			<option value="{{ $item->id }}"@if($relation->relation_id == $item->id) selected="selected"@endif>{{ $item->title }}</option>
 			@endforeach
 		</select>
 	</div>
 	<div class="field{{ $errors->has('content') ? ' error' : '' }}">
-		{{-- @if($relation == $content->relations->first())<label>Relation Type</label>@endif --}}
-		<!-- <textarea id="relation_value_{{ $relation->relation_type_id }}" name="value[]" rows="1" placeholder="relation Value">{{ $relation->relationType->title }}</textarea> -->
-		<select id="" name="relation_type" class="ui dropdown">
-			@foreach($contents as $item)
+		<select name="relation_type_id[{{$relation->id}}]" class="ui dropdown">
+			@foreach($relationTypes as $item)
 			<option value="{{ $item->id }}"@if($relation->relation_type_id == $item->id) selected="selected"@endif>{{ $item->title }}</option>
 			@endforeach
 		</select>
 	</div>
-	<button type="submit" class="ui right floated red button">
-	    X
+	<button type="button" class="ui right floated negative icon button remove-row">
+	    <i class="remove icon"></i>
 	</button>
 </div>
 @endforeach
+
+<div class="three fields">
+	<div class="field">
+		<select name="content_id[]" class="ui fluid dropdown disabled">
+			<option value="">Select Content</option>
+			@foreach($contents as $item)
+			<option value="{{ $item->id }}"@if($content->id == $item->id) selected="selected"@endif>{{ $item->title }}</option>
+			@endforeach
+		</select>
+	</div>
+	<div class="field">
+		<select name="relation_id[]" class="ui fluid dropdown">
+			<option value="">Select Related Content</option>
+			@foreach($contents as $item)
+			<option value="{{ $item->id }}">{{ $item->title }}</option>
+			@endforeach
+		</select>
+	</div>
+	<div class="field">
+		<select name="relation_type_id[]" class="ui fluid dropdown">
+			<option value="">Select Relationship Type</option>
+			@foreach($relationTypes as $item)
+			<option value="{{ $item->id }}">{{ $item->title }}</option>
+			@endforeach
+		</select>
+	</div>
+	<button type="button" class="ui right floated positive icon button add-row">
+	    <i class="add icon"></i>
+	</button>
+</div>

@@ -2,11 +2,12 @@
 
 namespace Baytek\LaravelContent\Models;
 
-// use Baytek\LaravelContent\Models\Content;
 use Illuminate\Database\Eloquent\Model;
 
 class ContentRelation extends Model
 {
+	public $timestamps = false;
+    protected $table = 'content_relations';
 	protected $fillable = [
 		'content_id',
 		'relation_id',

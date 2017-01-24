@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Content extends Model
 {
+    protected $table = 'contents';
 	protected $fillable = [
 		'status',
 		'language',
@@ -18,7 +19,6 @@ class Content extends Model
     public static $eager = [
         'meta',
         'relations',
-        // 'relations.content',
         'relations.relation',
         'relations.relationType'
     ];
@@ -29,18 +29,23 @@ class Content extends Model
         'relation-type',
     ];
 
+    public function scopeChildrenOf($query, $title, $depth = 1)
+    {
+        $query
+            ->select('contents.id', 'contents.status', 'contents.revision', 'contents.language', 'contents.title')
+            ->leftJoin('content_relations AS relations', 'contents.id', '=', 'relations.content_id')
+            ->leftJoin('contents AS types', 'types.id', '=', 'relations.relation_id')
+            ->where('types.title', $title)
+            ->get();
+    }
 
     public function meta()
     {
-    	return $this->hasMany(ContentMeta::class);
+    	return $this->hasMany(ContentMeta::class, 'content_id');
     }
 
     public function relations()
     {
-    	return $this->hasMany(ContentRelation::class);
-        // return $this->hasManyThrough(
-        //     ContentRelation::class, Content::class,
-        //     'id', 'content_id', 'id'
-        // );
+    	return $this->hasMany(ContentRelation::class, 'content_id');
     }
 }
