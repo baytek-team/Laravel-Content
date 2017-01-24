@@ -43,6 +43,10 @@
             <button type="submit" class="ui right floated primary button">
                 Update Content
             </button>
+
+            <button type="submit" class="ui right floated green button">
+                Add Relation
+            </button>
         </div>
 
     </form>

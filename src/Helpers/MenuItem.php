@@ -6,18 +6,17 @@ use Exception;
 
 class MenuItem
 {
-	private $action = 'url';
-	private $append;
-	private $class;
-	private $confirm;
-	private $form;
-	private $location = '';
-	private $method = 'get';
-	private $model = '';
-	private $prepend;
-	private $text;
-	private $type = 'url';
-
+	protected $action = 'url';
+	protected $append;
+	protected $class;
+	protected $confirm;
+	protected $form;
+	protected $location = '';
+	protected $method = 'get';
+	protected $model = '';
+	protected $prepend;
+	protected $text;
+	protected $type = 'url';
 
 	/**
 	 * Create a new menu item instance
