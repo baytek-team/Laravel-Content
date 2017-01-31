@@ -29,7 +29,7 @@
 
 <div id="registration" class="ui container">
     <div class="ui hidden divider"></div>
-    <form action="{{action('\Baytek\LaravelContent\Controllers\ContentController@update', $content)}}" method="POST" class="ui form">
+    <form action="{{action('\Baytek\Laravel\Content\Controllers\ContentController@update', $content)}}" method="POST" class="ui form">
         {{ csrf_field() }}
         {{ method_field('PUT') }}
 
@@ -39,7 +39,7 @@
 
         <div class="ui error message"></div>
         <div class="field actions">
-            <a class="ui button" href="{{ action('\Baytek\LaravelContent\Controllers\ContentController@index') }}">Cancel</a>
+            <a class="ui button" href="{{ action('\Baytek\Laravel\Content\Controllers\ContentController@index') }}">Cancel</a>
             <button type="submit" class="ui right floated primary button">
                 Update Content
             </button>

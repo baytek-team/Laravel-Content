@@ -17,7 +17,7 @@
 </div>
 
 <div class="ui bottom attached tab padded segment active" data-tab="role-permissions">
-    <form id="role-permissions" action="{{ action('\Baytek\LaravelContent\Controllers\RoleController@saveRolePermissions') }}" method="POST">
+    <form id="role-permissions" action="{{ action('\Baytek\Laravel\Content\Controllers\RoleController@saveRolePermissions') }}" method="POST">
         {{ csrf_field() }}
         <table class="ui selectable celled very basic table">
             <thead>
@@ -47,7 +47,7 @@
 </div>
 
 <div class="ui bottom attached tab padded segment" data-tab="user-roles">
-    <form id="user-roles" action="{{ action('\Baytek\LaravelContent\Controllers\RoleController@saveUserRoles') }}" method="POST">
+    <form id="user-roles" action="{{ action('\Baytek\Laravel\Content\Controllers\RoleController@saveUserRoles') }}" method="POST">
         {{ csrf_field() }}
         <table class="ui selectable celled very basic table">
             <thead>
@@ -75,7 +75,7 @@
 </div>
 
 <div class="ui bottom attached tab padded segment" data-tab="user-permissions">
-    <form id="user-permissions" action="{{ action('\Baytek\LaravelContent\Controllers\RoleController@saveUserPermissions') }}" method="POST">
+    <form id="user-permissions" action="{{ action('\Baytek\Laravel\Content\Controllers\RoleController@saveUserPermissions') }}" method="POST">
         {{ csrf_field() }}
         <table class="ui selectable celled very basic table">
             <thead>

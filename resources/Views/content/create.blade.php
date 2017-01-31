@@ -17,13 +17,13 @@
 
 <div class="flex-center position-ref full-height">
     <div class="content">
-        <form action="{{action('\Baytek\LaravelContent\Controllers\ContentController@store')}}" method="POST" class="ui form">
+        <form action="{{action('\Baytek\Laravel\Content\Controllers\ContentController@store')}}" method="POST" class="ui form">
             {{ csrf_field() }}
 
             @include('Pretzel::content.form')
 
             <div class="field actions">
-	            <a class="ui button" href="{{ action('\Baytek\LaravelContent\Controllers\ContentController@index') }}">Cancel</a>
+	            <a class="ui button" href="{{ action('\Baytek\Laravel\Content\Controllers\ContentController@index') }}">Cancel</a>
 	            <button type="submit" class="ui right floated primary button">
 	            	Save all the things
             	</button>
