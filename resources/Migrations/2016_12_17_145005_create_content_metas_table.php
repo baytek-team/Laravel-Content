@@ -15,8 +15,6 @@ class CreateContentMetasTable extends Migration
     {
         Schema::create('content_metas', function (Blueprint $table) {
             $table->increments('id');
-            // $table->timestamps();
-            // $table->softDeletes();
 
             $table->integer('content_id')->unsigned()->nullable();
             $table->foreign('content_id')->references('id')->on('contents');

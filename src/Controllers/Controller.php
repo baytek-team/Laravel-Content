@@ -15,10 +15,9 @@ class Controller extends BaseController
 
     public function __construct()
     {
-        $this->content = new ContentController;
+        // $this->content = new ContentController;
 
         // Register view namespace for this Route/Controller/ContentType
-        View::addNamespace($this->type, app_path()."/ContentTypes/$this->type/Views");
+        // View::addNamespace($this->type, app_path()."/ContentTypes/$this->type/Views");
     }
-
 }

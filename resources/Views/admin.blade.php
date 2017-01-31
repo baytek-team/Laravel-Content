@@ -79,9 +79,11 @@
                     return false;
                 }
 
-                result = $(this).parent().clone(true, true).insertAfter($(this).parent());
+                result = $(this).parent().clone(true, false).insertAfter($(this).parent());
 
                 result.find('input').val('');
+
+                result.find('.ui.dropdown').dropdown();
 
                 $(this).parent()
                     .find('.add-row')
@@ -98,8 +100,8 @@
                 $(this).parent().remove();
             }
 
-            $('.add-row').on('click', UiCloneRow);
-            $('.remove-row').on('click', UiRemoveRow);
+            $('body').on('click', '.add-row', UiCloneRow);
+            $('body').on('click', '.remove-row', UiRemoveRow);
         }(window.jQuery);
     </script>
 

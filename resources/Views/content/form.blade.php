@@ -1,3 +1,7 @@
+<div class="field{{ $errors->has('key') ? ' error' : '' }}">
+	<label for="key">Key</label>
+	<input type="text" id="key" name="key" placeholder="Key" value="{{ old('key', $content->key) }}">
+</div>
 <div class="field{{ $errors->has('title') ? ' error' : '' }}">
 	<label for="title">Title</label>
 	<input type="text" id="title" name="title" placeholder="Title" value="{{ old('title', $content->title) }}">
@@ -8,9 +12,9 @@
 </div>
 
 
-<button type="button" class="ui left floated basic positive button add-row">
+<!-- <button type="button" class="ui left floated basic positive button add-row">
     Add Metadata
-</button>
+</button> -->
 <h4 class="ui horizontal divider header">
 	<i class="tags icon"></i>
 	Metadata
@@ -31,11 +35,11 @@
 @endif
 
 <div class="two fields">
-	<div class="field{{ $errors->has('key') ? ' error' : '' }}">
-		<input type="text" name="key[{{$meta->id}}]" placeholder="Meta Key" value="{{ $meta->key }}">
+	<div class="field{{ $errors->has('meta_key') ? ' error' : '' }}">
+		<input type="text" name="meta_key[{{$meta->id}}]" placeholder="Meta Key" value="{{ $meta->key }}">
 	</div>
-	<div class="field{{ $errors->has('content') ? ' error' : '' }}">
-		<input type="text" name="value[{{$meta->id}}]" placeholder="Meta Value" value="{{ $meta->value }}">
+	<div class="field{{ $errors->has('meta_value') ? ' error' : '' }}">
+		<input type="text" name="meta_value[{{$meta->id}}]" placeholder="Meta Value" value="{{ $meta->value }}">
 	</div>
 	<button type="button" class="ui right floated negative icon button remove-row">
 	    <i class="remove icon"></i>
@@ -44,11 +48,11 @@
 @endforeach
 
 <div class="two fields">
-	<div class="field{{ $errors->has('key') ? ' error' : '' }}">
-		<input type="text" name="key[]" placeholder="Meta Key" value="">
+	<div class="field{{ $errors->has('meta_key') ? ' error' : '' }}">
+		<input type="text" name="meta_key[]" placeholder="Meta Key" value="">
 	</div>
-	<div class="field{{ $errors->has('content') ? ' error' : '' }}">
-		<input type="text" name="value[]" placeholder="Meta Value" value="">
+	<div class="field{{ $errors->has('meta_value') ? ' error' : '' }}">
+		<input type="text" name="meta_value[]" placeholder="Meta Value" value="">
 	</div>
 	<button type="button" class="ui right floated positive icon button add-row">
 	    <i class="add icon"></i>
@@ -56,9 +60,9 @@
 </div>
 
 
-<button type="button" class="ui left floated basic positive button add-row">
+<!-- <button type="button" class="ui left floated basic positive button add-row">
     Add Relationship
-</button>
+</button> -->
 <h4 class="ui horizontal divider header">
 	<i class="users icon"></i>
 	Relationships

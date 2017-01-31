@@ -12,6 +12,7 @@ class Content extends Model
 	protected $fillable = [
 		'status',
 		'language',
+        'key',
 		'title',
 		'content',
 	];
@@ -29,14 +30,13 @@ class Content extends Model
         'relation-type',
     ];
 
-    public function scopeChildrenOf($query, $title, $depth = 1)
+    public function scopeChildrenOf($query, $key, $depth = 1)
     {
         $query
-            ->select('contents.id', 'contents.status', 'contents.revision', 'contents.language', 'contents.title')
+            ->select('contents.id', 'contents.status', 'contents.revision', 'contents.language', 'contents.title', 'contents.key')
             ->leftJoin('content_relations AS relations', 'contents.id', '=', 'relations.content_id')
             ->leftJoin('contents AS types', 'types.id', '=', 'relations.relation_id')
-            ->where('types.title', $title)
-            ->get();
+            ->where('types.key', $key);
     }
 
     public function meta()

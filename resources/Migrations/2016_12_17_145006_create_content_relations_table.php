@@ -24,8 +24,6 @@ class CreateContentRelationsTable extends Migration
 
             $table->integer('relation_type_id')->unsigned()->nullable();
             $table->foreign('relation_type_id')->references('id')->on('contents');
-            // or
-            // $table->string('relation_type')->nullable();
 
         });
     }
