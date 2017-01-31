@@ -1,6 +1,6 @@
 <?php
 
-namespace Baytek\LaravelContent\Traits;
+namespace Baytek\Laravel\Content\Traits;
 
 use Crypt;
 

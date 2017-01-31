@@ -1,6 +1,6 @@
 <?php
 
-namespace Baytek\LaravelContent\Requests;
+namespace Baytek\Laravel\Content\Requests;
 
 use Auth;
 use Illuminate\Foundation\Http\FormRequest;

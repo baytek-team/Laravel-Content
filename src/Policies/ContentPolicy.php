@@ -1,9 +1,9 @@
 <?php
 
-namespace Baytek\LaravelContent\Policies;
+namespace Baytek\Laravel\Content\Policies;
 
 use App\User;
-use Baytek\LaravelContent\Models\Content;
+use Baytek\Laravel\Content\Models\Content;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class ContentPolicy
@@ -14,7 +14,7 @@ class ContentPolicy
      * Determine whether the user can view the content.
      *
      * @param  \App\User  $user
-     * @param  Baytek\LaravelContent\Content  $content
+     * @param  Baytek\Laravel\Content\Content  $content
      * @return mixed
      */
     public function view(User $user, Content $content)
@@ -39,7 +39,7 @@ class ContentPolicy
      * Determine whether the user can update the content.
      *
      * @param  \App\User  $user
-     * @param  Baytek\LaravelContent\Content  $content
+     * @param  Baytek\Laravel\Content\Content  $content
      * @return mixed
      */
     public function update(User $user, Content $content)
@@ -52,7 +52,7 @@ class ContentPolicy
      * Determine whether the user can delete the content.
      *
      * @param  \App\User  $user
-     * @param  Baytek\LaravelContent\Content  $content
+     * @param  Baytek\Laravel\Content\Content  $content
      * @return mixed
      */
     public function delete(User $user, Content $content)

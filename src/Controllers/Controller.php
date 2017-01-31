@@ -1,8 +1,8 @@
 <?php
 
-namespace Baytek\LaravelContent\Controllers;
+namespace Baytek\Laravel\Content\Controllers;
 
-use Baytek\LaravelContent\Traits\Contentable;
+use Baytek\Laravel\Content\Traits\Contentable;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;

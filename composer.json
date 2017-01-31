@@ -12,7 +12,7 @@
 
     "autoload": {
         "psr-4": {
-            "Baytek\\LaravelContent\\": "src/"
+            "Baytek\\Laravel\\Content\\": "src/"
         }
     },
     "require": {

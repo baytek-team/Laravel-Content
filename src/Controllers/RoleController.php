@@ -1,12 +1,12 @@
 <?php
 
-namespace Baytek\LaravelContent\Controllers;
+namespace Baytek\Laravel\Content\Controllers;
 
 use App\User;
 
-use Baytek\LaravelContent\Models\Content;
-use Baytek\LaravelContent\Models\ContentMeta;
-use Baytek\LaravelContent\Requests\RoleRequest;
+use Baytek\Laravel\Content\Models\Content;
+use Baytek\Laravel\Content\Models\ContentMeta;
+use Baytek\Laravel\Content\Requests\RoleRequest;
 
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -50,7 +50,7 @@ class RoleController extends Controller
 			}
 		}
 
-		return redirect()->action('\Baytek\LaravelContent\Controllers\RoleController@index');
+		return redirect()->action('\Baytek\Laravel\Content\Controllers\RoleController@index');
 	}
 
 	public function saveUserRoles(RoleRequest $post)
@@ -70,7 +70,7 @@ class RoleController extends Controller
 			}
 		}
 
-		return redirect()->action('\Baytek\LaravelContent\Controllers\RoleController@index');
+		return redirect()->action('\Baytek\Laravel\Content\Controllers\RoleController@index');
 	}
 
 	public function saveUserPermissions(RoleRequest $post)
@@ -90,7 +90,7 @@ class RoleController extends Controller
 			}
 		}
 
-		return redirect()->action('\Baytek\LaravelContent\Controllers\RoleController@index');
+		return redirect()->action('\Baytek\Laravel\Content\Controllers\RoleController@index');
 	}
 
 }

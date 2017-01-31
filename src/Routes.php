@@ -1,6 +1,6 @@
 <?php
 
-Route::group(['namespace' => '\Baytek\LaravelContent\Controllers', 'prefix' => 'admin', 'middleware' => 'web'], function () {
+Route::group(['namespace' => '\Baytek\Laravel\Content\Controllers', 'prefix' => 'admin', 'middleware' => 'web'], function () {
 	Route::resource('content', 'ContentController');
 
 	Route::get('roles', 'RoleController@index');

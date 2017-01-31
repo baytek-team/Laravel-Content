@@ -1,9 +1,9 @@
 <?php
 
-namespace Baytek\LaravelContent\Models;
+namespace Baytek\Laravel\Content\Models;
 
-use Baytek\LaravelContent\Models\ContentMeta;
-use Baytek\LaravelContent\Models\ContentRelation;
+use Baytek\Laravel\Content\Models\ContentMeta;
+use Baytek\Laravel\Content\Models\ContentRelation;
 use Illuminate\Database\Eloquent\Model;
 
 class Content extends Model

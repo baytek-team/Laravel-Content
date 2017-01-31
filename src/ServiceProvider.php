@@ -1,9 +1,9 @@
 <?php
 
-namespace Baytek\LaravelContent;
+namespace Baytek\Laravel\Content;
 
-use Baytek\LaravelContent\Models\Content;
-use Baytek\LaravelContent\Policies\ContentPolicy;
+use Baytek\Laravel\Content\Models\Content;
+use Baytek\Laravel\Content\Policies\ContentPolicy;
 
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider;

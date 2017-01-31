@@ -1,6 +1,6 @@
 <?php
 
-namespace Baytek\LaravelContent\Controllers;
+namespace Baytek\Laravel\Content\Controllers;
 
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller;
@@ -8,9 +8,9 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 
-use Baytek\LaravelContent\Models\Content;
-use Baytek\LaravelContent\Models\ContentMeta;
-use Baytek\LaravelContent\Models\ContentRelation;
+use Baytek\Laravel\Content\Models\Content;
+use Baytek\Laravel\Content\Models\ContentMeta;
+use Baytek\Laravel\Content\Models\ContentRelation;
 
 use Illuminate\Http\Request;
 

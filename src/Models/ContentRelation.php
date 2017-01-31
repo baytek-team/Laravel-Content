@@ -1,6 +1,6 @@
 <?php
 
-namespace Baytek\LaravelContent\Models;
+namespace Baytek\Laravel\Content\Models;
 
 use Illuminate\Database\Eloquent\Model;
 

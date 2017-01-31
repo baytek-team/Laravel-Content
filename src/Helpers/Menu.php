@@ -1,6 +1,6 @@
 <?php
 
-namespace Baytek\LaravelContent\Helpers;
+namespace Baytek\Laravel\Content\Helpers;
 
 use App\Helpers\MenuItem;
 use Illuminate\Database\Eloquent\Collection;
