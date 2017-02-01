@@ -1,4 +1,4 @@
-@extends('Pretzel::admin')
+@extends('Content::admin')
 @section('content')
 
 <h1 class="ui header">

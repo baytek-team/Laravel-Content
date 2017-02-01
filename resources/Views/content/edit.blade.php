@@ -1,4 +1,4 @@
-@extends('Pretzel::admin')
+@extends('Content::admin')
 @section('content')
 
 <div class="ui two column stackable grid">
@@ -33,7 +33,7 @@
         {{ csrf_field() }}
         {{ method_field('PUT') }}
 
-        @include('Pretzel::content.form')
+        @include('Content::content.form')
         <div class="ui hidden divider"></div>
         <div class="ui hidden divider"></div>
 

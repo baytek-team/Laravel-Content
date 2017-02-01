@@ -1,4 +1,4 @@
-@extends('Pretzel::admin')
+@extends('Content::admin')
 @section('content')
 
 <div class="ui two column stackable grid">
@@ -20,7 +20,7 @@
         <form action="{{action('\Baytek\Laravel\Content\Controllers\ContentController@store')}}" method="POST" class="ui form">
             {{ csrf_field() }}
 
-            @include('Pretzel::content.form')
+            @include('Content::content.form')
 
             <div class="field actions">
 	            <a class="ui button" href="{{ action('\Baytek\Laravel\Content\Controllers\ContentController@index') }}">Cancel</a>

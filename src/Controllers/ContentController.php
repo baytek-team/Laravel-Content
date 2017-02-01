@@ -2,21 +2,73 @@
 
 namespace Baytek\Laravel\Content\Controllers;
 
-use Illuminate\Foundation\Bus\DispatchesJobs;
-use Illuminate\Routing\Controller;
-use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-
-
 use Baytek\Laravel\Content\Models\Content;
 use Baytek\Laravel\Content\Models\ContentMeta;
 use Baytek\Laravel\Content\Models\ContentRelation;
 
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
+
+use ReflectionClass;
+use View;
 
 class ContentController extends Controller
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+
+    protected $model = Content::class;
+    protected $instance;
+    protected $type;
+    protected $redirects = true;
+    protected $names = [
+        'singular' => '',
+        'plural' => '',
+        'class' => '',
+    ];
+
+    protected $viewData = [
+        'index' => [],
+        'create' => [],
+        'edit' => [],
+        'show' => [],
+    ];
+
+    protected $views = [
+        'index' => 'content.index',
+        'create' => 'content.create',
+        'edit' => 'content.edit',
+        'show' => 'content.show',
+    ];
+
+    public function __construct()
+    {
+        $this->instance = new $this->model;
+        $this->names['class'] = (new ReflectionClass($this->instance))->getShortName();
+        $this->names['singular'] = strtolower(str_singular($this->names['class']));
+        $this->names['plural'] = strtolower(str_plural($this->names['class']));
+    }
+
+    protected function view($name)
+    {
+        return implode('::', [$this->names['class'], $this->views[$name]]);
+    }
+
+    protected function bound($id)
+    {
+        if(!is_string($id) && get_class($id) == $this->model) {
+            return $id;
+        }
+
+        return $this->instance->find($id);
+    }
+
+    protected function params(Array $params, Array $additional)
+    {
+        return collect($params)->merge($additional)->all();
+    }
 
     /**
      * Display a listing of the resource.
@@ -25,7 +77,17 @@ class ContentController extends Controller
      */
     public function index()
     {
-        return Content::with(Content::$eager)->get();
+        $model = $this->instance;
+        $view = $this->view('index');
+        $content = $model->with($model::$eager)->get();
+
+        if(!View::exists($view)) {
+            return $content;
+        }
+
+        return View::make($view, $this->params([
+            $this->names['plural'] => $content
+        ], $this->viewData[__FUNCTION__]));
     }
 
     /**
@@ -35,10 +97,13 @@ class ContentController extends Controller
      */
     public function create()
     {
-        return view('Pretzel::content.create', [
-            'contents' => Content::select('id', 'status', 'revision', 'language', 'title')->get(),
-            'content' => (new Content)
-        ]);
+        $model = $this->instance;
+
+        return View::make($this->view('create'), $this->params([
+            $this->names['plural'] => $model::select('id', 'status', 'revision', 'language', 'title')->get(),
+            $this->names['singular'] => $model,
+            'relationTypes' => $model::childrenOf('relation-type')->get(),
+        ], $this->viewData[__FUNCTION__]));
     }
 
     /**
@@ -49,14 +114,18 @@ class ContentController extends Controller
      */
     public function store(Request $request)
     {
-        $content = new Content($request->all());
+        $content = new $this->model($request->all());
 
         $content->save();
 
         $this->saveMetaData($content, $request);
         $this->saveResources($content, $request);
 
-        return redirect(action('\\'.self::class.'@show', $content));
+        if($this->redirects) {
+            return redirect(route($this->names['singular'].'.show', $content));
+        }
+
+        return $content;
     }
 
     /**
@@ -65,9 +134,19 @@ class ContentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Content $content)
+    public function show($id)
     {
-        return $content->load(Content::$eager);
+        $model = $this->instance;
+        $view = $this->view('show');
+        $content = $this->bound($id)->load($model::$eager);
+
+        if(!View::exists($view)) {
+            return $content;
+        }
+
+        return View::make($view, $this->params([
+            $this->names['singular'] => $content
+        ], $this->viewData[__FUNCTION__]));
     }
 
     /**
@@ -76,13 +155,15 @@ class ContentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Content $content)
+    public function edit($id)
     {
-        return view('Pretzel::content.edit', [
-            'contents' => Content::select('id', 'status', 'revision', 'language', 'title')->get(),
-            'relationTypes' => Content::childrenOf('relation-type')->get(),
-            'content' => $content,
-        ]);
+        $model = $this->instance;
+
+        return View::make($this->view('edit'), $this->params([
+            $this->names['plural'] => $model::select('id', 'status', 'revision', 'language', 'title')->get(),
+            $this->names['singular'] => $this->bound($id),
+            'relationTypes' => $model::childrenOf('relation-type')->get(),
+        ], $this->viewData[__FUNCTION__]));
     }
 
     /**
@@ -92,8 +173,10 @@ class ContentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Content $content)
+    public function update(Request $request, $id)
     {
+        $content = $this->bound($id);
+
         // Update the content
         $content->update($request->all());
 
@@ -103,7 +186,11 @@ class ContentController extends Controller
         $this->saveMetaData($content, $request);
         $this->saveResources($content, $request);
 
-        return redirect(action('\\'.self::class.'@show', $content));
+        if($this->redirects) {
+            return redirect(route($this->names['singular'].'.show', $content));
+        }
+
+        return $content;
     }
 
     /**
@@ -112,14 +199,18 @@ class ContentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Content $content)
+    public function destroy($id)
     {
-        //
+        $this->bound($id)->delete();
+
+        return redirect(route($this->names['singular'].'.index', $content));
     }
 
 
     private function saveMetaData(Content $content, Request $request)
     {
+        if(!$request->meta_key) return;
+
         // Get the ids of the meta that was present on the page when the form was loaded
         $metaIds = json_decode($request->meta_ids) ?: [];
 
@@ -138,7 +229,6 @@ class ContentController extends Controller
                 }
                 else {
                     $metaRecord = (new ContentMeta([
-                        // 'content_id' => $content->id,
                         'key' => $key,
                         'value' => $request->meta_value[$id]
                     ]));
@@ -154,6 +244,8 @@ class ContentController extends Controller
 
     private function saveResources(Content $content, Request $request)
     {
+        if(!$request->relation_ids) return;
+
         // Get the ids of the meta that was present on the page when the form was loaded
         $resourceIds = json_decode($request->relation_ids) ?: [];
 
@@ -162,7 +254,6 @@ class ContentController extends Controller
             if(in_array($id, $resourceIds) && $relationRecord = ContentRelation::where('id', $id)) {
                 $relationRecord
                     ->update([
-                        // 'content_id'  => $content_id,
                         'relation_id' => $request->relation_id[$id],
                         'relation_type_id' => $request->relation_type_id[$id],
                     ]);
