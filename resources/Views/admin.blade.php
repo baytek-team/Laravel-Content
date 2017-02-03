@@ -62,7 +62,7 @@
     <!-- <script src="/wp-includes/js/jquery/jquery.js?ver=1.12.4"></script> -->
     <!-- <script src="/vendor/bundle.js"></script> -->
     <script src="/js/all.js"></script>
-    <script src="http://192.168.2.25:1337/pretzel.js"></script>
+    {{-- <script src="http://192.168.2.25:1337/pretzel.js"></script> --}}
     <script>
         ;+function($){
             $('.ui.dropdown').dropdown();

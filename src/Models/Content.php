@@ -17,6 +17,8 @@ class Content extends Model
 		'content',
 	];
 
+    public $relationships = [];
+
     public static $eager = [
         'meta',
         'relations',

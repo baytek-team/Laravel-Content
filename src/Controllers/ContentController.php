@@ -121,6 +121,10 @@ class ContentController extends Controller
         $this->saveMetaData($content, $request);
         $this->saveResources($content, $request);
 
+        foreach($content->relationships as $contentType => $type) {
+            $content->saveRelation($contentType, Webpage::where('key', $type)->first()->id);
+        }
+
         if($this->redirects) {
             return redirect(route($this->names['singular'].'.show', $content));
         }
