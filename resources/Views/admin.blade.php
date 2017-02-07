@@ -8,11 +8,13 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name', 'Pretzel CAS :: Content Authoring System') }}</title>
 
     <!-- Styles -->
     <link href="/css/all.css" rel="stylesheet">
     <link href="/css/app.css" rel="stylesheet">
+
+    @yield('head')
 
     <!-- Scripts -->
     <script>

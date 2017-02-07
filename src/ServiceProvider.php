@@ -5,7 +5,7 @@ namespace Baytek\Laravel\Content;
 use Baytek\Laravel\Content\Models\Content;
 use Baytek\Laravel\Content\Policies\ContentPolicy;
 use Baytek\LaravelStatusBit\StatusBitServiceProvider;
-use Baytek\Laravel\User\ServiceProvider as UserServiceProvider;
+use Baytek\Laravel\Users\ServiceProvider as UserServiceProvider;
 use Prettus\Repository\Providers\RepositoryServiceProvider;
 
 use Illuminate\Support\Facades\Gate;

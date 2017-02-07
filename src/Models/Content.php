@@ -37,8 +37,13 @@ class Content extends Model
         (new ContentRelation([
             'content_id' => $this->id,
             'relation_id' => $relation_id,
-            'relation_type_id' => static::where('key', $type)->first()->id,
+            'relation_type_id' => $this->getContentByKey($type)->id,
         ]))->save();
+    }
+
+    public function getContentByKey($type)
+    {
+        return static::where('key', $type)->first();
     }
 
     public function scopeChildrenOf($query, $key, $depth = 1)

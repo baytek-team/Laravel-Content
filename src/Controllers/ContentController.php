@@ -119,10 +119,15 @@ class ContentController extends Controller
         $content->save();
 
         $this->saveMetaData($content, $request);
-        $this->saveResources($content, $request);
+        $this->saveRelationships($content, $request);
 
         foreach($content->relationships as $contentType => $type) {
-            $content->saveRelation($contentType, Webpage::where('key', $type)->first()->id);
+            // $typeID = (is_object($t) && ($t instanceof Closure)) ? $t($request) : $t;
+            // Lookup the type id
+            $typeID = $content::where('key', $type)->first()->id;
+
+            // Save the actual relationship ID
+            $content->saveRelation($contentType, $typeID);
         }
 
         if($this->redirects) {
@@ -188,7 +193,7 @@ class ContentController extends Controller
         $content->save();
 
         $this->saveMetaData($content, $request);
-        $this->saveResources($content, $request);
+        $this->saveRelationships($content, $request);
 
         if($this->redirects) {
             return redirect(route($this->names['singular'].'.show', $content));
@@ -246,7 +251,7 @@ class ContentController extends Controller
     }
 
 
-    private function saveResources(Content $content, Request $request)
+    private function saveRelationships(Content $content, Request $request)
     {
         if(!$request->relation_ids) return;
 
