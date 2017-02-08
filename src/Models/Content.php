@@ -55,6 +55,15 @@ class Content extends Model
             ->where('types.key', $key);
     }
 
+    public function scopeOfContentType($query, $key)
+    {
+        return $query
+            ->select('contents.id', 'contents.status', 'contents.revision', 'contents.language', 'contents.title', 'contents.key', 'contents.content')
+            ->leftJoin('content_relations AS relations', 'contents.id', '=', 'relations.content_id')
+            ->leftJoin('contents AS types', 'types.id', '=', 'relations.relation_id')
+            ->where('types.key', $key);
+    }
+
     public function meta()
     {
     	return $this->hasMany(ContentMeta::class, 'content_id');

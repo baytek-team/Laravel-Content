@@ -24,6 +24,31 @@
     </script>
 </head>
 <body>
+    <div class="ui inverted vertical masthead center aligned segment">
+        <div class="ui container inverted">
+            <div class="ui large secondary inverted pointing menu">
+                <div class="item">
+                    <img src="http://cdn4.baytek.ca/wp-content/themes/baytek2016/images/logos/baytek-logo.svg" alt="" class="logo" scale="0">
+                </div>
+                {{-- <a class="toc item">
+                    <i class="sidebar icon"></i>
+                </a> --}}
+                <a class="active item">Home</a>
+                <a class="item" href="{{ route('user.index') }}">Users</a>
+                <a class="item" href="{{ route('roles.index') }}">Roles</a>
+                <a class="item" href="{{ route('content.index') }}">Contents</a>
+                <a class="item" href="{{ route('webpage.index') }}">Webpages</a>
+                <a class="item">Menus</a>
+                {{-- <div class="right item">
+                    <a class="ui inverted button pretzel-edit"><i class="pencil icon"></i> Edit </a>
+                </div> --}}
+            </div>
+        </div>
+    </div>
+
+    <div class="ui hidden divider"></div>
+    <div class="ui hidden divider"></div>
+
 
 {{-- @include('app.common.navigation.sidebar') --}}
 
@@ -33,6 +58,19 @@
     {{-- @include('app.common.errors') --}}
 
     <div id="app" class="ui container">
+        <div class="ui grid">
+            <div class="two column row">
+                <div class="left floated column">
+                    @yield('page.head.header')
+                </div>
+                <div class="">
+                    @yield('page.head.menu')
+                </div>
+            </div>
+        </div>
+        <div class="ui hidden divider"></div>
+        <div class="ui hidden divider"></div>
+
         <!-- <div class=" ui container" @if (!isset($notifications) || $notifications->count() == 0) style="display: none" @endif>
             <div class="ui hidden divider"></div>
             <div class="row">
