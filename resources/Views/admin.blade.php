@@ -36,12 +36,19 @@
                 <a class="active item">Home</a>
                 <a class="item" href="{{ route('user.index') }}">Users</a>
                 <a class="item" href="{{ route('roles.index') }}">Roles</a>
-                <a class="item" href="{{ route('content.index') }}">Contents</a>
-                <a class="item" href="{{ route('webpage.index') }}">Webpages</a>
+                <div class="ui dropdown item">
+                    Contents
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+                        <a href="{{ route('content.index') }}" class="item">Contents</a>
+                        <a href="{{ route('webpage.index') }}" class="item">Webpages</a>
+                        <div class="item">Blog</div>
+                        <div class="item">Events</div>
+                        <div class="item">Forum</div>
+                    </div>
+                </div>
                 <a class="item">Menus</a>
-                {{-- <div class="right item">
-                    <a class="ui inverted button pretzel-edit"><i class="pencil icon"></i> Edit </a>
-                </div> --}}
+                <a class="item" href="{{ route('settings.index') }}">Settings</a>
             </div>
         </div>
     </div>
@@ -51,9 +58,6 @@
 
 
 {{-- @include('app.common.navigation.sidebar') --}}
-
-
-    {{-- @include('app.common.header.app') --}}
 
     {{-- @include('app.common.errors') --}}
 
@@ -94,13 +98,8 @@
 
     {{-- @include('app.common.footer') --}}
 
-    <!--[if lte IE 10]>
-    <script src="/js/dataset-shim.js"></script>
-    <![endif]-->
 
     <!-- Scripts -->
-    <!-- <script src="/wp-includes/js/jquery/jquery.js?ver=1.12.4"></script> -->
-    <!-- <script src="/vendor/bundle.js"></script> -->
     <script src="/js/all.js"></script>
     {{-- <script src="http://192.168.2.25:1337/pretzel.js"></script> --}}
     <script>

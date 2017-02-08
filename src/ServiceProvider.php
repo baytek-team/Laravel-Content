@@ -5,6 +5,7 @@ namespace Baytek\Laravel\Content;
 use Baytek\Laravel\Content\Models\Content;
 use Baytek\Laravel\Content\Policies\ContentPolicy;
 use Baytek\LaravelStatusBit\StatusBitServiceProvider;
+use Baytek\Laravel\Settings\SettingsServiceProvider;
 use Baytek\Laravel\Users\ServiceProvider as UserServiceProvider;
 use Prettus\Repository\Providers\RepositoryServiceProvider;
 
@@ -42,6 +43,7 @@ class ServiceProvider extends AuthServiceProvider
         $this->app->register(RepositoryServiceProvider::class);
         $this->app->register(StatusBitServiceProvider::class);
         $this->app->register(UserServiceProvider::class);
+        $this->app->register(SettingsServiceProvider::class);
     	// $this->app->register('Collective\Html\HtmlServiceProvider');
     }
 }
