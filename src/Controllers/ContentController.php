@@ -5,6 +5,7 @@ namespace Baytek\Laravel\Content\Controllers;
 use Baytek\Laravel\Content\Models\Content;
 use Baytek\Laravel\Content\Models\ContentMeta;
 use Baytek\Laravel\Content\Models\ContentRelation;
+use Baytek\Laravel\Settings\SettingsProvider;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -43,12 +44,14 @@ class ContentController extends Controller
         'show' => 'content.show',
     ];
 
-    public function __construct()
+    public function __construct(SettingsProvider $settings)
     {
         $this->instance = new $this->model;
         $this->names['class'] = (new ReflectionClass($this->instance))->getShortName();
         $this->names['singular'] = strtolower(str_singular($this->names['class']));
         $this->names['plural'] = strtolower(str_plural($this->names['class']));
+
+        // $settings->resolve(strtolower($this->names['class']));
     }
 
     protected function view($name)

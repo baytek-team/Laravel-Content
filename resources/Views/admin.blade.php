@@ -101,13 +101,25 @@
 
     <!-- Scripts -->
     <script src="/js/all.js"></script>
-    {{-- <script src="http://192.168.2.25:1337/pretzel.js"></script> --}}
+    <script src="http://192.168.2.25:1337/pretzel.js"></script>
     <script>
         ;+function($){
-            $('.ui.dropdown').dropdown();
+            $('.ui.dropdown').dropdown({
+                    onChange: function(value) {
+                        var target = $('.ui.dropdown');
+                        if(value) {
+                             target.find('.dropdown.icon').removeClass('dropdown').addClass('delete').on('click', function() {
+                                target.dropdown('clear');
+                                $(this).removeClass('delete').addClass('dropdown');
+                            });
+                        }
+                    }
+                });
             $('.button').popup();
             $('.ui.progress').progress();
             $('.menu .item').tab();
+            $('.ui.checkbox').checkbox();
+            $('.ui.radio.checkbox').checkbox();
 
             function UiCloneRow() {
                 isEmpty = $(this).parent().find('input').filter(function() {

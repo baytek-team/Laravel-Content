@@ -40,10 +40,10 @@ class ServiceProvider extends AuthServiceProvider
      */
     public function register()
     {
+        $this->app->register(SettingsServiceProvider::class);
         $this->app->register(RepositoryServiceProvider::class);
         $this->app->register(StatusBitServiceProvider::class);
         $this->app->register(UserServiceProvider::class);
-        $this->app->register(SettingsServiceProvider::class);
     	// $this->app->register('Collective\Html\HtmlServiceProvider');
     }
 }
