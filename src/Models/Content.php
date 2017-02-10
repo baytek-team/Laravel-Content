@@ -8,7 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Content extends Model
 {
+    // Defining the table we want to use for all content
     protected $table = 'contents';
+
+    // Defining the fillable fields when saving records
 	protected $fillable = [
 		'status',
 		'language',
@@ -17,8 +20,10 @@ class Content extends Model
 		'content',
 	];
 
+    // Setting up default relationships which are none
     public $relationships = [];
 
+    // Eager loading relationship lists
     public static $eager = [
         'meta',
         'relations',
@@ -26,12 +31,14 @@ class Content extends Model
         'relations.relationType'
     ];
 
+    // Default list of content types
     public $types = [
         'content',
         'content-type',
         'relation-type',
     ];
 
+    // This method saves the content relation
     public function saveRelation($type, $relation_id)
     {
         (new ContentRelation([

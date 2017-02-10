@@ -33,20 +33,41 @@ class ContentController extends Controller
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
+    /**
+     * The data model that will be used to load resources
+     * @var Baytek\Laravel\Content\Models\Content
+     */
     protected $model = Content::class;
+
+    // Reference to the current model instance
     protected $instance;
+
+    // I have no clue what this is for, This should be removed if not required
     protected $type;
+
+    /**
+     * Flag that defines whether we should redirect after saving
+     *
+     * @var boolean
+     */
     protected $redirects = true;
+
+    /**
+     * List of names that the class needs to use
+     * PS, I don't really like this, perhaps add a bit of abstraction here to clean this up
+     *
+     * @var [type]
+     */
     protected $names = [
         'singular' => '',
         'plural' => '',
         'class' => '',
     ];
 
-
     /**
      * List of view data variables that will be passed along to the views at render time
-     * @var [type]
+     *
+     * @var Array
      */
     protected $viewData = [
         'index' => [],
@@ -55,6 +76,11 @@ class ContentController extends Controller
         'show' => [],
     ];
 
+    /**
+     * List of views used to display the content
+     *
+     * @var Array
+     */
     protected $views = [
         'index' => 'content.index',
         'create' => 'content.create',
@@ -62,6 +88,14 @@ class ContentController extends Controller
         'show' => 'content.show',
     ];
 
+    /**
+     * Controller instantiation:
+     * Injection of the SettingsProvider this will load all required settings
+     *
+     * We also set locally the list of names used within the controller
+     *
+     * @param SettingsProvider $settings Automatically provides the required settings
+     */
     public function __construct(SettingsProvider $settings)
     {
         $this->instance = new $this->model;
@@ -72,11 +106,23 @@ class ContentController extends Controller
         // $settings->resolve(strtolower($this->names['class']));
     }
 
+    /**
+     * Internal method to output the view name to render
+     *
+     * @param  String $name The method type key to lookup the view
+     * @return String       The result of the current class and the view
+     */
     protected function view($name)
     {
         return implode('::', [$this->names['class'], $this->views[$name]]);
     }
 
+    /**
+     * Internal method used to return an instance of the loaded model class
+     *
+     * @param  Mixed $id Either the ID or Model
+     * @return Model     Returns a laravel model instance
+     */
     protected function bound($id)
     {
         if(!is_string($id) && get_class($id) == $this->model) {
@@ -86,6 +132,13 @@ class ContentController extends Controller
         return $this->instance->find($id);
     }
 
+    /**
+     * Internal method used to concatenate parameters being passed to the views
+     *
+     * @param  Array  $params     List of default parameters
+     * @param  Array  $additional List of additional parameters
+     * @return Collection         Concatenated list of parameters
+     */
     protected function params(Array $params, Array $additional)
     {
         return collect($params)->merge($additional)->all();
@@ -121,8 +174,11 @@ class ContentController extends Controller
         $model = $this->instance;
 
         return View::make($this->view('create'), $this->params([
+            // This needs to be updated as it returns everything in the content table, this should return the list of objects of that type
             $this->names['plural'] => $model::select('id', 'status', 'revision', 'language', 'title')->get(),
+            // Create a blank instance of our model used for the view
             $this->names['singular'] => $model,
+            // Get the relationship types
             'relationTypes' => $model::childrenOf('relation-type')->get(),
         ], $this->viewData[__FUNCTION__]));
     }
@@ -168,6 +224,7 @@ class ContentController extends Controller
     {
         $model = $this->instance;
         $view = $this->view('show');
+        // Eager load the subset models, meta data and relationships
         $content = $this->bound($id)->load($model::$eager);
 
         if(!View::exists($view)) {
@@ -175,6 +232,7 @@ class ContentController extends Controller
         }
 
         return View::make($view, $this->params([
+            // return an instance of content that should have been route model binded
             $this->names['singular'] => $content
         ], $this->viewData[__FUNCTION__]));
     }
@@ -190,8 +248,11 @@ class ContentController extends Controller
         $model = $this->instance;
 
         return View::make($this->view('edit'), $this->params([
+            // This needs to be updated as it returns everything in the content table, this should return the list of objects of that type
             $this->names['plural'] => $model::select('id', 'status', 'revision', 'language', 'title')->get(),
+            // Get the current content model object
             $this->names['singular'] => $this->bound($id),
+            // Get the relationship types
             'relationTypes' => $model::childrenOf('relation-type')->get(),
         ], $this->viewData[__FUNCTION__]));
     }
@@ -233,10 +294,17 @@ class ContentController extends Controller
     {
         $this->bound($id)->delete();
 
-        return redirect(route($this->names['singular'].'.index', $content));
+        if($this->redirects) {
+            return redirect(route($this->names['singular'].'.show', $content));
+        }
     }
 
-
+    /**
+     * Internal method to save all of the requests meta data
+     * @param  Content $content Content model of which to save meta data for
+     * @param  Request $request Request content posted
+     * @return void             We don't return anything, perhaps we should..
+     */
     private function saveMetaData(Content $content, Request $request)
     {
         if(!$request->meta_key) return;
@@ -271,7 +339,12 @@ class ContentController extends Controller
         ContentMeta::destroy($metaIds);
     }
 
-
+    /**
+     * Internal method to save all of the requests relationships
+     * @param  Content $content Content model of which to save relationships for
+     * @param  Request $request Request content posted
+     * @return void             We don't return anything, perhaps we should..
+     */
     private function saveRelationships(Content $content, Request $request)
     {
         if(!$request->relation_ids) return;
