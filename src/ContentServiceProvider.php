@@ -12,7 +12,7 @@ use Prettus\Repository\Providers\RepositoryServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider;
 
-class ServiceProvider extends AuthServiceProvider
+class ContentServiceProvider extends AuthServiceProvider
 {
 
     protected $policies = [

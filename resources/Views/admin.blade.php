@@ -33,21 +33,28 @@
                 {{-- <a class="toc item">
                     <i class="sidebar icon"></i>
                 </a> --}}
-                <a class="active item">Home</a>
-                <a class="item" href="{{ route('user.index') }}">Users</a>
-                <a class="item" href="{{ route('roles.index') }}">Roles</a>
+                <a class="item">Home</a>
                 <div class="ui dropdown item">
-                    Contents
+                    Users
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+                        <a class="item" href="{{ route('user.index') }}">Users</a>
+                        <a class="item" href="{{ route('roles.index') }}">Roles</a>
+                    </div>
+                </div>
+                <div class="ui dropdown item">
+                    Content
                     <i class="dropdown icon"></i>
                     <div class="menu">
                         <a href="{{ route('content.index') }}" class="item">Contents</a>
                         <a href="{{ route('webpage.index') }}" class="item">Webpages</a>
-                        <div class="item">Blog</div>
-                        <div class="item">Events</div>
-                        <div class="item">Forum</div>
+                        <a class="item">Menus</a>
+                        <!-- <div class="item">Blog</div> -->
+                        <!-- <div class="item">Events</div> -->
+                        <!-- <div class="item">Forum</div> -->
                     </div>
                 </div>
-                <a class="item">Menus</a>
+                <a class="item" href="{{ route('user.index') }}">Profile</a>
                 <a class="item" href="{{ route('settings.index') }}">Settings</a>
             </div>
         </div>
@@ -106,7 +113,7 @@
         ;+function($){
             $('.ui.dropdown').dropdown({
                     onChange: function(value) {
-                        var target = $('.ui.dropdown');
+                        var target = $(this).parents('.ui.dropdown');
                         if(value) {
                              target.find('.dropdown.icon').removeClass('dropdown').addClass('delete').on('click', function() {
                                 target.dropdown('clear');
@@ -115,6 +122,7 @@
                         }
                     }
                 });
+
             $('.button').popup();
             $('.ui.progress').progress();
             $('.menu .item').tab();

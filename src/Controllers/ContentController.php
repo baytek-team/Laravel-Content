@@ -16,6 +16,19 @@ use Illuminate\Routing\Controller;
 use ReflectionClass;
 use View;
 
+
+/**
+ * The Content Controller is suppose to act as an abstract class that facilitates
+ * rendering and saving of common resource tables.
+ *
+ * There are three primary models used for all content types:
+ *     Content
+ *     ContentMetas
+ *     ContentRelations
+ *
+ * Due to this commonality, it makes sense to have a super class which can handle all
+ * data storage and relegate all content specific stuff to the sub classes.
+ */
 class ContentController extends Controller
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
@@ -30,6 +43,11 @@ class ContentController extends Controller
         'class' => '',
     ];
 
+
+    /**
+     * List of view data variables that will be passed along to the views at render time
+     * @var [type]
+     */
     protected $viewData = [
         'index' => [],
         'create' => [],
