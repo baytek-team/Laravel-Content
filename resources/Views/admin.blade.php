@@ -109,7 +109,18 @@
     <!-- Scripts -->
     <script src="/js/all.js"></script>
     <script src="http://192.168.2.25:1337/pretzel.js"></script>
+    <script src="//{{ Request::getHost() }}:6001/socket.io/socket.io.js"></script>
     <script>
+
+        var conn = new WebSocket('ws://' + window.location.hostname + ':8080');
+        conn.onopen = function(e) {
+            console.log("Connection established!");
+        };
+
+        conn.onmessage = function(e) {
+            console.log(e.data);
+        };
+
         ;+function($){
             $('.ui.dropdown').dropdown({
                     onChange: function(value) {
