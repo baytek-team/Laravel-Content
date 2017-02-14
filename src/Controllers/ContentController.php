@@ -6,6 +6,7 @@ use Baytek\Laravel\Content\Models\Content;
 use Baytek\Laravel\Content\Models\ContentMeta;
 use Baytek\Laravel\Content\Models\ContentRelation;
 use Baytek\Laravel\Settings\SettingsProvider;
+use Baytek\Laravel\Content\Events\ContentEvent;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -207,6 +208,8 @@ class ContentController extends Controller
             $content->saveRelation($contentType, $typeID);
         }
 
+        event(new ContentEvent($content));
+
         if($this->redirects) {
             return redirect(route($this->names['singular'].'.show', $content));
         }
@@ -277,6 +280,8 @@ class ContentController extends Controller
         $this->saveMetaData($content, $request);
         $this->saveRelationships($content, $request);
 
+        event(new ContentEvent($content));
+
         if($this->redirects) {
             return redirect(route($this->names['singular'].'.show', $content));
         }
@@ -293,6 +298,8 @@ class ContentController extends Controller
     public function destroy($id)
     {
         $this->bound($id)->delete();
+
+        event(new ContentEvent($content));
 
         if($this->redirects) {
             return redirect(route($this->names['singular'].'.show', $content));

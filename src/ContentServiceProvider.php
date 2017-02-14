@@ -4,13 +4,11 @@ namespace Baytek\Laravel\Content;
 
 use Baytek\Laravel\Content\Models\Content;
 use Baytek\Laravel\Content\Policies\ContentPolicy;
-use Baytek\LaravelStatusBit\StatusBitServiceProvider;
-use Baytek\Laravel\Settings\SettingsServiceProvider;
-use Baytek\Laravel\Users\ServiceProvider as UserServiceProvider;
-use Prettus\Repository\Providers\RepositoryServiceProvider;
 
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider;
+
+use Event;
 
 class ContentServiceProvider extends AuthServiceProvider
 {
@@ -52,10 +50,12 @@ class ContentServiceProvider extends AuthServiceProvider
      */
     public function register()
     {
-        $this->app->register(SettingsServiceProvider::class);
-        $this->app->register(RepositoryServiceProvider::class);
-        $this->app->register(StatusBitServiceProvider::class);
-        $this->app->register(UserServiceProvider::class);
+        $this->app->register(\Baytek\Laravel\Settings\SettingsServiceProvider::class);
+        $this->app->register(\Prettus\Repository\Providers\RepositoryServiceProvider::class);
+        $this->app->register(\Baytek\LaravelStatusBit\StatusBitServiceProvider::class);
+        $this->app->register(\Baytek\Laravel\Users\ServiceProvider::class);
+        $this->app->register(\Baytek\Laravel\Content\ContentEventServiceProvider::class);
+        $this->app->register(\Baytek\Laravel\Menu\MenuServiceProvider::class);
     	// $this->app->register('Collective\Html\HtmlServiceProvider');
     }
 }
