@@ -31,6 +31,18 @@ class ContentServiceProvider extends AuthServiceProvider
         $this->loadRoutesFrom(__DIR__.'/Routes.php');
         $this->loadMigrationsFrom(__DIR__.'/../resources/Migrations');
         $this->loadViewsFrom(__DIR__.'/../resources/Views', 'Content');
+
+        $this->publishes([
+            __DIR__.'/../resources/Views' => resource_path('views/vendor/Content'),
+        ], 'views');
+
+        $this->publishes([
+            __DIR__.'/../resources/migrations/' => database_path('migrations')
+        ], 'migrations');
+
+        $this->publishes([
+            __DIR__.'/../resources/seeds/' => database_path('seeds')
+        ], 'seeds');
     }
 
     /**
