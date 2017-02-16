@@ -78,15 +78,15 @@
 		<label>Content</label>
 	</div>
 	<div class="field">
-		<label>Relation</label>
+		<label>Relation Type</label>
 	</div>
 	<div class="field">
-		<label>Relation Type</label>
+		<label>Relation</label>
 	</div>
 </div>
 @endif
 
-<div class="three fields">
+<div class="three fields relationship-row">
 	<div class="field{{ $errors->has('key') ? ' error' : '' }}">
 		<select name="content_id[{{$relation->id}}]" class="ui dropdown disabled">
 			@foreach($contents as $item)
@@ -95,16 +95,16 @@
 		</select>
 	</div>
 	<div class="field{{ $errors->has('content') ? ' error' : '' }}">
-		<select name="relation_id[{{$relation->id}}]" class="ui dropdown">
-			@foreach($contents as $item)
-			<option value="{{ $item->id }}"@if($relation->relation_id == $item->id) selected="selected"@endif>{{ $item->title }}</option>
+		<select name="relation_type_id[{{$relation->id}}]" class="ui dropdown relation-type">
+			@foreach($relationTypes as $item)
+			<option value="{{ $item->id }}"@if($relation->relation_type_id == $item->id) selected="selected"@endif>{{ $item->title }}</option>
 			@endforeach
 		</select>
 	</div>
 	<div class="field{{ $errors->has('content') ? ' error' : '' }}">
-		<select name="relation_type_id[{{$relation->id}}]" class="ui dropdown">
-			@foreach($relationTypes as $item)
-			<option value="{{ $item->id }}"@if($relation->relation_type_id == $item->id) selected="selected"@endif>{{ $item->title }}</option>
+		<select name="relation_id[{{$relation->id}}]" class="ui dropdown relation">
+			@foreach($contents as $item)
+			<option value="{{ $item->id }}"@if($relation->relation_id == $item->id) selected="selected"@endif>{{ $item->title }}</option>
 			@endforeach
 		</select>
 	</div>
@@ -114,7 +114,7 @@
 </div>
 @endforeach
 
-<div class="three fields">
+<div class="three fields relationship-row">
 	<div class="field">
 		<select name="content_id[]" class="ui fluid dropdown disabled">
 			<option value="">Select Content</option>
@@ -124,17 +124,17 @@
 		</select>
 	</div>
 	<div class="field">
-		<select name="relation_id[]" class="ui fluid dropdown">
-			<option value="">Select Related Content</option>
-			@foreach($contents as $item)
+		<select name="relation_type_id[]" class="ui fluid dropdown relation-type">
+			<option value="">Select Relationship Type</option>
+			@foreach($relationTypes as $item)
 			<option value="{{ $item->id }}">{{ $item->title }}</option>
 			@endforeach
 		</select>
 	</div>
 	<div class="field">
-		<select name="relation_type_id[]" class="ui fluid dropdown">
-			<option value="">Select Relationship Type</option>
-			@foreach($relationTypes as $item)
+		<select name="relation_id[]" class="ui fluid dropdown relation">
+			<option value="">Select Related Content</option>
+			@foreach($contents as $item)
 			<option value="{{ $item->id }}">{{ $item->title }}</option>
 			@endforeach
 		</select>
@@ -143,3 +143,51 @@
 	    <i class="add icon"></i>
 	</button>
 </div>
+
+@section('scripts')
+@php
+$items = [];
+@endphp
+@foreach($relationTypes as $item)
+	@php
+		if($item->key == 'parent-id') {
+			$item->children = $contents;
+		}
+		else {
+			$item->children = $item->childrenOf($item->key)->get();
+		}
+		array_push($items, $item);
+	@endphp
+@endforeach
+<script>
+
+;+function($) {
+	var options = {!! json_encode($items) !!};
+
+	$('.relation-type.dropdown').on('change', function(e) {
+		var dropdown = this;
+		var optionValue = $(this).find('select').val();
+
+		var posibilities = ''; //= [];
+
+		options.forEach(function(item, index){
+			if(item.id == optionValue) {
+				item.children.forEach(function(option) {
+					posibilities += '<option value="' + option.id + '">' + option.title + '</option>';
+				});
+
+				$(dropdown).parents('.relationship-row').find('.relation select').html(posibilities);
+
+				$(dropdown).parents('.relationship-row').find('.relation').dropdown('refresh');
+
+				// $(dropdown).parents('.relationship-row').find('.relation').api({
+				// 	response: {
+				// 		success: true,
+				// 		results: posibilities
+				// 	}
+				// });
+			}
+		});
+	});
+}(jQuery);
+</script>@endsection

@@ -1,4 +1,4 @@
-<!-- <!DOCTYPE html> -->
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -35,8 +35,7 @@
                 </a> --}}
                 <a class="item">Home</a>
                 <div class="ui dropdown item">
-                    Users
-                    <i class="dropdown icon"></i>
+                    Users <i class="dropdown icon"></i>
                     <div class="menu">
                         <a class="item" href="{{ route('user.index') }}">Users</a>
                         <a class="item" href="{{ route('roles.index') }}">Roles</a>
