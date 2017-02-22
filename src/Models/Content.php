@@ -6,6 +6,8 @@ use Baytek\Laravel\Content\Models\ContentMeta;
 use Baytek\Laravel\Content\Models\ContentRelation;
 use Illuminate\Database\Eloquent\Model;
 
+use DB;
+
 class Content extends Model
 {
     // Defining the table we want to use for all content
@@ -51,6 +53,33 @@ class Content extends Model
     public function getContentByKey($type)
     {
         return static::where('key', $type)->first();
+    }
+
+    public function getParents()
+    {
+        return $this->getParentsOf($this->id);
+    }
+
+    public function getParentsOf($id) {
+        return DB::select('SELECT T2.id, T2.status, T2.revision, T2.language, T2.key, T2.title
+            FROM (
+                SELECT
+                    @r AS _id,
+                    (
+                        SELECT @r := rel.relation_id
+                        FROM pretzel_contents
+                        LEFT JOIN pretzel_content_relations rel
+                        ON rel.content_id = @r AND rel.relation_type_id = 3
+                        WHERE pretzel_contents.id = _id
+                    ) AS parent_id,
+                    @l := @l + 1 AS lvl
+                FROM
+                    (SELECT @r := ?, @l := 0) vars,
+                    pretzel_contents m
+                WHERE @r <> 0) T1
+            JOIN pretzel_contents T2
+            ON T1._id = T2.id
+            ORDER BY T1.lvl DESC;', [$id]);
     }
 
     public function scopeChildrenOf($query, $key, $depth = 1)

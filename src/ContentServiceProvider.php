@@ -5,9 +5,10 @@ namespace Baytek\Laravel\Content;
 use Baytek\Laravel\Content\Models\Content;
 use Baytek\Laravel\Content\Policies\ContentPolicy;
 
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider;
+use Illuminate\Support\Facades\Gate;
 
+use Artisan;
 use Event;
 
 class ContentServiceProvider extends AuthServiceProvider
@@ -27,20 +28,41 @@ class ContentServiceProvider extends AuthServiceProvider
         // AliasLoader::getInstance()->alias('Form', 'Collective\Html\FormFacade');
         $this->registerPolicies();
         $this->loadRoutesFrom(__DIR__.'/Routes.php');
-        $this->loadMigrationsFrom(__DIR__.'/../resources/Migrations');
         $this->loadViewsFrom(__DIR__.'/../resources/Views', 'Content');
 
         $this->publishes([
             __DIR__.'/../resources/Views' => resource_path('views/vendor/Content'),
         ], 'views');
 
+        $this->loadMigrationsFrom(__DIR__.'/../resources/Database/Migrations');
         $this->publishes([
-            __DIR__.'/../resources/migrations/' => database_path('migrations')
+            __DIR__.'/../resources/Database/Migrations/' => database_path('migrations')
         ], 'migrations');
 
         $this->publishes([
-            __DIR__.'/../resources/seeds/' => database_path('seeds')
+            __DIR__.'/../resources/Database/Seeds/' => database_path('seeds')
         ], 'seeds');
+
+        Artisan::command('content:install', function () {
+            $this->info("Installing Content");
+
+            if(app()->environment() === 'production') {
+                $this->error("You are in a production environment, aborting.");
+                exit();
+            }
+
+            $this->info("Running Migrations");
+            Artisan::call('migrate', ['--path' => __DIR__.'/../resources/Database/Migrations']);
+
+            // Here we need to check to see if the base content was already seeded.
+
+            $this->info("Seeding Base Content");
+            (new \Baytek\Laravel\Content\Seeds\ContentSeeder)->run();
+
+            $this->info("Publishing Assets");
+            Artisan::call('vendor:publish', ['--tag' => 'views', '--provider' => Baytek\Laravel\Content\ContentServiceProvider::class]);
+
+        })->describe('Install the base system and seed the content tables');
     }
 
     /**

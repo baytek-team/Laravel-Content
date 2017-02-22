@@ -8,7 +8,7 @@ class ContentNotificationSubscriber
      * Handle user login events.
      */
     public function create($event) {
-
+        // dump('Content Event Fires');
     }
 
     /**
