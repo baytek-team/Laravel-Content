@@ -24,6 +24,11 @@ class ContentEvent implements ShouldBroadcast
         $this->content = $content;
     }
 
+    // public function broadcastAs()
+    // {
+    //     return 'content.update';
+    // }
+
     /**
      * Get the channels the event should broadcast on.
      *
@@ -31,6 +36,6 @@ class ContentEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('content.'.$this->content->id);
+        return new Channel('content.'.$this->content->id);
     }
 }

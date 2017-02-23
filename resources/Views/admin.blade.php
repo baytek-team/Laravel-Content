@@ -55,17 +55,13 @@
                 </div>
                 <a class="item" href="{{ route('user.index') }}">Profile</a>
                 <a class="item" href="{{ route('settings.index') }}">Settings</a>
+                <a class="item" href="{{ route('settings.index') }}">Login</a>
             </div>
         </div>
     </div>
 
     <div class="ui hidden divider"></div>
     <div class="ui hidden divider"></div>
-
-
-{{-- @include('app.common.navigation.sidebar') --}}
-
-    {{-- @include('app.common.errors') --}}
 
     <div id="app" class="ui container">
         <div class="ui grid">
@@ -101,9 +97,6 @@
         </div> -->
         @yield('content')
     </div>
-
-    {{-- @include('app.common.footer') --}}
-
 
     <!-- Scripts -->
     <script src="//{{ Request::getHost() }}:6001/socket.io/socket.io.js"></script>
