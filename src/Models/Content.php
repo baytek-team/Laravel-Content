@@ -60,26 +60,29 @@ class Content extends Model
         return $this->getParentsOf($this->id);
     }
 
-    public function getParentsOf($id) {
-        return DB::select('SELECT T2.id, T2.status, T2.revision, T2.language, T2.key, T2.title
+    public function getParentsOf($id)
+    {
+        $prefix = env('DB_PREFIX');
+        return DB::select("SELECT T2.id, T2.status, T2.revision, T2.language, T2.key, T2.title
             FROM (
                 SELECT
                     @r AS _id,
                     (
                         SELECT @r := rel.relation_id
-                        FROM pretzel_contents
-                        LEFT JOIN pretzel_content_relations rel
+                        FROM ${prefix}contents
+                        LEFT JOIN ${prefix}content_relations rel
                         ON rel.content_id = @r AND rel.relation_type_id = 3
-                        WHERE pretzel_contents.id = _id
+                        WHERE ${prefix}contents.id = _id
                     ) AS parent_id,
                     @l := @l + 1 AS lvl
                 FROM
                     (SELECT @r := ?, @l := 0) vars,
-                    pretzel_contents m
+                    ${prefix}contents m
                 WHERE @r <> 0) T1
-            JOIN pretzel_contents T2
+            JOIN ${prefix}contents T2
             ON T1._id = T2.id
-            ORDER BY T1.lvl DESC;', [$id]);
+            ORDER BY T1.lvl DESC;
+        ", [$id]);
     }
 
     public function scopeChildrenOf($query, $key, $depth = 1)
