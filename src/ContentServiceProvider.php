@@ -3,11 +3,13 @@
 namespace Baytek\Laravel\Content;
 
 use Baytek\Laravel\Content\Models\Content;
+use Baytek\Laravel\Content\Models\ContentRelation;
 use Baytek\Laravel\Content\Policies\ContentPolicy;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider;
 use Illuminate\Support\Facades\Gate;
-
+use Faker\Generator;
+use Illuminate\Database\Eloquent\Factory;
 use Artisan;
 use Event;
 
@@ -63,6 +65,79 @@ class ContentServiceProvider extends AuthServiceProvider
             Artisan::call('vendor:publish', ['--tag' => 'views', '--provider' => Baytek\Laravel\Content\ContentServiceProvider::class]);
 
         })->describe('Install the base system and seed the content tables');
+
+        Artisan::command('content:seed', function () {
+            $this->info("Seeding Content");
+
+            if(app()->environment() === 'production') {
+                $this->error("You are in a production environment, aborting.");
+                exit();
+            }
+
+            $faker = new Generator;
+            $factory = app(Factory::class);
+            // $factory = new Factory($faker);
+
+            $factory->define(Content::class, function (Generator $faker) {
+                static $password;
+
+                $title = $faker->sentence(rand(2, 10));
+
+                return [
+                    'key' => str_slug($title),
+                    'title' => $title,
+                    'content' => $faker->paragraph(rand(2, 10)),
+                ];
+            });
+
+            // $factory->define(ContentRelations::class, function (Generator $faker) {
+            //     static $password;
+
+            //     return [
+            //         'key' => str_slug($title),
+            //         'title' => $title,
+            //         'content' => $faker->paragraphs(rand(2, 10)),
+            //     ];
+            // });
+
+            factory(Content::class, 1000)->create()->each(function($content, $index) {
+                // Save item as webpage
+                (new ContentRelation([
+                    'content_id'  => $content->id,
+                    'relation_id' => 4,
+                    'relation_type_id' => 2,
+                ]))->save();
+
+                // $contents = range(8, $index);
+                // array_push($contents, 5);
+
+                // Pick a random piece of content as parent id
+                (new ContentRelation([
+                    'content_id'  => $content->id,
+                    'relation_id' => Content::ofContentType('webpage')->inRandomOrder()->limit(1)->first()->id,
+                    'relation_type_id' => 3,
+                ]))->save();
+            });
+
+            // $factory->define(Baytek\Laravel\Content\Models\ContentMeta::class, function (Faker\Generator $faker) {
+            //     static $password;
+
+            //     $title = $faker->sentence();
+
+            //     return [
+            //         'key' => str_slug($title),
+            //         'title' => $title,
+            //         'content' => $faker->paragraphs(rand(2, 10)),
+            //     ];
+            // });
+
+            // Here we need to check to see if the base content was already seeded.
+
+            $this->info("Seeding Base Content");
+            // (new \Baytek\Laravel\Content\Seeds\RandomSeeder)->run();
+
+
+        })->describe('Seed tables with random data');
     }
 
     /**

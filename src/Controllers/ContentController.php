@@ -154,14 +154,14 @@ class ContentController extends Controller
     {
         $model = $this->instance;
         $view = $this->view('index');
-        $content = $model->with($model::$eager)->get();
+        // $content = $model->with($model::$eager)->paginate(10);
 
         if(!View::exists($view)) {
-            return $content;
+            return $model->with($model::$eager)->get();
         }
 
         return View::make($view, $this->params([
-            $this->names['plural'] => $content
+            // $this->names['plural'] => $content
         ], $this->viewData[__FUNCTION__]));
     }
 

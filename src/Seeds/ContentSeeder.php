@@ -8,6 +8,39 @@ use DB;
 
 class ContentSeeder extends Seeder
 {
+    private $data = [
+        [
+            'key' => 'root',
+            'title' => 'Root',
+            'content' => '',
+        ],
+        [
+            'key' => 'content-type',
+            'title' => 'Content Type',
+            'content' => '',
+        ],
+        [
+            'key' => 'relation-type',
+            'title' => 'Relation Type',
+            'content' => '',
+        ],
+        [
+            'key' => 'parent-id',
+            'title' => 'Parent ID',
+            'content' => '',
+        ],
+        [
+            'key' => 'webpage',
+            'title' => 'Webpage',
+            'content' => 'The webpage content type',
+        ],
+        [
+            'key' => 'homepage',
+            'title' => 'Homepage',
+            'content' => 'First page, some content should be added here.',
+        ]
+    ];
+
     /**
      * Run the database seeds.
      *
@@ -15,11 +48,15 @@ class ContentSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('users')->insert([
-            'name' => str_random(10),
-            'email' => str_random(10).'@gmail.com',
-            'password' => bcrypt('secret'),
-        ]);
+        // Check to see if the content has already been inserted, do not run if content exists.
+        if(false) {
+            collect($this->data)->each(function($data) {
+                DB::table('content')->insert([
+                    'key' => $data['key'],
+                    'title' => $data['title'],
+                    'content' => $data['content'],
+                ]);
+            });
+        }
     }
 }
-
