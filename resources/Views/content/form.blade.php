@@ -13,7 +13,7 @@
 
 
 <!-- <button type="button" class="ui left floated basic positive button add-row">
-    Add Metadata
+	Add Metadata
 </button> -->
 <h4 class="ui horizontal divider header">
 	<i class="tags icon"></i>
@@ -34,6 +34,7 @@
 </div>
 @endif
 
+
 <div class="two fields">
 	<div class="field{{ $errors->has('meta_key') ? ' error' : '' }}">
 		<input type="text" name="meta_key[{{$meta->id}}]" placeholder="Meta Key" value="{{ $meta->key }}">
@@ -41,8 +42,8 @@
 	<div class="field{{ $errors->has('meta_value') ? ' error' : '' }}">
 		<input type="text" name="meta_value[{{$meta->id}}]" placeholder="Meta Value" value="{{ $meta->value }}">
 	</div>
-	<button type="button" class="ui right floated negative icon button remove-row">
-	    <i class="remove icon"></i>
+	<button type="button" class="ui right floated negative icon button basic remove-row">
+		<i class="remove icon"></i>
 	</button>
 </div>
 @endforeach
@@ -54,14 +55,13 @@
 	<div class="field{{ $errors->has('meta_value') ? ' error' : '' }}">
 		<input type="text" name="meta_value[]" placeholder="Meta Value" value="">
 	</div>
-	<button type="button" class="ui right floated positive icon button add-row">
-	    <i class="add icon"></i>
+	<button type="button" class="ui right floated positive icon button basic add-row">
+		<i class="add icon"></i>
 	</button>
 </div>
 
-
 <!-- <button type="button" class="ui left floated basic positive button add-row">
-    Add Relationship
+	Add Relationship
 </button> -->
 <h4 class="ui horizontal divider header">
 	<i class="users icon"></i>
@@ -108,8 +108,8 @@
 			@endforeach
 		</select>
 	</div>
-	<button type="button" class="ui right floated negative icon button remove-row">
-	    <i class="remove icon"></i>
+	<button type="button" class="ui right floated negative icon button basic remove-row">
+		<i class="remove icon"></i>
 	</button>
 </div>
 @endforeach
@@ -139,8 +139,8 @@
 			@endforeach
 		</select>
 	</div>
-	<button type="button" class="ui right floated positive icon button add-row">
-	    <i class="add icon"></i>
+	<button type="button" class="ui right floated positive icon button basic add-row">
+		<i class="add icon"></i>
 	</button>
 </div>
 

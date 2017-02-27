@@ -45,27 +45,17 @@ class ContentServiceProvider extends AuthServiceProvider
             __DIR__.'/../resources/Database/Seeds/' => database_path('seeds')
         ], 'seeds');
 
-        Artisan::command('content:install', function () {
-            $this->info("Installing Content");
+    }
 
-            if(app()->environment() === 'production') {
-                $this->error("You are in a production environment, aborting.");
-                exit();
-            }
+    public function bootArtisanCommands()
+    {
+        $this->bootArtisanInstallCommand();
+        $this->bootArtisanSeedCommand();
 
-            $this->info("Running Migrations");
-            Artisan::call('migrate', ['--path' => __DIR__.'/../resources/Database/Migrations']);
+    }
 
-            // Here we need to check to see if the base content was already seeded.
-
-            $this->info("Seeding Base Content");
-            (new \Baytek\Laravel\Content\Seeds\ContentSeeder)->run();
-
-            $this->info("Publishing Assets");
-            Artisan::call('vendor:publish', ['--tag' => 'views', '--provider' => Baytek\Laravel\Content\ContentServiceProvider::class]);
-
-        })->describe('Install the base system and seed the content tables');
-
+    public function bootArtisanSeedCommand()
+    {
         Artisan::command('content:seed', function () {
             $this->info("Seeding Content");
 
@@ -76,7 +66,6 @@ class ContentServiceProvider extends AuthServiceProvider
 
             $faker = new Generator;
             $factory = app(Factory::class);
-            // $factory = new Factory($faker);
 
             $factory->define(Content::class, function (Generator $faker) {
                 static $password;
@@ -90,26 +79,13 @@ class ContentServiceProvider extends AuthServiceProvider
                 ];
             });
 
-            // $factory->define(ContentRelations::class, function (Generator $faker) {
-            //     static $password;
-
-            //     return [
-            //         'key' => str_slug($title),
-            //         'title' => $title,
-            //         'content' => $faker->paragraphs(rand(2, 10)),
-            //     ];
-            // });
-
-            factory(Content::class, 1000)->create()->each(function($content, $index) {
+            factory(Content::class, 1000)->create()->each(function ($content, $index) {
                 // Save item as webpage
                 (new ContentRelation([
                     'content_id'  => $content->id,
                     'relation_id' => 4,
                     'relation_type_id' => 2,
                 ]))->save();
-
-                // $contents = range(8, $index);
-                // array_push($contents, 5);
 
                 // Pick a random piece of content as parent id
                 (new ContentRelation([
@@ -138,6 +114,30 @@ class ContentServiceProvider extends AuthServiceProvider
 
 
         })->describe('Seed tables with random data');
+    }
+
+    public function bootArtisanInstallCommand()
+    {
+        Artisan::command('content:install', function () {
+            $this->info("Installing Content");
+
+            if(app()->environment() === 'production') {
+                $this->error("You are in a production environment, aborting.");
+                exit();
+            }
+
+            $this->info("Running Migrations");
+            Artisan::call('migrate', ['--path' => __DIR__.'/../resources/Database/Migrations']);
+
+            // Here we need to check to see if the base content was already seeded.
+
+            $this->info("Seeding Base Content");
+            (new \Baytek\Laravel\Content\Seeds\ContentSeeder)->run();
+
+            $this->info("Publishing Assets");
+            Artisan::call('vendor:publish', ['--tag' => 'views', '--provider' => Baytek\Laravel\Content\ContentServiceProvider::class]);
+
+        })->describe('Install the base system and seed the content tables');
     }
 
     /**

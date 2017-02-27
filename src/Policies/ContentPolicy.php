@@ -11,6 +11,18 @@ class ContentPolicy
     use HandlesAuthorization;
 
     /**
+     * Determine whether the user is admin.
+     *
+     * @param  \App\User  $user
+     * @return mixed
+     */
+    public function before(User $user)
+    {
+        //
+        return true;
+    }
+
+    /**
      * Determine whether the user can view the content.
      *
      * @param  \App\User  $user

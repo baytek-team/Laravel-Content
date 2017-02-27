@@ -2,6 +2,9 @@
 
 namespace Baytek\Laravel\Content\Listeners;
 
+use Baytek\Laravel\Content\Events\ContentEvent;
+use Baytek\Laravel\Content\Listeners\ContentNotificationSubscriber;
+
 class ContentNotificationSubscriber
 {
     /**
@@ -20,9 +23,8 @@ class ContentNotificationSubscriber
     {
 
         $events->listen(
-            \Baytek\Laravel\Content\Events\ContentEvent::class,
-            \Baytek\Laravel\Content\Listeners\ContentNotificationSubscriber::class.'@create'
+            ContentEvent::class,
+            ContentNotificationSubscriber::class.'@create'
         );
     }
-
 }
