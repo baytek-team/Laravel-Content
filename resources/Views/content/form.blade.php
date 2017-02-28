@@ -23,29 +23,29 @@
 <input type="hidden" name="meta_ids" value="{{ json_encode($content->meta->pluck('id')) }}">
 
 @foreach($content->meta as $meta)
-@if($meta == $content->meta->first())
-<div class="two fields">
-	<div class="field">
-		<label>Meta Key</label>
-	</div>
-	<div class="field">
-		<label>Meta Value</label>
-	</div>
-</div>
-@endif
+	@if($meta == $content->meta->first())
+		<div class="two fields">
+			<div class="field">
+				<label>Meta Key</label>
+			</div>
+			<div class="field">
+				<label>Meta Value</label>
+			</div>
+		</div>
+	@endif
 
 
-<div class="two fields">
-	<div class="field{{ $errors->has('meta_key') ? ' error' : '' }}">
-		<input type="text" name="meta_key[{{$meta->id}}]" placeholder="Meta Key" value="{{ $meta->key }}">
+	<div class="two fields">
+		<div class="field{{ $errors->has('meta_key') ? ' error' : '' }}">
+			<input type="text" name="meta_key[{{$meta->id}}]" placeholder="Meta Key" value="{{ $meta->key }}">
+		</div>
+		<div class="field{{ $errors->has('meta_value') ? ' error' : '' }}">
+			<input type="text" name="meta_value[{{$meta->id}}]" placeholder="Meta Value" value="{{ $meta->value }}">
+		</div>
+		<button type="button" class="ui right floated negative icon button basic remove-row">
+			<i class="remove icon"></i>
+		</button>
 	</div>
-	<div class="field{{ $errors->has('meta_value') ? ' error' : '' }}">
-		<input type="text" name="meta_value[{{$meta->id}}]" placeholder="Meta Value" value="{{ $meta->value }}">
-	</div>
-	<button type="button" class="ui right floated negative icon button basic remove-row">
-		<i class="remove icon"></i>
-	</button>
-</div>
 @endforeach
 
 <div class="two fields">
@@ -72,46 +72,46 @@
 
 @foreach($content->relations as $relation)
 
-@if($relation == $content->relations->first())
-<div class="three fields">
-	<div class="field">
-		<label>Content</label>
-	</div>
-	<div class="field">
-		<label>Relation Type</label>
-	</div>
-	<div class="field">
-		<label>Relation</label>
-	</div>
-</div>
-@endif
+	@if($relation == $content->relations->first())
+		<div class="three fields">
+			<div class="field">
+				<label>Content</label>
+			</div>
+			<div class="field">
+				<label>Relation Type</label>
+			</div>
+			<div class="field">
+				<label>Relation</label>
+			</div>
+		</div>
+	@endif
 
-<div class="three fields relationship-row">
-	<div class="field{{ $errors->has('key') ? ' error' : '' }}">
-		<select name="content_id[{{$relation->id}}]" class="ui dropdown disabled">
-			@foreach($contents as $item)
-			<option value="{{ $item->id }}"@if($content->id == $item->id) selected="selected"@endif>{{ $item->title }}</option>
-			@endforeach
-		</select>
+	<div class="three fields relationship-row">
+		<div class="field{{ $errors->has('key') ? ' error' : '' }}">
+			<select name="content_id[{{$relation->id}}]" class="ui dropdown disabled">
+				@foreach($contents as $item)
+				<option value="{{ $item->id }}"@if($content->id == $item->id) selected="selected"@endif>{{ $item->title }}</option>
+				@endforeach
+			</select>
+		</div>
+		<div class="field{{ $errors->has('content') ? ' error' : '' }}">
+			<select name="relation_type_id[{{$relation->id}}]" class="ui dropdown relation-type">
+				@foreach($relationTypes as $item)
+				<option value="{{ $item->id }}"@if($relation->relation_type_id == $item->id) selected="selected"@endif>{{ $item->title }}</option>
+				@endforeach
+			</select>
+		</div>
+		<div class="field{{ $errors->has('content') ? ' error' : '' }}">
+			<select name="relation_id[{{$relation->id}}]" class="ui dropdown relation">
+				@foreach($contents as $item)
+				<option value="{{ $item->id }}"@if($relation->relation_id == $item->id) selected="selected"@endif>{{ $item->title }}</option>
+				@endforeach
+			</select>
+		</div>
+		<button type="button" class="ui right floated negative icon button basic remove-row">
+			<i class="remove icon"></i>
+		</button>
 	</div>
-	<div class="field{{ $errors->has('content') ? ' error' : '' }}">
-		<select name="relation_type_id[{{$relation->id}}]" class="ui dropdown relation-type">
-			@foreach($relationTypes as $item)
-			<option value="{{ $item->id }}"@if($relation->relation_type_id == $item->id) selected="selected"@endif>{{ $item->title }}</option>
-			@endforeach
-		</select>
-	</div>
-	<div class="field{{ $errors->has('content') ? ' error' : '' }}">
-		<select name="relation_id[{{$relation->id}}]" class="ui dropdown relation">
-			@foreach($contents as $item)
-			<option value="{{ $item->id }}"@if($relation->relation_id == $item->id) selected="selected"@endif>{{ $item->title }}</option>
-			@endforeach
-		</select>
-	</div>
-	<button type="button" class="ui right floated negative icon button basic remove-row">
-		<i class="remove icon"></i>
-	</button>
-</div>
 @endforeach
 
 <div class="three fields relationship-row">

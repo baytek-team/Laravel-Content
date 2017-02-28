@@ -33,6 +33,7 @@
                 {{-- <a class="toc item">
                     <i class="sidebar icon"></i>
                 </a> --}}
+                @if( Auth::user() )
                 <a class="item">Home</a>
                 <div class="ui dropdown item">
                     Users <i class="dropdown icon"></i>
@@ -48,14 +49,16 @@
                         <a href="{{ route('content.index') }}" class="item">Contents</a>
                         <a href="{{ route('webpage.index') }}" class="item">Webpages</a>
                         <a class="item">Menus</a>
-                        <!-- <div class="item">Blog</div> -->
-                        <!-- <div class="item">Events</div> -->
-                        <!-- <div class="item">Forum</div> -->
+                        <div class="item">Blog</div>
+                        <div class="item">Events</div>
+                        <div class="item">Forum</div>
                     </div>
                 </div>
                 <a class="item" href="{{ route('user.index') }}">Profile</a>
                 <a class="item" href="{{ route('settings.index') }}">Settings</a>
-                <a class="item" href="{{ route('settings.index') }}">Login</a>
+                @else
+                    <a class="item" href="{{ route('login') }}">Login</a>
+                @endif
             </div>
         </div>
     </div>
@@ -104,61 +107,12 @@
     <!-- <script src="http://192.168.2.25:1337/pretzel.js"></script> -->
 
     <script>
-        ;+function($){
-            $('.ui.dropdown').dropdown({
-                    onChange: function(value) {
-                        var target = $(this).parents('.ui.dropdown');
-                        if(value) {
-                             target.find('.dropdown.icon').removeClass('dropdown').addClass('delete').on('click', function() {
-                                target.dropdown('clear');
-                                $(this).removeClass('delete').addClass('dropdown');
-                            });
-                        }
-                    }
-                });
 
-            $('.button').popup();
-            $('.ui.progress').progress();
-            $('.menu .item').tab();
-            $('.ui.checkbox').checkbox();
-            $('.ui.radio.checkbox').checkbox();
-
-            function UiCloneRow() {
-                isEmpty = $(this).parent().find('input').filter(function() {
-                    return !this.value;
-                }).length;
-
-                if(isEmpty) {
-                    return false;
-                }
-
-                result = $(this).parent().clone(true, false).insertAfter($(this).parent());
-
-                result.find('input').val('');
-
-                result.find('.ui.dropdown').dropdown();
-
-                $(this).parent()
-                    .find('.add-row')
-                        .addClass('negative')
-                        .addClass('remove-row')
-                        .removeClass('add-row')
-                        .removeClass('positive')
-                    .find('i.icon')
-                        .addClass('remove')
-                        .removeClass('add')
-            }
-
-            function UiRemoveRow() {
-                $(this).parent().remove();
-            }
-
-            $('body').on('click', '.add-row', UiCloneRow);
-            $('body').on('click', '.remove-row', UiRemoveRow);
-        }(window.jQuery);
     </script>
 
     @yield('scripts')
+
+    <script src="/js/global.js"></script>
 
     @if(isset($validation)) {!! $validation !!} @endif
 
