@@ -30,16 +30,19 @@
                 <div class="item">
                     <img src="http://cdn4.baytek.ca/wp-content/themes/baytek2016/images/logos/baytek-logo.svg" alt="" class="logo" scale="0">
                 </div>
-                {{-- <a class="toc item">
-                    <i class="sidebar icon"></i>
-                </a> --}}
+                {{--
+                    <a class="toc item">
+                        <i class="sidebar icon"></i>
+                    </a>
+                --}}
                 @if( Auth::user() )
                 <a class="item">Home</a>
                 <div class="ui dropdown item">
                     Users <i class="dropdown icon"></i>
                     <div class="menu">
                         <a class="item" href="{{ route('user.index') }}">Users</a>
-                        <a class="item" href="{{ route('roles.index') }}">Roles</a>
+                        <a class="item" href="{{ route('role.index') }}">Roles</a>
+                        <a class="item" href="{{ route('user.role.index') }}">User Roles</a>
                     </div>
                 </div>
                 <div class="ui dropdown item">
@@ -48,7 +51,7 @@
                     <div class="menu">
                         <a href="{{ route('content.index') }}" class="item">Contents</a>
                         <a href="{{ route('webpage.index') }}" class="item">Webpages</a>
-                        <a class="item">Menus</a>
+                        <a href="{{ route('menu.index') }}" class="item">Menus</a>
                         <div class="item">Blog</div>
                         <div class="item">Events</div>
                         <div class="item">Forum</div>
@@ -99,6 +102,26 @@
             <div class="ui hidden divider"></div>
         </div> -->
         @yield('content')
+    </div>
+
+    <div class="ui basic force modal">
+        <div class="ui icon header">
+            <i class="hand paper icon"></i>
+            <span class="message"></span>
+        </div>
+        <div class="content">
+            <p>Default modal text.</p>
+        </div>
+        <div class="actions">
+            <div class="ui red basic inverted cancel button">
+                <i class="remove icon"></i>
+                <span class="message">Cancel</span>
+            </div>
+            <div class="ui primary ok button">
+                <i class="checkmark icon"></i>
+                <span class="message">Yes</span>
+            </div>
+        </div>
     </div>
 
     <!-- Scripts -->

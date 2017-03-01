@@ -2,7 +2,7 @@
 
 namespace Baytek\Laravel\Content\Policies;
 
-use App\User;
+use Baytek\Laravel\Users\User;
 use Baytek\Laravel\Content\Models\Content;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -11,65 +11,62 @@ class ContentPolicy
     use HandlesAuthorization;
 
     /**
-     * Determine whether the user is admin.
+     * Determine whether the user is admin or root.
+     * If so they can do all the things.
      *
-     * @param  \App\User  $user
+     * @param  Baytek\Laravel\Users\User  $user
      * @return mixed
      */
     public function before(User $user)
     {
-        //
-        return true;
+        return $user->can('Manage Content');
     }
 
     /**
-     * Determine whether the user can view the content.
+     * Determine whether the user can view the user.
      *
-     * @param  \App\User  $user
-     * @param  Baytek\Laravel\Content\Content  $content
+     * @param  Baytek\Laravel\Users\User  $user
+     * @param  Baytek\Laravel\Users\User  $content
      * @return mixed
      */
     public function view(User $user, Content $content)
     {
-        //
-        return true;
+        return $user->can('Manage Content');
     }
 
     /**
      * Determine whether the user can create contents.
      *
-     * @param  \App\User  $user
+     * @param  Baytek\Laravel\Users\User  $user
      * @return mixed
      */
     public function create(User $user)
     {
         //
-        return true;
+        return $user->can('Manage Content');
     }
 
     /**
-     * Determine whether the user can update the content.
+     * Determine whether the user can update the user.
      *
-     * @param  \App\User  $user
-     * @param  Baytek\Laravel\Content\Content  $content
+     * @param  Baytek\Laravel\Users\User  $user
+     * @param  Baytek\Laravel\Users\User  $content
      * @return mixed
      */
     public function update(User $user, Content $content)
     {
-        //
-        return true;
+        return $user->can('Manage Content');
     }
 
     /**
-     * Determine whether the user can delete the content.
+     * Determine whether the user can delete the user.
      *
-     * @param  \App\User  $user
-     * @param  Baytek\Laravel\Content\Content  $content
+     * @param  Baytek\Laravel\Users\User  $user
+     * @param  Baytek\Laravel\Users\User  $content
      * @return mixed
      */
     public function delete(User $user, Content $content)
     {
-        //
-        return true;
+        return $user->can('Manage Content');
     }
 }
