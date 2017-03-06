@@ -25,6 +25,15 @@ class CreateContentRelationsTable extends Migration
             $table->integer('relation_type_id')->unsigned()->nullable();
             $table->foreign('relation_type_id')->references('id')->on('contents');
 
+            $table->index('content_id');
+            $table->index('relation_id');
+            $table->index('relation_type_id');
+
+            $table->index(['content_id', 'relation_id']);
+            $table->index(['content_id', 'relation_type_id']);
+            $table->index(['relation_id', 'relation_type_id']);
+
+            $table->index(['content_id', 'relation_id', 'relation_type_id']);
         });
     }
 

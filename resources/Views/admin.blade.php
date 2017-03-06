@@ -52,9 +52,10 @@
                         <a href="{{ route('content.index') }}" class="item">Contents</a>
                         <a href="{{ route('webpage.index') }}" class="item">Webpages</a>
                         <a href="{{ route('menu.index') }}" class="item">Menus</a>
-                        <div class="item">Blog</div>
-                        <div class="item">Events</div>
-                        <div class="item">Forum</div>
+                        <div class="item">Taxonomy</div>
+                        <!-- <div class="item">Blog</div> -->
+                        <!-- <div class="item">Events</div> -->
+                        <!-- <div class="item">Forum</div> -->
                     </div>
                 </div>
                 <a class="item" href="{{ route('user.index') }}">Profile</a>

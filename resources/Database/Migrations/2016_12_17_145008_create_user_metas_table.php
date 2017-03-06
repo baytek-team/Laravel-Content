@@ -19,11 +19,16 @@ class CreateUserMetasTable extends Migration
             $table->integer('user_id')->unsigned()->nullable();
             $table->foreign('user_id')->references('id')->on('users');
 
-            $table->integer('status')->unsigned()->nullable()->default(0);
+            $table->integer('status')->unsigned()->nullable()->default(0)->index();
 
-            $table->string('language')->nullable();
-            $table->string('key')->nullable();
+            $table->string('language')->nullable()->index();
+            $table->string('key')->nullable()->index();
             $table->text('value')->nullable();
+
+            $table->index(['user_id', 'key']);
+            $table->index(['user_id', 'key', 'status']);
+            $table->index(['user_id', 'key', 'language']);
+            $table->index(['user_id', 'key', 'language', 'status']);
         });
     }
 

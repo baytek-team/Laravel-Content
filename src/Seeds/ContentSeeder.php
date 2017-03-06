@@ -1,22 +1,14 @@
 <?php
 namespace Baytek\Laravel\Content\Seeds;
 
-use Illuminate\Database\Seeder;
-use Illuminate\Database\Eloquent\Model;
-
-use DB;
+use Baytek\Laravel\Content\Seeder;
 
 class ContentSeeder extends Seeder
 {
-    private $data = [
+    protected $data = [
         [
             'key' => 'root',
             'title' => 'Root',
-            'content' => '',
-        ],
-        [
-            'key' => 'content-type',
-            'title' => 'Content Type',
             'content' => '',
         ],
         [
@@ -25,19 +17,20 @@ class ContentSeeder extends Seeder
             'content' => '',
         ],
         [
+            'key' => 'content-type',
+            'title' => 'Content Type',
+            'content' => '',
+            'relations' => [
+                ['parent-id', 'relation-type']
+            ]
+        ],
+        [
             'key' => 'parent-id',
             'title' => 'Parent ID',
             'content' => '',
-        ],
-        [
-            'key' => 'webpage',
-            'title' => 'Webpage',
-            'content' => 'The webpage content type',
-        ],
-        [
-            'key' => 'homepage',
-            'title' => 'Homepage',
-            'content' => 'First page, some content should be added here.',
+            'relations' => [
+                ['parent-id', 'relation-type']
+            ]
         ]
     ];
 
@@ -48,15 +41,6 @@ class ContentSeeder extends Seeder
      */
     public function run()
     {
-        // Check to see if the content has already been inserted, do not run if content exists.
-        if(false) {
-            collect($this->data)->each(function($data) {
-                DB::table('content')->insert([
-                    'key' => $data['key'],
-                    'title' => $data['title'],
-                    'content' => $data['content'],
-                ]);
-            });
-        }
+        $this->seedStructure($this->data);
     }
 }

@@ -19,11 +19,16 @@ class CreateContentMetasTable extends Migration
             $table->integer('content_id')->unsigned()->nullable();
             $table->foreign('content_id')->references('id')->on('contents');
 
-            $table->integer('status')->unsigned()->nullable()->default(0);
+            $table->integer('status')->unsigned()->nullable()->default(0)->index();
 
-            $table->string('language')->nullable();
-            $table->string('key')->nullable();
+            $table->string('language')->nullable()->index();
+            $table->string('key')->nullable()->index();
             $table->text('value')->nullable();
+
+            $table->index(['content_id', 'key']);
+            $table->index(['content_id', 'key', 'status']);
+            $table->index(['content_id', 'key', 'language']);
+            $table->index(['content_id', 'key', 'language', 'status']);
         });
     }
 
