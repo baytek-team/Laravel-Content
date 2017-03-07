@@ -17,7 +17,6 @@ use Illuminate\Routing\Controller;
 use ReflectionClass;
 use View;
 
-
 /**
  * The Content Controller is suppose to act as an abstract class that facilitates
  * rendering and saving of common resource tables.
@@ -97,7 +96,7 @@ class ContentController extends Controller
      *
      * @param SettingsProvider $settings Automatically provides the required settings
      */
-    public function __construct(SettingsProvider $settings)
+    public function __construct(/*SettingsProvider $settings*/)
     {
         $this->instance = new $this->model;
         $this->names['class'] = (new ReflectionClass($this->instance))->getShortName();
@@ -124,13 +123,13 @@ class ContentController extends Controller
      * @param  Mixed $id Either the ID or Model
      * @return Model     Returns a laravel model instance
      */
-    protected function bound($id)
+    protected function bound($contentID)
     {
-        if(!is_string($id) && get_class($id) == $this->model) {
-            return $id;
+        if (!is_string($contentID) && get_class($contentID) == $this->model) {
+            return $contentID;
         }
 
-        return $this->instance->find($id);
+        return $this->instance->find($contentID);
     }
 
     /**
@@ -152,11 +151,13 @@ class ContentController extends Controller
      */
     public function index()
     {
+        $this->authorize('view', $this->model);
+
         $model = $this->instance;
         $view = $this->view('index');
         // $content = $model->with($model::$eager)->paginate(10);
 
-        if(!View::exists($view)) {
+        if (!View::exists($view)) {
             return $model->with($model::$eager)->get();
         }
 
@@ -172,6 +173,8 @@ class ContentController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', $this->model);
+
         $model = $this->instance;
 
         return View::make($this->view('create'), $this->params([
@@ -192,6 +195,8 @@ class ContentController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create', $this->model);
+
         $content = new $this->model($request->all());
 
         $content->save();
@@ -199,7 +204,7 @@ class ContentController extends Controller
         $this->saveMetaData($content, $request);
         $this->saveRelationships($content, $request);
 
-        foreach($content->relationships as $contentType => $type) {
+        foreach ($content->relationships as $contentType => $type) {
             // $typeID = (is_object($t) && ($t instanceof Closure)) ? $t($request) : $t;
             // Lookup the type id
             $typeID = $content::where('key', $type)->first()->id;
@@ -210,7 +215,7 @@ class ContentController extends Controller
 
         event(new ContentEvent($content));
 
-        if($this->redirects) {
+        if ($this->redirects) {
             return redirect(route($this->names['singular'].'.show', $content));
         }
 
@@ -220,17 +225,19 @@ class ContentController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int  $contentID
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($contentID)
     {
         $model = $this->instance;
         $view = $this->view('show');
         // Eager load the subset models, meta data and relationships
-        $content = $this->bound($id)->load($model::$eager);
+        $content = $this->bound($contentID)->load($model::$eager);
 
-        if(!View::exists($view)) {
+        $this->authorize('view', $content);
+
+        if (!View::exists($view)) {
             return $content;
         }
 
@@ -243,18 +250,22 @@ class ContentController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  int  $contentID
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($contentID)
     {
+        $content = $this->bound($contentID);
+
+        $this->authorize('update', $content);
+
         $model = $this->instance;
 
         return View::make($this->view('edit'), $this->params([
             // This needs to be updated as it returns everything in the content table, this should return the list of objects of that type
             $this->names['plural'] => $model::select('id', 'status', 'revision', 'language', 'title')->get(),
             // Get the current content model object
-            $this->names['singular'] => $this->bound($id),
+            $this->names['singular'] => $content,
             // Get the relationship types
             'relationTypes' => $model::childrenOf('relation-type')->get(),
         ], $this->viewData[__FUNCTION__]));
@@ -264,12 +275,14 @@ class ContentController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  int  $contentID
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $contentID)
     {
-        $content = $this->bound($id);
+        $content = $this->bound($contentID);
+
+        $this->authorize('update', $content);
 
         // Update the content
         $content->update($request->all());
@@ -282,7 +295,7 @@ class ContentController extends Controller
 
         event(new ContentEvent($content));
 
-        if($this->redirects) {
+        if ($this->redirects) {
             return redirect(route($this->names['singular'].'.show', $content));
         }
 
@@ -292,16 +305,20 @@ class ContentController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  int  $contentID
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($contentID)
     {
-        $this->bound($id)->delete();
+        $content = $this->bound($contentID);
+
+        $this->authorize('delete', $content);
+
+        $content->delete();
 
         event(new ContentEvent($content));
 
-        if($this->redirects) {
+        if ($this->redirects) {
             return redirect(route($this->names['singular'].'.show', $content));
         }
     }
@@ -314,16 +331,18 @@ class ContentController extends Controller
      */
     private function saveMetaData(Content $content, Request $request)
     {
-        if(!$request->meta_key) return;
+        if (!$request->meta_key) {
+            return;
+        }
 
         // Get the ids of the meta that was present on the page when the form was loaded
         $metaIds = json_decode($request->meta_ids) ?: [];
 
-        foreach($request->meta_key as $id => $key) {
+        foreach ($request->meta_key as $id => $key) {
 
-            if(!empty($key) && !empty($request->meta_value[$id])) {
+            if (!empty($key) && !empty($request->meta_value[$id])) {
 
-                if(in_array($id, $metaIds) && $metaRecord = ContentMeta::where('id', $id)) {
+                if (in_array($id, $metaIds) && $metaRecord = ContentMeta::where('id', $id)) {
                     $metaRecord
                         ->update([
                             'key'   => $key,
@@ -331,8 +350,7 @@ class ContentController extends Controller
                         ]);
 
                     unset($metaIds[array_search($id, $metaIds)]);
-                }
-                else {
+                } else {
                     $metaRecord = (new ContentMeta([
                         'key' => $key,
                         'value' => $request->meta_value[$id]
@@ -354,14 +372,16 @@ class ContentController extends Controller
      */
     private function saveRelationships(Content $content, Request $request)
     {
-        if(!$request->relation_ids) return;
+        if (!$request->relation_ids) {
+            return;
+        }
 
         // Get the ids of the meta that was present on the page when the form was loaded
         $resourceIds = json_decode($request->relation_ids) ?: [];
 
-        foreach($request->content_id as $id => $content_id) {
+        foreach ($request->content_id as $id => $content_id) {
 
-            if(in_array($id, $resourceIds) && $relationRecord = ContentRelation::where('id', $id)) {
+            if (in_array($id, $resourceIds) && $relationRecord = ContentRelation::where('id', $id)) {
                 $relationRecord
                     ->update([
                         'relation_id' => $request->relation_id[$id],
@@ -369,9 +389,8 @@ class ContentController extends Controller
                     ]);
 
                 unset($resourceIds[array_search($id, $resourceIds)]);
-            }
-            else {
-                if(!empty($content_id) && !empty($request->relation_id[$id]) && !empty($request->relation_type_id[$id])) {
+            } else {
+                if (!empty($content_id) && !empty($request->relation_id[$id]) && !empty($request->relation_type_id[$id])) {
                     (new ContentRelation([
                         'content_id'  => $content->id,
                         'relation_id' => $request->relation_id[$id],

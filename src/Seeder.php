@@ -27,14 +27,12 @@ abstract class Seeder extends IlluminateSeeder
             $record = (new Content)->create($recordData);
 
             // Save the relationship data
-            // $this->seedRelations($record, $databaseItemProperties->get('relations'));
+            $this->seedMeta($record, $databaseItemProperties->get('meta'));
 
             $relations[$record->id] = $databaseItemProperties->get('relations');
-
-            // dump($record->id);
         });
 
-        foreach($relations as $id => $relation) {
+        foreach ($relations as $id => $relation) {
             $this->seedRelations($id, $relation);
         }
 
@@ -42,7 +40,17 @@ abstract class Seeder extends IlluminateSeeder
 
     protected function seedMeta($content, $meta)
     {
+        if (empty($meta)) {
+            return false;
+        }
 
+        foreach ($meta as $key => $value) {
+            $metaRecord = (new ContentMeta(['key' => $key, 'value' => $value]));
+
+            $content->meta()->save($metaRecord);
+
+            $metaRecord->save();
+        }
     }
 
     protected function seedRelations($content_id, $relations)
@@ -53,7 +61,7 @@ abstract class Seeder extends IlluminateSeeder
             $relation_type_record = Content::where('key', $relation[0])->first();
             $relation_record = Content::where('key', $relation[1])->first();
 
-            if(!$relation_type_record || !$relation_record) {
+            if (!$relation_type_record || !$relation_record) {
                 return false;
             }
 
