@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ContentMeta extends Model
 {
-	protected $table = 'content_metas';
+	protected $table = 'content_meta';
 	protected $fillable = [
 		'status',
 		'key',

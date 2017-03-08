@@ -62,6 +62,9 @@
                 <a class="item" href="{{ route('settings.index') }}">Settings</a>
                 @else
                     <a class="item" href="{{ route('login') }}">Login</a>
+
+                    <a class="item" href="{{ route('register') }}">Register</a>
+
                 @endif
             </div>
         </div>

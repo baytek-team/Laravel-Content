@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateContentMetasTable extends Migration
+class CreateContentMetaTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateContentMetasTable extends Migration
      */
     public function up()
     {
-        Schema::create('content_metas', function (Blueprint $table) {
+        Schema::create('content_meta', function (Blueprint $table) {
             $table->increments('id');
 
             $table->integer('content_id')->unsigned()->nullable();
@@ -39,6 +39,6 @@ class CreateContentMetasTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('content_metas');
+        Schema::dropIfExists('content_meta');
     }
 }

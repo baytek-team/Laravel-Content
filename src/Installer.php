@@ -3,6 +3,7 @@
 namespace Baytek\Laravel\Content;
 
 use Baytek\Laravel\Content\Contracts\InstallerContract;
+use Spatie\Permission\Models\Permission;
 
 use Artisan;
 
@@ -11,6 +12,7 @@ abstract class Installer implements InstallerContract
     public function installCommand()
     {
         $installer = $this;
+
         Artisan::command('install:'.strtolower($this->name), function () use ($installer) {
             if(method_exists($installer, 'beforeInstallation')) {
                 $installer->beforeInstallation();
@@ -28,10 +30,13 @@ abstract class Installer implements InstallerContract
             $this->line('Checking if migrations are required: ');
             $this->info($installer->migrate() ? 'Yes! Running Migrations.' : 'No! Skipping.');
 
+            $this->line('');
+            $this->line("Checking if $installer->name data seeding is required: ");
+            $this->info($installer->seed() ? 'Yes! Running Seeder.' : 'No! Skipping.');
 
             $this->line('');
-            $this->line('Checking if base data seeding is required: ');
-            $this->info($installer->seed() ? 'Yes! Running Seeder.' : 'No! Skipping.');
+            $this->line('Checking if permission seeding are required: ');
+            $this->info($installer->protect() ? 'Yes! Generating Permissions.' : 'No! Skipping.');
 
             if($installer->shouldPublish()) {
                 if($this->confirm('Would your like to publish and/or overwrite publishable assets?')) {
@@ -58,6 +63,19 @@ abstract class Installer implements InstallerContract
             return true;
         }
 
+        return false;
+    }
+
+    public function protect()
+    {
+        if($this->shouldProtect()) {
+            Permission::create(['name' => ucwords('view '   . $this->name)]);
+            Permission::create(['name' => ucwords('create ' . $this->name)]);
+            Permission::create(['name' => ucwords('update ' . $this->name)]);
+            Permission::create(['name' => ucwords('delete ' . $this->name)]);
+
+            return true;
+        }
         return false;
     }
 

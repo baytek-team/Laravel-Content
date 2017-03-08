@@ -7,4 +7,5 @@ interface InstallerContract
     public function shouldPublish();
     public function shouldMigrate();
     public function shouldSeed();
+    public function shouldProtect();
 }

@@ -7,6 +7,7 @@ use Baytek\Laravel\Content\Models\ContentRelation;
 use Illuminate\Database\Eloquent\Model;
 
 use DB;
+use Illuminate\Support\Str;
 
 class Content extends Model
 {
@@ -111,5 +112,57 @@ class Content extends Model
     public function relations()
     {
     	return $this->hasMany(ContentRelation::class, 'content_id');
+    }
+
+
+    /**
+     * Get the model's relationships in array form.
+     *
+     * @return array
+     */
+    public function relationsToArray()
+    {
+        $attributes = parent::relationsToArray();
+
+        foreach ($this->getArrayableRelations() as $key => $value) {
+
+            if($key == 'meta') {
+                if(! isset($attributes['metadata'])) {
+                    $attributes['metadata'] = [];
+                }
+
+                $value->each(function ($metadata) use (&$attributes) {
+                    $attributes['metadata'][str_replace('-', '_', $metadata->key)] = $metadata->value;
+                });
+            }
+
+            if($key == 'relations') {
+                if(! isset($attributes['related'])) {
+                    $attributes['relationships'] = [];
+                }
+
+                foreach($value as $relation) {
+
+                    $newKey = str_replace('-', '_', $relation->relations['relationType']->key);
+
+                    if(! isset($attributes['relationships'][$newKey])) {
+                        $attributes['relationships'][$newKey] = [];
+                    }
+
+                    if($newKey == str_plural($newKey)) {
+                        $attributes['relationships'][$newKey][] = $relation->relations['relation']->key;
+                    }
+                    else {
+                        if(! is_array($attributes['relationships'][$newKey])) {
+                            throw new \Exception('Content relationship is not plural, but has many relations.');
+                        }
+
+                        $attributes['relationships'][$newKey] = $relation->relations['relation']->key;
+                    }
+                }
+            }
+        }
+
+        return $attributes;
     }
 }

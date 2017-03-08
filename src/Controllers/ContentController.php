@@ -23,7 +23,7 @@ use View;
  *
  * There are three primary models used for all content types:
  *     Content
- *     ContentMetas
+ *     ContentMeta
  *     ContentRelations
  *
  * Due to this commonality, it makes sense to have a super class which can handle all
@@ -195,6 +195,8 @@ class ContentController extends Controller
      */
     public function store(Request $request)
     {
+        dd($request);
+
         $this->authorize('create', $this->model);
 
         $content = new $this->model($request->all());

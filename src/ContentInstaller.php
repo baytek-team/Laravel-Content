@@ -5,6 +5,7 @@ namespace Baytek\Laravel\Content;
 use Baytek\Laravel\Content\ContentServiceProvider;
 use Baytek\Laravel\Content\Models\Content;
 use Baytek\Laravel\Content\Seeders\ContentSeeder;
+use Spatie\Permission\Models\Permission;
 
 use Artisan;
 use DB;
@@ -30,11 +31,24 @@ class ContentInstaller extends Installer
         return true;
     }
 
+    public function shouldProtect()
+    {
+        foreach(['view', 'create', 'update', 'delete'] as $permission) {
+
+            // If the permission exists in any form do not reseed.
+            if(Permission::where('name', title_case($permission.' '.$this->name))->exists()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public function shouldMigrate()
     {
         $pluginTables = [
             env('DB_PREFIX', '').'contents',
-            env('DB_PREFIX', '').'content_metas',
+            env('DB_PREFIX', '').'content_meta',
             env('DB_PREFIX', '').'content_histories',
             env('DB_PREFIX', '').'content_relations',
         ];
