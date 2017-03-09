@@ -5,6 +5,7 @@ namespace Baytek\Laravel\Content;
 use Baytek\Laravel\Content\Models\Content;
 use Baytek\Laravel\Content\Models\ContentRelation;
 use Baytek\Laravel\Content\Policies\ContentPolicy;
+use Baytek\Laravel\Content\Middleware\LocaleMiddleware;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider;
 use Illuminate\Support\Facades\Gate;
@@ -25,8 +26,10 @@ class ContentServiceProvider extends AuthServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot(\Illuminate\Routing\Router $router)
     {
+        $router->middleware('localization', LocaleMiddleware::class);
+
         // AliasLoader::getInstance()->alias('Form', 'Collective\Html\FormFacade');
         $this->registerPolicies();
         $this->loadRoutesFrom(__DIR__.'/Routes.php');
@@ -46,6 +49,14 @@ class ContentServiceProvider extends AuthServiceProvider
         ], 'seeds');
 
         $this->bootArtisanCommands();
+
+        $router->group([
+            'namespace' => '\Baytek\Laravel\Content\Controllers',
+            'prefix' => 'admin',
+            'middleware' => ['web', 'localization']
+        ], function () use ($router) {
+            $router->resource('content', 'ContentController');
+        });
 
     }
 

@@ -21,5 +21,8 @@
         "prettus/l5-repository": "^2.6",
         "baytek/laravel-user": "dev-master"
     },
+    "post-install-cmd": [
+        "php artisan install:content"
+    ],
     "minimum-stability": "dev"
 }
