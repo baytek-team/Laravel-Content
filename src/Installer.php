@@ -36,7 +36,7 @@ abstract class Installer implements InstallerContract
             $this->info($installer->seed() ? 'Yes! Running Seeder.' : 'No! Skipping.');
 
             $this->line('');
-            $this->line('Checking if permission seeding are required: ');
+            $this->line('Checking if permission seeding is required: ');
             $this->info($installer->protect() ? 'Yes! Generating Permissions.' : 'No! Skipping.');
 
             if($installer->shouldPublish()) {
@@ -70,15 +70,15 @@ abstract class Installer implements InstallerContract
     public function protect()
     {
         if($this->shouldProtect()) {
-            Permission::create(['name' => ucwords('view '   . $this->name)]);
-            Permission::create(['name' => ucwords('create ' . $this->name)]);
-            Permission::create(['name' => ucwords('update ' . $this->name)]);
-            Permission::create(['name' => ucwords('delete ' . $this->name)]);
+            $view = Permission::create(['name' => ucwords('view '   . $this->name)]);
+            $create = Permission::create(['name' => ucwords('create ' . $this->name)]);
+            $update = Permission::create(['name' => ucwords('update ' . $this->name)]);
+            $delete = Permission::create(['name' => ucwords('delete ' . $this->name)]);
+
+            Role::findByName('Root')->permissions()->saveMany([$view, $create, $update, $delete]);
 
             return true;
         }
-
-        Role::findByName('Root')->permissions()->saveMany(Permission::all());
 
         return false;
     }
