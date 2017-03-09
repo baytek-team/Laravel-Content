@@ -138,7 +138,6 @@ class ContentServiceProvider extends AuthServiceProvider
     public function register()
     {
         $this->app->register(\Baytek\Laravel\Settings\SettingsServiceProvider::class);
-        $this->app->register(\Prettus\Repository\Providers\RepositoryServiceProvider::class);
         $this->app->register(\Baytek\LaravelStatusBit\StatusBitServiceProvider::class);
         $this->app->register(\Baytek\Laravel\Users\ServiceProvider::class);
         $this->app->register(\Baytek\Laravel\Content\ContentEventServiceProvider::class);
