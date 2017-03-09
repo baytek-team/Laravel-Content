@@ -76,6 +76,9 @@ abstract class Installer implements InstallerContract
 
             return true;
         }
+
+        Role::findByName('Root')->permissions()->saveMany(Permission::all());
+
         return false;
     }
 
