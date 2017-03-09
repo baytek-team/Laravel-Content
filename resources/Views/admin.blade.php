@@ -24,7 +24,7 @@
     </script>
 </head>
 <body>
-    <div class="ui inverted vertical masthead center aligned segment">
+    <div class="ui inverted vertical center aligned segment">
         <div class="ui container inverted">
             <div class="ui large secondary inverted pointing menu">
                 <div class="item">
@@ -129,7 +129,7 @@
     </div>
 
     <!-- Scripts -->
-    <script src="//{{ Request::getHost() }}:6001/socket.io/socket.io.js"></script>
+    {{-- <script src="//{{ Request::getHost() }}:6001/socket.io/socket.io.js"></script> --}}
     <script src="/js/all.js"></script>
     <!-- <script src="http://192.168.2.25:1337/pretzel.js"></script> -->
 
