@@ -4,6 +4,7 @@ namespace Baytek\Laravel\Content;
 
 use Baytek\Laravel\Content\Contracts\InstallerContract;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 use Artisan;
 
