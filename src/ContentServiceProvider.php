@@ -28,11 +28,8 @@ class ContentServiceProvider extends AuthServiceProvider
      */
     public function boot(\Illuminate\Routing\Router $router)
     {
-        $router->middleware('localization', LocaleMiddleware::class);
-
         // AliasLoader::getInstance()->alias('Form', 'Collective\Html\FormFacade');
         $this->registerPolicies();
-        $this->loadRoutesFrom(__DIR__.'/Routes.php');
         $this->loadViewsFrom(__DIR__.'/../resources/Views', 'Content');
 
         $this->publishes([
@@ -53,7 +50,7 @@ class ContentServiceProvider extends AuthServiceProvider
         $router->group([
             'namespace' => '\Baytek\Laravel\Content\Controllers',
             'prefix' => 'admin',
-            'middleware' => ['web', 'localization']
+            'middleware' => ['web', LocaleMiddleware::class]
         ], function () use ($router) {
             $router->resource('content', 'ContentController');
         });
