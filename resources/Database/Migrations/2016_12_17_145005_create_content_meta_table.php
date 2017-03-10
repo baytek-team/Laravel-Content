@@ -21,14 +21,14 @@ class CreateContentMetaTable extends Migration
 
             $table->integer('status')->unsigned()->nullable()->default(0)->index();
 
-            $table->string('language')->nullable()->index();
-            $table->string('key')->nullable()->index();
+            $table->string('language')->nullable();//->index();->index();
+            $table->string('key')->nullable();//->index();->index();
             $table->text('value')->nullable();
 
-            $table->index(['content_id', 'key']);
-            $table->index(['content_id', 'key', 'status']);
-            $table->index(['content_id', 'key', 'language']);
-            $table->index(['content_id', 'key', 'language', 'status']);
+            // $table->index(['content_id', 'key']);
+            // $table->index(['content_id', 'key', 'status']);
+            // $table->index(['content_id', 'key', 'language']);
+            // $table->index(['content_id', 'key', 'language', 'status']);
         });
     }
 

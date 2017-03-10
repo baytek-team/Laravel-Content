@@ -22,13 +22,13 @@ class CreateContentsTable extends Migration
             $table->integer('revision')->unsigned()->nullable()->default(0)->index();
 
             $table->string('language')->nullable();
-            $table->string('key')->index();
+            $table->string('key');//->index();
             $table->string('title')->nullable();
             $table->text('content')->nullable();
 
-            $table->index(['status', 'key']);
-            $table->index(['revision', 'language', 'key']);
-            $table->index(['revision', 'language', 'key', 'status']);
+            // $table->index(['status', 'key']);
+            // $table->index(['revision', 'language', 'key']);
+            // $table->index(['revision', 'language', 'key', 'status']);
         });
     }
 
