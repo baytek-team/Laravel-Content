@@ -165,6 +165,7 @@ class Content extends Model
                     }
                     else {
                         if(! is_array($attributes['relationships'][$newKey])) {
+                            // $attributes['relationships'][$newKey] = [$attributes['relationships'][$newKey]];
                             throw new \Exception('Content relationship is not plural, but has many relations.');
                         }
 
