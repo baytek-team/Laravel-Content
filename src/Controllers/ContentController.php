@@ -195,8 +195,6 @@ class ContentController extends Controller
      */
     public function store(Request $request)
     {
-        dd($request);
-
         $this->authorize('create', $this->model);
 
         $content = new $this->model($request->all());
