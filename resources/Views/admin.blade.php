@@ -11,8 +11,10 @@
     <title>{{ config('app.name', 'Pretzel CAS :: Content Authoring System') }}</title>
 
     <!-- Styles -->
-    <link href="/css/all.css" rel="stylesheet">
-    <link href="/css/app.css" rel="stylesheet">
+    {{-- <link href="/css/all.css" rel="stylesheet"> --}}
+    <link href="/admin/app.css" rel="stylesheet">
+
+    <link href="/css/semantic.min.css" rel="stylesheet">
 
     @yield('head')
 

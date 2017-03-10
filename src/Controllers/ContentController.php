@@ -16,6 +16,7 @@ use Illuminate\Routing\Controller;
 
 use ReflectionClass;
 use View;
+use DB;
 
 /**
  * The Content Controller is suppose to act as an abstract class that facilitates
@@ -88,6 +89,8 @@ class ContentController extends Controller
         'show' => 'content.show',
     ];
 
+    protected $redirectsKey;
+
     /**
      * Controller instantiation:
      * Injection of the SettingsProvider this will load all required settings
@@ -129,7 +132,7 @@ class ContentController extends Controller
             return $contentID;
         }
 
-        return $this->instance->find($contentID);
+        return $this->instance->withoutGlobalScopes()->find($contentID);
     }
 
     /**
@@ -183,7 +186,7 @@ class ContentController extends Controller
             // Create a blank instance of our model used for the view
             $this->names['singular'] => $model,
             // Get the relationship types
-            'relationTypes' => $model::childrenOf('relation-type')->get(),
+            'relationTypes' => Content::childrenOf('relation-type')->get(),
         ], $this->viewData[__FUNCTION__]));
     }
 
@@ -207,7 +210,7 @@ class ContentController extends Controller
         foreach ($content->relationships as $contentType => $type) {
             // $typeID = (is_object($t) && ($t instanceof Closure)) ? $t($request) : $t;
             // Lookup the type id
-            $typeID = $content::where('key', $type)->first()->id;
+            $typeID = $content::withoutGlobalScopes()->where('contents.key', $type)->first()->id;
 
             // Save the actual relationship ID
             $content->saveRelation($contentType, $typeID);
@@ -216,7 +219,7 @@ class ContentController extends Controller
         event(new ContentEvent($content));
 
         if ($this->redirects) {
-            return redirect(route($this->names['singular'].'.show', $content));
+            return redirect(route(($this->redirectsKey ?: $this->names['singular']).'.index', $content));
         }
 
         return $content;
@@ -267,7 +270,7 @@ class ContentController extends Controller
             // Get the current content model object
             $this->names['singular'] => $content,
             // Get the relationship types
-            'relationTypes' => $model::childrenOf('relation-type')->get(),
+            'relationTypes' => Content::childrenOf('relation-type')->get(),
         ], $this->viewData[__FUNCTION__]));
     }
 
@@ -296,7 +299,7 @@ class ContentController extends Controller
         event(new ContentEvent($content));
 
         if ($this->redirects) {
-            return redirect(route($this->names['singular'].'.show', $content));
+            return redirect(route(($this->redirectsKey ?: $this->names['singular']).'.index', $content));
         }
 
         return $content;
@@ -319,7 +322,7 @@ class ContentController extends Controller
         event(new ContentEvent($content));
 
         if ($this->redirects) {
-            return redirect(route($this->names['singular'].'.show', $content));
+            return redirect(route(($this->redirectsKey ?: $this->names['singular']).'.index', $content));
         }
     }
 

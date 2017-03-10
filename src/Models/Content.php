@@ -53,7 +53,7 @@ class Content extends Model
 
     public function getContentByKey($type)
     {
-        return static::where('key', $type)->first();
+        return static::withoutGlobalScopes()->where('key', $type)->first();
     }
 
     public function getParents()
@@ -86,15 +86,25 @@ class Content extends Model
         ", [$id]);
     }
 
-    public function scopeChildrenOf($query, $key, $depth = 1)
+    public function scopeChildrenOf($query, $key, $column = 'key', $depth = 1)
     {
         return $query
             ->select('r.id', 'r.status', 'r.revision', 'r.language', 'r.title', 'r.key')
             ->leftJoin('content_relations AS relations', 'contents.id', '=', 'relations.relation_id')
             ->leftJoin('contents AS r', 'r.id', '=', 'relations.content_id')
             ->where('relations.relation_type_id', 4)
-            ->where('contents.key', $key);
+            ->where('contents.'.$column, $key);
     }
+
+    // public function scopeChildrenOfWithId($query, $key, $depth = 1)
+    // {
+    //     return $query
+    //         ->select('r.id', 'r.status', 'r.revision', 'r.language', 'r.title', 'r.key')
+    //         ->leftJoin('content_relations AS relations', 'contents.id', '=', 'relations.relation_id')
+    //         ->leftJoin('contents AS r', 'r.id', '=', 'relations.content_id')
+    //         ->where('relations.relation_type_id', 4)
+    //         ->where('contents.id', );
+    // }
 
     public function scopeOfContentType($query, $key)
     {
