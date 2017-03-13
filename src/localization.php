@@ -1,8 +1,6 @@
 <?php
 
-dump(function_exists('__'));
-
-if (! function_exists('__')) {
+if (! function_exists('___')) {
     /**
      * Translate the given message.
      *
@@ -11,9 +9,18 @@ if (! function_exists('__')) {
      * @param  string  $locale
      * @return \Illuminate\Contracts\Translation\Translator|string
      */
-    function __($key = null, $replace = [], $locale = null)
+    function ___($key = null, $replace = [], $locale = null)
     {
-        dd($key);
-        return app('translator')->getFromJson($key, $replace, $locale);
+        $result = app('translator')->getFromJson($key, $replace, $locale);
+
+        if($key == $result) {
+            if(!\DB::table('translations')->where('content', $key)->count()) {
+                \DB::table('translations')->insert([
+                    'content' => $key,
+                ]);
+            }
+        }
+
+        return $result;
     }
 }
