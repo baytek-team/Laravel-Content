@@ -58,6 +58,11 @@ class Content extends Model
         return static::withoutGlobalScopes()->where('key', $type)->first();
     }
 
+    public function getContentIdByKey($type)
+    {
+        return static::withoutGlobalScopes()->where('key', $type)->first()->id;
+    }
+
     public function getParents()
     {
         return $this->getParentsOf($this->id);
@@ -92,10 +97,39 @@ class Content extends Model
     {
         return $query
             ->select('r.id', 'r.status', 'r.revision', 'r.language', 'r.title', 'r.key')
-            ->leftJoin('content_relations AS relations', 'contents.id', '=', 'relations.relation_id')
-            ->leftJoin('contents AS r', 'r.id', '=', 'relations.content_id')
-            ->where('relations.relation_type_id', 4)
-            ->where('contents.'.$column, $key);
+            ->join('content_relations AS relations', 'contents.id', '=', 'relations.relation_id')
+            ->join('contents AS r', 'r.id', '=', 'relations.content_id')
+            ->where('relations.relation_type_id', $this->getContentIdByKey('parent-id'))
+            ->where('contents.'.$column, $key)
+            ->orderBy('r.title', 'asc');
+    }
+
+
+
+
+    // select * from pretzel_contents c
+    // inner join pretzel_content_relations r on r.relation_id = c.id and r.relation_type_id = 4
+    // inner join pretzel_contents c2 on c2.id = r.content_id
+    // inner join pretzel_content_relations t on t.relation_type_id = 3  and t.relation_id = 9 and r.content_id = t.content_id
+    // where c.key = 'Animals';
+
+    public function scopeChildrenOfType($query, $key, $type, $depth = 1)
+    {
+        return $query
+            ->select('r.id', 'r.status', 'r.revision', 'r.language', 'r.title', 'r.key')
+            ->join('content_relations AS relations', function ($join) {
+                $join->on('contents.id', '=', 'relations.relation_id')
+                     ->where('relations.relation_type_id', $this->getContentIdByKey('parent-id'));
+            })
+            ->join('contents AS r', 'r.id', '=', 'relations.content_id')
+            ->join('content_relations AS type', function ($join) use ($type) {
+                $join->on('type.content_id', '=', 'relations.content_id')
+                     ->where('type.relation_type_id', $this->getContentIdByKey('content-type'))
+                     ->where('type.relation_id', $this->getContentIdByKey($type));
+            })
+
+            ->where('contents.key', $key)
+            ->orderBy('r.title', 'asc');
     }
 
     // public function scopeChildrenOfWithId($query, $key, $depth = 1)
