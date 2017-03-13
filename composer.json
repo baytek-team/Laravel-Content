@@ -9,8 +9,8 @@
             "email": "yvon@baytek.ca"
         }
     ],
-
     "autoload": {
+        "files": ["src/localization.php"],
         "psr-4": {
             "Baytek\\Laravel\\Content\\": "src/"
         }
