@@ -1,14 +1,14 @@
 <div class="field{{ $errors->has('key') ? ' error' : '' }}">
-	<label for="key">Key</label>
-	<input type="text" id="key" name="key" placeholder="Key" value="{{ old('key', $content->key) }}">
+	<label for="key">{{ ___('Key') }}</label>
+	<input type="text" id="key" name="key" placeholder="{{ ___('Key') }}" value="{{ old('key', $content->key) }}">
 </div>
 <div class="field{{ $errors->has('title') ? ' error' : '' }}">
-	<label for="title">Title</label>
-	<input type="text" id="title" name="title" placeholder="Title" value="{{ old('title', $content->title) }}">
+	<label for="title">{{ ___('Title') }}</label>
+	<input type="text" id="title" name="title" placeholder="{{ ___('Title') }}" value="{{ old('title', $content->title) }}">
 </div>
 <div class="field{{ $errors->has('content') ? ' error' : '' }}">
-	<label for="content">Content</label>
-	<textarea id="content" name="content" placeholder="Content">{{ old('content', $content->content) }}</textarea>
+	<label for="content">{{ ___('Content') }}</label>
+	<textarea id="content" name="content" placeholder="{{ ___('Content') }}">{{ old('content', $content->content) }}</textarea>
 </div>
 
 
@@ -17,7 +17,7 @@
 </button> -->
 <h4 class="ui horizontal divider header">
 	<i class="tags icon"></i>
-	Metadata
+	{{ ___('Metadata') }}
 </h4>
 
 <input type="hidden" name="meta_ids" value="{{ json_encode($content->meta->pluck('id')) }}">
@@ -26,10 +26,10 @@
 	@if($meta == $content->meta->first())
 		<div class="two fields">
 			<div class="field">
-				<label>Meta Key</label>
+				<label>{{ ___('Meta Key') }}</label>
 			</div>
 			<div class="field">
-				<label>Meta Value</label>
+				<label>{{ ___('Meta Value') }}</label>
 			</div>
 		</div>
 	@endif
@@ -37,10 +37,10 @@
 
 	<div class="two fields">
 		<div class="field{{ $errors->has('meta_key') ? ' error' : '' }}">
-			<input type="text" name="meta_key[{{$meta->id}}]" placeholder="Meta Key" value="{{ $meta->key }}">
+			<input type="text" name="meta_key[{{$meta->id}}]" placeholder="{{ ___('Meta Key') }}" value="{{ $meta->key }}">
 		</div>
 		<div class="field{{ $errors->has('meta_value') ? ' error' : '' }}">
-			<input type="text" name="meta_value[{{$meta->id}}]" placeholder="Meta Value" value="{{ $meta->value }}">
+			<input type="text" name="meta_value[{{$meta->id}}]" placeholder="{{ ___('Meta Value') }}" value="{{ $meta->value }}">
 		</div>
 		<button type="button" class="ui right floated negative icon button basic remove-row">
 			<i class="remove icon"></i>
@@ -50,10 +50,10 @@
 
 <div class="two fields">
 	<div class="field{{ $errors->has('meta_key') ? ' error' : '' }}">
-		<input type="text" name="meta_key[]" placeholder="Meta Key" value="">
+		<input type="text" name="meta_key[]" placeholder="{{ ___('Meta Key') }}" value="">
 	</div>
 	<div class="field{{ $errors->has('meta_value') ? ' error' : '' }}">
-		<input type="text" name="meta_value[]" placeholder="Meta Value" value="">
+		<input type="text" name="meta_value[]" placeholder="{{ ___('Meta Value') }}" value="">
 	</div>
 	<button type="button" class="ui right floated positive icon button basic add-row">
 		<i class="add icon"></i>
@@ -65,7 +65,7 @@
 </button> -->
 <h4 class="ui horizontal divider header">
 	<i class="users icon"></i>
-	Relationships
+	{{ ___('Relationships') }}
 </h4>
 
 <input type="hidden" name="relation_ids" value="{{ json_encode($content->relations->pluck('id')) }}">
@@ -75,13 +75,13 @@
 	@if($relation == $content->relations->first())
 		<div class="three fields">
 			<div class="field">
-				<label>Content</label>
+				<label>{{ ___('Content') }}</label>
 			</div>
 			<div class="field">
-				<label>Relation Type</label>
+				<label>{{ ___('Relation Type') }}</label>
 			</div>
 			<div class="field">
-				<label>Relation</label>
+				<label>{{ ___('Relation') }}</label>
 			</div>
 		</div>
 	@endif
@@ -117,7 +117,7 @@
 <div class="three fields relationship-row">
 	<div class="field">
 		<select name="content_id[]" class="ui fluid dropdown disabled">
-			<option value="">Select Content</option>
+			<option value="">{{ ___('Select Content') }}</option>
 			@foreach($contents as $item)
 			<option value="{{ $item->id }}"@if($content->id == $item->id) selected="selected"@endif>{{ $item->title }}</option>
 			@endforeach
@@ -125,7 +125,7 @@
 	</div>
 	<div class="field">
 		<select name="relation_type_id[]" class="ui fluid dropdown relation-type">
-			<option value="">Select Relationship Type</option>
+			<option value="">{{ ___('Select Relationship Type') }}</option>
 			@foreach($relationTypes as $item)
 			<option value="{{ $item->id }}">{{ $item->title }}</option>
 			@endforeach
@@ -133,7 +133,7 @@
 	</div>
 	<div class="field">
 		<select name="relation_id[]" class="ui fluid dropdown relation">
-			<option value="">Select Related Content</option>
+			<option value="">{{ ___('Select Related Content') }}</option>
 			@foreach($contents as $item)
 			<option value="{{ $item->id }}">{{ $item->title }}</option>
 			@endforeach

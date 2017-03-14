@@ -6,8 +6,8 @@
         <h1 class="ui header">
             <i class="browser icon"></i>
             <div class="content">
-                Content Management
-                <div class="sub header">Create the content for the application.</div>
+                {{ ___('Content Management') }}
+                <div class="sub header">{{ ___('Create the content for the application.') }}</div>
             </div>
         </h1>
     </div>
@@ -23,9 +23,9 @@
             @include('Content::content.form')
 
             <div class="field actions">
-	            <a class="ui button" href="{{ action('\Baytek\Laravel\Content\Controllers\ContentController@index') }}">Cancel</a>
+	            <a class="ui button" href="{{ action('\Baytek\Laravel\Content\Controllers\ContentController@index') }}">{{ ___('Cancel') }}</a>
 	            <button type="submit" class="ui right floated primary button">
-	            	Save all the things
+	            	{{ ___('Save all the things') }}
             	</button>
             </div>
         </form>

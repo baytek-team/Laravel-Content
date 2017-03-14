@@ -15,13 +15,17 @@ class ContentSeeder extends Seeder
             'key' => 'relation-type',
             'title' => 'Relation Type',
             'content' => '',
+            'relations' => [
+                ['content-type', 'relation-type'],
+            ]
         ],
         [
             'key' => 'content-type',
             'title' => 'Content Type',
             'content' => '',
             'relations' => [
-                ['parent-id', 'relation-type']
+                ['parent-id', 'relation-type'],
+                ['content-type', 'relation-type'],
             ]
         ],
         [
@@ -29,7 +33,17 @@ class ContentSeeder extends Seeder
             'title' => 'Parent ID',
             'content' => '',
             'relations' => [
-                ['parent-id', 'relation-type']
+                ['parent-id', 'relation-type'],
+                ['content-type', 'relation-type'],
+            ]
+        ],
+        [
+            'key' => 'translations',
+            'title' => 'Translations',
+            'content' => '',
+            'relations' => [
+                ['parent-id', 'relation-type'],
+                ['content-type', 'relation-type'],
             ]
         ]
     ];

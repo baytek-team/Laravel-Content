@@ -12,6 +12,10 @@ class Content extends Model
     // Defining the table we want to use for all content
     protected $table = 'contents';
 
+    protected $attributes = [
+        'language' => 'en',
+    ];
+
     protected static $metadataCache = [];
 
     // Defining the fillable fields when saving records

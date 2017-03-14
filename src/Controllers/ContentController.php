@@ -2,11 +2,11 @@
 
 namespace Baytek\Laravel\Content\Controllers;
 
+use Baytek\Laravel\Content\Events\ContentEvent;
 use Baytek\Laravel\Content\Models\Content;
 use Baytek\Laravel\Content\Models\ContentMeta;
 use Baytek\Laravel\Content\Models\ContentRelation;
 use Baytek\Laravel\Settings\SettingsProvider;
-use Baytek\Laravel\Content\Events\ContentEvent;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -14,9 +14,10 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 
-use ReflectionClass;
-use View;
 use DB;
+use ReflectionClass;
+use Route;
+use View;
 
 /**
  * The Content Controller is suppose to act as an abstract class that facilitates
@@ -48,6 +49,9 @@ class ContentController extends Controller
 
     // Reference to the current model instance
     protected $instance;
+
+    // Reference to the current model instance
+    protected $isTranslation = false;
 
     // I have no clue what this is for, This should be removed if not required
     protected $type;
@@ -107,7 +111,10 @@ class ContentController extends Controller
      */
     public function __construct(/*SettingsProvider $settings*/)
     {
-        if(\Route::current()->parameterNames[0] == 'translation') {
+        if(!is_null(Route::current()) && collect(Route::current()->parameterNames)->first() == 'translation') {
+
+            $this->isTranslation = true;
+
             $this->views = [
                 'index' => 'translate.index',
                 'create' => 'translate.create',
@@ -287,7 +294,7 @@ class ContentController extends Controller
             // Get the current content model object
             $this->names['singular'] => $content,
             // Get the relationship types
-            'relationTypes' => Content::childrenOf('relation-type')->get(),
+            'relationTypes' => Content::ofRelation('content-type', 'relation-type')->get(),
         ], $this->viewData[__FUNCTION__]));
     }
 
@@ -322,6 +329,64 @@ class ContentController extends Controller
         $this->saveRelationships($content, $request);
 
         event(new ContentEvent($content));
+
+        if ($this->redirects) {
+            return redirect(route(($this->redirectsKey ?: $this->names['singular']).'.index', $content));
+        }
+
+        return $content;
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $contentID
+     * @return \Illuminate\Http\Response
+     */
+    public function translate(Request $request, $contentID)
+    {
+
+        // Check to see if the translation exists if it does, we cannot save, this is not the way to translate stuff
+        $orignal = $this->bound($contentID);
+
+        $request->merge(['key' => str_slug($request->title)]);
+        // $request->merge(['key' => $orignal->key]);
+
+        $content = (new $this->model($request->all()));
+        $content->save();
+
+        foreach($orignal->meta as $meta) {
+
+            $metaRecord = (new ContentMeta([
+                'key' => $meta->key,
+                'value' => $request->meta_value[$meta->id]
+            ]));
+
+            $content->meta()->save($metaRecord);
+            $metaRecord->save();
+        }
+
+        foreach($orignal->relations as $relation) {
+            (new ContentRelation([
+                'content_id'  => $content->id,
+                'relation_id' => $relation->relation_id,
+                'relation_type_id' => $relation->relation_type_id,
+            ]))->save();
+        }
+
+        $content->saveRelation('translations', $orignal->id);
+        $orignal->saveRelation('translations', $content->id);
+
+
+        // foreach ($content->relationships as $contentType => $type) {
+        //     // $typeID = (is_object($t) && ($t instanceof Closure)) ? $t($request) : $t;
+        //     // Lookup the type id
+        //     $typeID = $content::withoutGlobalScopes()->where('contents.key', $type)->first()->id;
+
+        //     // Save the actual relationship ID
+        //     $content->saveRelation($contentType, $typeID);
+        // }
 
         if ($this->redirects) {
             return redirect(route(($this->redirectsKey ?: $this->names['singular']).'.index', $content));

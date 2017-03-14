@@ -58,6 +58,7 @@ class ContentServiceProvider extends AuthServiceProvider
             'middleware' => ['web', 'auth', LocaleMiddleware::class]
         ], function () use ($router) {
             $router->resource('content', 'ContentController');
+            $router->put('translation/{content}/translate', 'ContentController@translate')->name('translation.translate');
             $router->resource('translation', 'ContentController');
         });
 
