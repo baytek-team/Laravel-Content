@@ -164,6 +164,11 @@ class Content extends Model
         return $query;
     }
 
+    public function scopeWithContents($query)
+    {
+        return $query->select(explode('.', $query->getQuery()->columns[0])[0].'.*');
+    }
+
     // public function scopeChildrenOfWithId($query, $key, $depth = 1)
     // {
     //     return $query
