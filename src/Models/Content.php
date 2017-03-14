@@ -147,6 +147,24 @@ class Content extends Model
             ->where('contents.key', $key);
     }
 
+    public function scopeChildOfType($query, $parent, $type, $key)
+    {
+        return $query
+            ->select('r.id', 'r.status', 'r.revision', 'r.language', 'r.title', 'r.key')
+            ->join('content_relations AS relations', function ($join) {
+                $join->on('contents.id', '=', 'relations.relation_id')
+                     ->where('relations.relation_type_id', $this->getContentIdByKey('parent-id'));
+            })
+            ->join('contents AS r', 'r.id', '=', 'relations.content_id')
+            ->join('content_relations AS type', function ($join) use ($type) {
+                $join->on('type.content_id', '=', 'relations.content_id')
+                     ->where('type.relation_type_id', $this->getContentIdByKey('content-type'))
+                     ->where('type.relation_id', $this->getContentIdByKey($type));
+            })
+            ->where('r.key', $key)
+            ->where('contents.key', $parent);
+    }
+
     public function scopeSortAlphabetical($query)
     {
         $prefix = explode('.', $query->getQuery()->columns[0])[0];
