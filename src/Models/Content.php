@@ -103,7 +103,24 @@ class Content extends Model
             ->where('contents.'.$column, $key);
     }
 
+    public function scopeOfType($query, $type)
+    {
+        return $this->scopeOfRelation($query, 'content-type', $type);
+    }
 
+
+    public function scopeOfRelation($query, $relation, $type)
+    {
+        return $query
+            ->select('contents.id', 'contents.status', 'contents.revision', 'contents.language', 'contents.title', 'contents.key')
+            ->join('content_relations AS type', function ($join) use ($type, $relation) {
+                $join->on('contents.id', '=', 'type.content_id')
+                     ->where('type.relation_type_id', $this->getContentIdByKey($relation))
+                     ->where('type.relation_id', $this->getContentIdByKey($type));
+            });
+            // ->join('contents AS r', 'r.id', '=', 'type.content_id')
+            // ->where('contents.key', $key);
+    }
 
 
     // select * from pretzel_contents c
@@ -132,12 +149,14 @@ class Content extends Model
 
     public function scopeSortAlphabetical($query)
     {
-        return $query->orderBy('r.title', 'desc');
+        $prefix = explode('.', $query->getQuery()->columns[0])[0];
+        return $query->orderBy($prefix.'.title', 'asc');
     }
 
     public function scopeSortNewest($query)
     {
-        return $query->orderBy('r.created_at', 'desc');
+        $prefix = explode('.', $query->getQuery()->columns[0])[0];
+        return $query->orderBy($prefix.'.created_at', 'desc');
     }
 
     public function scopeSortPopular($query)
