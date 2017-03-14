@@ -1,6 +1,6 @@
 <?php
 
-namespace Baytek\Laravel\Content\Traits;
+namespace Baytek\Laravel\Content\Models\Concerns;
 
 use Illuminate\Support\Str;
 

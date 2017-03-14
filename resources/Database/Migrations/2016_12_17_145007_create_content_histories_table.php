@@ -13,7 +13,7 @@ class CreateContentHistoriesTable extends Migration
      */
     public function up()
     {
-        Schema::create('content_histories', function (Blueprint $table) {
+        Schema::create('content_history', function (Blueprint $table) {
             $table->increments('id');
             $table->timestamp('touched_at');
 
@@ -23,7 +23,7 @@ class CreateContentHistoriesTable extends Migration
             $table->integer('user_id')->unsigned()->nullable();
             $table->foreign('user_id')->references('id')->on('users');
 
-            $table->string('note')->nullable();
+            $table->text('content')->nullable();
         });
     }
 
@@ -34,6 +34,6 @@ class CreateContentHistoriesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('content_histories');
+        Schema::dropIfExists('content_history');
     }
 }

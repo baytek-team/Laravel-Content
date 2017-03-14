@@ -27,7 +27,7 @@ class LocaleMiddleware
         // explode(',', $language)
 
         // Next check the domain, and override the language
-        foreach(config('app.domains') as $localeKey => $localeDomain) {
+        foreach(config('language.domains') as $localeKey => $localeDomain) {
             if($localeDomain == $domain) {
                 $language = $localeKey;
             }

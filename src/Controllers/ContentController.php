@@ -40,6 +40,12 @@ class ContentController extends Controller
      */
     protected $model = Content::class;
 
+    /**
+     * Table where history will be dumped upon update
+     * @var string
+     */
+    protected $historyTable = 'content_history';
+
     // Reference to the current model instance
     protected $instance;
 
@@ -101,6 +107,15 @@ class ContentController extends Controller
      */
     public function __construct(/*SettingsProvider $settings*/)
     {
+        if(\Route::current()->parameterNames[0] == 'translation') {
+            $this->views = [
+                'index' => 'translate.index',
+                'create' => 'translate.create',
+                'edit' => 'translate.edit',
+                'show' => 'translate.show',
+            ];
+        }
+
         $this->instance = new $this->model;
         $this->names['class'] = (new ReflectionClass($this->instance))->getShortName();
         $this->names['singular'] = strtolower(str_singular($this->names['class']));
@@ -200,6 +215,8 @@ class ContentController extends Controller
     {
         $this->authorize('create', $this->model);
 
+        $request->merge(['language' => \App::getLocale()]);
+
         $content = new $this->model($request->all());
 
         $content->save();
@@ -286,6 +303,14 @@ class ContentController extends Controller
         $content = $this->bound($contentID);
 
         $this->authorize('update', $content);
+
+        DB::table($this->historyTable)->insert([
+            'content_id' => $content->id,
+            'user_id' => \Auth::id(),
+            'content' => serialize($content->load(Content::$eager)),
+        ]);
+
+        $request->merge(['language' => \App::getLocale()]);
 
         // Update the content
         $content->update($request->all());

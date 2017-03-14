@@ -50,9 +50,10 @@ class ContentServiceProvider extends AuthServiceProvider
         $router->group([
             'namespace' => '\Baytek\Laravel\Content\Controllers',
             'prefix' => 'admin',
-            'middleware' => ['web', LocaleMiddleware::class]
+            'middleware' => ['web', 'auth', LocaleMiddleware::class]
         ], function () use ($router) {
             $router->resource('content', 'ContentController');
+            $router->resource('translation', 'ContentController');
         });
 
     }
