@@ -2,28 +2,27 @@
 
 namespace Baytek\Laravel\Content\Models;
 
-use Baytek\Laravel\Content\Models\ContentMeta;
-use Baytek\Laravel\Content\Models\ContentRelation;
-use Illuminate\Database\Eloquent\Model;
-
 use DB;
-use Illuminate\Support\Str;
+use Baytek\Laravel\Content\Traits\HasMetadata;
+use Illuminate\Database\Eloquent\Model;
 
 class Content extends Model
 {
+    use HasMetadata;
+
     // Defining the table we want to use for all content
     protected $table = 'contents';
 
     protected static $metadataCache = [];
 
     // Defining the fillable fields when saving records
-	protected $fillable = [
-		'status',
-		'language',
+    protected $fillable = [
+        'status',
+        'language',
         'key',
-		'title',
-		'content',
-	];
+        'title',
+        'content',
+    ];
 
     // Setting up default relationships which are none
     public $relationships = [];
@@ -33,7 +32,7 @@ class Content extends Model
         'meta',
         'relations',
         'relations.relation',
-        'relations.relationType'
+        'relations.relationType',
     ];
 
     // Default list of content types
@@ -42,6 +41,16 @@ class Content extends Model
         'content-type',
         'relation-type',
     ];
+
+    public function meta()
+    {
+        return $this->hasMany(ContentMeta::class, 'content_id');
+    }
+
+    public function relations()
+    {
+        return $this->hasMany(ContentRelation::class, 'content_id');
+    }
 
     // This method saves the content relation
     public function saveRelation($type, $relation_id)
@@ -71,6 +80,7 @@ class Content extends Model
     public function getParentsOf($id)
     {
         $prefix = env('DB_PREFIX');
+
         return DB::select("SELECT T2.id, T2.status, T2.revision, T2.language, T2.key, T2.title
             FROM (
                 SELECT
@@ -108,7 +118,6 @@ class Content extends Model
         return $this->scopeOfRelation($query, 'content-type', $type);
     }
 
-
     public function scopeOfRelation($query, $relation, $type)
     {
         return $query
@@ -121,7 +130,6 @@ class Content extends Model
             // ->join('contents AS r', 'r.id', '=', 'type.content_id')
             // ->where('contents.key', $key);
     }
-
 
     // select * from pretzel_contents c
     // inner join pretzel_content_relations r on r.relation_id = c.id and r.relation_type_id = 4
@@ -168,12 +176,14 @@ class Content extends Model
     public function scopeSortAlphabetical($query)
     {
         $prefix = explode('.', $query->getQuery()->columns[0])[0];
+
         return $query->orderBy($prefix.'.title', 'asc');
     }
 
     public function scopeSortNewest($query)
     {
         $prefix = explode('.', $query->getQuery()->columns[0])[0];
+
         return $query->orderBy($prefix.'.created_at', 'desc');
     }
 
@@ -204,139 +214,5 @@ class Content extends Model
             ->leftJoin('content_relations AS relations', 'contents.id', '=', 'relations.content_id')
             ->leftJoin('contents AS types', 'types.id', '=', 'relations.relation_id')
             ->where('types.key', $key);
-    }
-
-    public function meta()
-    {
-    	return $this->hasMany(ContentMeta::class, 'content_id');
-    }
-
-    public function relations()
-    {
-    	return $this->hasMany(ContentRelation::class, 'content_id');
-    }
-
-
-    /**
-     * Convert the model instance to an array.
-     *
-     * @return array
-     */
-    public function toArray()
-    {
-        return array_merge($this->attributesToArray(), $this->relationsToArray(), $this->metaDataToArray());
-    }
-
-
-    /**
-     * Get the model's relationships in array form.
-     *
-     * @return array
-     */
-    public function metaDataToArray()
-    {
-        $attributes = []; //parent::relationsToArray();
-
-        foreach ($this->getArrayableRelations() as $key => $value) {
-
-            if($key == 'meta') {
-                if(! isset($attributes['metadata'])) {
-                    $attributes['metadata'] = [];
-                }
-
-                $value->each(function ($metadata) use (&$attributes) {
-                    $attributes['metadata'][str_replace('-', '_', $metadata->key)] = $metadata->value;
-                });
-            }
-
-            if($key == 'relations') {
-                if(! isset($attributes['related'])) {
-                    $attributes['relationships'] = [];
-                }
-
-                foreach($value as $relation) {
-
-                    $newKey = str_replace('-', '_', $relation->relations['relationType']->key);
-
-                    if(! isset($attributes['relationships'][$newKey])) {
-                        $attributes['relationships'][$newKey] = [];
-                    }
-
-                    if($newKey == str_plural($newKey)) {
-                        $attributes['relationships'][$newKey][] = $relation->relations['relation']->key;
-                    }
-                    else {
-                        if(! is_array($attributes['relationships'][$newKey])) {
-                            // $attributes['relationships'][$newKey] = [$attributes['relationships'][$newKey]];
-                            throw new \Exception('Content relationship is not plural, but has many relations.');
-                        }
-
-                        $attributes['relationships'][$newKey] = $relation->relations['relation']->key;
-                    }
-                }
-            }
-        }
-
-        foreach($this->getMetadataAttributes() as $key)
-        {
-            $attributes['metadata'][$key] = $this->populateMetadataAttribute($key);
-        }
-
-        return $attributes;
-    }
-
-
-    /**
-     * Get the value of an attribute using its mutator.
-     *
-     * @param  string  $key
-     * @param  mixed  $value
-     * @return mixed
-     */
-    protected function populateMetadataAttribute($key, $value = null)
-    {
-        return $this->{'set'.Str::studly($key).'Metadata'}($value);
-    }
-
-    /**
-     * Get the mutated attributes for a given instance.
-     *
-     * @return array
-     */
-    public function getMetadataAttributes()
-    {
-        $class = static::class;
-
-        if (! isset(static::$metadataCache[$class])) {
-            static::cacheMetadataAttributes($class);
-        }
-
-        return static::$metadataCache[$class];
-    }
-
-    /**
-     * Extract and cache all the mutated attributes of a class.
-     *
-     * @param  string  $class
-     * @return void
-     */
-    public static function cacheMetadataAttributes($class)
-    {
-        static::$metadataCache[$class] = collect(static::getMetadataMethods($class))->map(function ($match) {
-            return lcfirst(static::$snakeAttributes ? Str::snake($match) : $match);
-        })->all();
-    }
-
-    /**
-     * Get all of the attribute mutator methods.
-     *
-     * @param  mixed  $class
-     * @return array
-     */
-    public static function getMetadataMethods($class)
-    {
-        preg_match_all('/(?<=^|;)set([^;]+?)Metadata(;|$)/', implode(';', get_class_methods($class)), $matches);
-
-        return $matches[1];
     }
 }
