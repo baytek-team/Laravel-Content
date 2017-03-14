@@ -100,8 +100,7 @@ class Content extends Model
             ->join('content_relations AS relations', 'contents.id', '=', 'relations.relation_id')
             ->join('contents AS r', 'r.id', '=', 'relations.content_id')
             ->where('relations.relation_type_id', $this->getContentIdByKey('parent-id'))
-            ->where('contents.'.$column, $key)
-            ->orderBy('r.title', 'asc');
+            ->where('contents.'.$column, $key);
     }
 
 
@@ -128,8 +127,22 @@ class Content extends Model
                      ->where('type.relation_id', $this->getContentIdByKey($type));
             })
 
-            ->where('contents.key', $key)
-            ->orderBy('r.title', 'asc');
+            ->where('contents.key', $key);
+    }
+
+    public function scopeSortAlphabetical($query)
+    {
+        return $query->orderBy('r.title', 'desc');
+    }
+
+    public function scopeSortNewest($query)
+    {
+        return $query->orderBy('r.created_at', 'desc');
+    }
+
+    public function scopeSortPopular($query)
+    {
+        return $query;
     }
 
     // public function scopeChildrenOfWithId($query, $key, $depth = 1)
