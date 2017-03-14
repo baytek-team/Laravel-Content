@@ -45,6 +45,11 @@ class ContentServiceProvider extends AuthServiceProvider
             __DIR__.'/../resources/Database/Seeds/' => database_path('seeds')
         ], 'seeds');
 
+        $this->publishes([
+            __DIR__.'/../resources/Config/content.php' => config_path('content.php'),
+            __DIR__.'/../resources/Config/language.php' => config_path('language.php'),
+        ], 'config');
+
         $this->bootArtisanCommands();
 
         $router->group([
