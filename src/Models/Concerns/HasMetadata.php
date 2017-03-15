@@ -62,10 +62,12 @@ trait HasMetadata
             }
         }
 
-        foreach ($this->getMetadataAttributes() as $key) {
-            $attributes['metadata'][$key] = $this->populateMetadataAttribute(
-                $key, array_key_exists($key, $attributes['metadata']) ? $attributes['metadata'][$key] : null
-            );
+        if (isset($attributes['metadata'])) {
+            foreach ($this->getMetadataAttributes() as $key) {
+                $attributes['metadata'][$key] = $this->populateMetadataAttribute(
+                    $key, array_key_exists($key, $attributes['metadata']) ? $attributes['metadata'][$key] : null
+                );
+            }
         }
 
         return $attributes;

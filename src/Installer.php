@@ -85,7 +85,7 @@ abstract class Installer implements InstallerContract
 
     public function publish()
     {
-        Artisan::call('vendor:publish', ['--tag' => 'views', '--provider' => $this->provider]);
+        // Artisan::call('vendor:publish', ['--tag' => 'views', '--provider' => $this->provider]);
         Artisan::call('vendor:publish', ['--tag' => 'config', '--provider' => $this->provider]);
         return true;
     }

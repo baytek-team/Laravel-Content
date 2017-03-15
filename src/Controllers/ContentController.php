@@ -47,6 +47,8 @@ class ContentController extends Controller
      */
     protected $historyTable = 'content_history';
 
+    protected $viewPrefix = '';
+
     // Reference to the current model instance
     protected $instance;
 
@@ -160,7 +162,7 @@ class ContentController extends Controller
         if(View::exists($view = implode('::', [$this->names['class'], $this->views[$name]]))) {
             return $view;
         }
-        else if(View::exists($view = implode('/', ['admin', $this->names['class'], $this->views[$name]]))) {
+        else if(View::exists($view = implode('/', array_filter([$this->viewPrefix, $this->names['class'], $this->views[$name]]) ) ) )  {
             return $view;
         }
         else if(View::exists($view = implode('/', [$this->names['class'], $this->views[$name]]))) {
@@ -286,6 +288,7 @@ class ContentController extends Controller
     {
         $model = $this->instance;
         $view = $this->view('show');
+
         // Eager load the subset models, meta data and relationships
         $content = $this->bound($contentID)->load($model::$eager);
 
