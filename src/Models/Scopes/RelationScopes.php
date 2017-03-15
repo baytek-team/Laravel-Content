@@ -6,15 +6,14 @@ use DB;
 
 trait RelationScopes
 {
-
 	public function getContentByKey($type)
 	{
-	    return static::withoutGlobalScopes()->where('key', $type)->first();
+	    return parent::withoutGlobalScopes()->where('key', $type)->firstOrFail();
 	}
 
 	public function getContentIdByKey($type)
 	{
-	    return static::withoutGlobalScopes()->where('key', $type)->first()->id;
+	    return $this->getContentByKey($type)->id;
 	}
 
 	public function getParents()
@@ -46,6 +45,17 @@ trait RelationScopes
 	        ON T1._id = T2.id
 	        ORDER BY T1.lvl DESC;
 	    ", [$id]);
+	}
+
+
+	public function scopeWhereMetadata($query, $key, $value)
+	{
+	    return $query
+	        ->join('content_meta AS metadata', function($join) use ($key, $value) {
+	        	$join->on('contents.id', '=', 'metadata.content_id')
+	        	     ->where('metadata.key', $key)
+	        	     ->where('metadata.value', $value);
+	        });
 	}
 
 	public function scopeChildrenOf($query, $key, $column = 'key', $depth = 1)
@@ -120,14 +130,14 @@ trait RelationScopes
 
 	public function scopeSortAlphabetical($query)
 	{
-	    $prefix = explode('.', $query->getQuery()->columns[0])[0];
+	    $prefix = explode('.', $query->getQuery()->columns[0])[0] ?: 'contents';
 
 	    return $query->orderBy($prefix.'.title', 'asc');
 	}
 
 	public function scopeSortNewest($query)
 	{
-	    $prefix = explode('.', $query->getQuery()->columns[0])[0];
+	    $prefix = explode('.', $query->getQuery()->columns[0])[0] ?: 'contents';
 
 	    return $query->orderBy($prefix.'.created_at', 'desc');
 	}
@@ -139,7 +149,7 @@ trait RelationScopes
 
 	public function scopeWithContents($query)
 	{
-	    return $query->select(explode('.', $query->getQuery()->columns[0])[0].'.*');
+	    return $query->select( (explode('.', $query->getQuery()->columns[0])[0] ?: 'contents')  .'.*');
 	}
 
 	// public function scopeChildrenOfWithId($query, $key, $depth = 1)

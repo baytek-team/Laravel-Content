@@ -132,6 +132,24 @@ class ContentController extends Controller
     }
 
     /**
+     * Register a view file namespace.
+     *
+     * Illuminate\Support\ServiceProvider
+     *
+     * @param  string  $path
+     * @param  string  $namespace
+     * @return void
+     */
+    protected function loadViewsFrom($path, $namespace)
+    {
+        if (is_dir($appPath = app()->resourcePath().'/views/vendor/'.$namespace)) {
+            app()['view']->addNamespace($namespace, $appPath);
+        }
+
+        app()['view']->addNamespace($namespace, $path);
+    }
+
+    /**
      * Internal method to output the view name to render
      *
      * @param  String $name The method type key to lookup the view
@@ -139,7 +157,17 @@ class ContentController extends Controller
      */
     protected function view($name)
     {
-        return implode('::', [$this->names['class'], $this->views[$name]]);
+        if(View::exists($view = implode('::', [$this->names['class'], $this->views[$name]]))) {
+            return $view;
+        }
+        else if(View::exists($view = implode('/', ['admin', $this->names['class'], $this->views[$name]]))) {
+            return $view;
+        }
+        else if(View::exists($view = implode('/', [$this->names['class'], $this->views[$name]]))) {
+            return $view;
+        }
+
+        return false;
     }
 
     /**
@@ -179,10 +207,9 @@ class ContentController extends Controller
         $this->authorize('view', $this->model);
 
         $model = $this->instance;
-        $view = $this->view('index');
         // $content = $model->with($model::$eager)->paginate(10);
 
-        if (!View::exists($view)) {
+        if (!$view = $this->view('index')) {
             return $model->with($model::$eager)->get();
         }
 
