@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 
 trait HasMetadata
 {
+    protected static $metadataCache = [];
     /**
      * Convert the model instance to an array.
      *

@@ -16,8 +16,6 @@ class Content extends Model
         'language' => 'en',
     ];
 
-    protected static $metadataCache = [];
-
     // Defining the fillable fields when saving records
     protected $fillable = [
         'status',

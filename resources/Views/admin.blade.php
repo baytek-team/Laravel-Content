@@ -12,7 +12,7 @@
 
     <!-- Styles -->
     {{-- <link href="/css/all.css" rel="stylesheet"> --}}
-    <link href="/admin/app.css" rel="stylesheet">
+    <link href="/css/admin/app.css" rel="stylesheet">
 
     <link href="/css/semantic.min.css" rel="stylesheet">
 
