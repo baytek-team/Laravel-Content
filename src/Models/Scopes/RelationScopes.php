@@ -21,6 +21,25 @@ trait RelationScopes
         return $this->getParentsOf($this->id);
     }
 
+
+    // SELECT T2.id, T2.status, T2.revision, T2.language, T2.key, T2.title
+    // FROM (
+    //     SELECT
+    //         @r AS _id,
+    //         (
+    //             SELECT @r := closure.relation_id
+    //             FROM pretzel_content_relations closure, pretzel_contents relation
+    //             WHERE relation.id = closure.relation_type_id AND relation.key = 'parent-id' AND relation.language = 'en' AND closure.content_id = _id
+    //          ) AS parent,
+    //         @l := @l + 1 AS lvl
+    //     FROM
+    //         (SELECT @r := 41, @l := 0) initialize,
+    //         pretzel_contents m
+    //     GROUP BY _id
+    //     ) T1
+    // JOIN pretzel_contents T2
+    // ON T1._id = T2.id
+    // ORDER BY T1.lvl DESC;
     public function getParentsOf($id)
     {
         $prefix = env('DB_PREFIX');
