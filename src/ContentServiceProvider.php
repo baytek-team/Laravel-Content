@@ -33,7 +33,7 @@ class ContentServiceProvider extends AuthServiceProvider
         $this->loadViewsFrom(__DIR__.'/../resources/Views', 'Content');
 
         $this->publishes([
-            __DIR__.'/../resources/Views' => resource_path('views/vendor/Content'),
+            __DIR__.'/../resources/Views' => resource_path('views/vendor/content'),
         ], 'views');
 
         $this->loadMigrationsFrom(__DIR__.'/../resources/Database/Migrations');
