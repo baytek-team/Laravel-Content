@@ -144,6 +144,8 @@ trait RelationScopes
 
     public function scopeOfRelation($query, $relation, $type)
     {
+
+        dd($this->getContentIdByKey($type));
         return $query
             ->select('contents.id', 'contents.status', 'contents.revision', 'contents.language', 'contents.title', 'contents.key')
             ->join('content_relations AS type', function ($join) use ($type, $relation) {
@@ -180,6 +182,27 @@ trait RelationScopes
                      ->where('type.relation_id', $this->getContentIdByKey($type));
             })
 
+            ->where('contents.key', $key);
+    }
+
+
+
+    // select content.* from pretzel_contents c
+
+    // inner join pretzel_content_relations r on r.content_id = c.id and r.relation_type_id = 25
+    // inner join pretzel_contents content on r.relation_id = content.id
+
+    // where c.key = 'ten-reasons-why-chocolate-is-better-than-vanilla'
+
+    public function scopeChildrenOfRelation($query, $key, $relation)
+    {
+        return $query
+            ->select('r.id', 'r.status', 'r.revision', 'r.language', 'r.title', 'r.key')
+            ->join('content_relations AS type', function ($join) use ($relation) {
+                $join->on('type.content_id', '=', 'contents.id')
+                     ->where('type.relation_type_id', $this->getContentIdByKey($relation));
+            })
+            ->join('contents AS r', 'r.id', '=', 'type.relation_id')
             ->where('contents.key', $key);
     }
 
