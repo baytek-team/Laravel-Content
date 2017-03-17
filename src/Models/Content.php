@@ -57,6 +57,7 @@ class Content extends Model
     // This method saves the content relation
     public function saveRelation($type, $relation_id)
     {
+        // We need to check to see if the relation exists already before creating a new one.
         (new ContentRelation([
             'content_id' => $this->id,
             'relation_id' => $relation_id,
