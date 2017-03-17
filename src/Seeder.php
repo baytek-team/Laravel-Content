@@ -45,7 +45,7 @@ abstract class Seeder extends IlluminateSeeder
         }
 
         foreach ($meta as $key => $value) {
-            $metaRecord = (new ContentMeta(['key' => $key, 'value' => $value]));
+            $metaRecord = (new ContentMeta(['language' => \App::getLocale(), 'key' => $key, 'value' => $value]));
 
             $content->meta()->save($metaRecord);
 
