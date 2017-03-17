@@ -147,7 +147,7 @@ trait RelationScopes
         return $query
             ->select('contents.id', 'contents.status', 'contents.revision', 'contents.language', 'contents.title', 'contents.key')
             ->join('content_relations AS type', function ($join) use ($type, $relation) {
-                $join->on('r.id', '=', 'type.content_id')
+                $join->on('contents.id', '=', 'type.content_id')
                      ->where('type.relation_type_id', $this->getContentIdByKey($relation))
                      ->where('type.relation_id', $this->getContentIdByKey($type));
             });
