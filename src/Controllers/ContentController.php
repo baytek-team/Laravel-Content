@@ -379,7 +379,6 @@ class ContentController extends Controller
      */
     public function translate(Request $request, $contentID)
     {
-
         // Check to see if the translation exists if it does, we cannot save, this is not the way to translate stuff
         $orignal = $this->bound($contentID);
 
