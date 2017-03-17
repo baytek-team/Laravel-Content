@@ -144,12 +144,10 @@ trait RelationScopes
 
     public function scopeOfRelation($query, $relation, $type)
     {
-
-        dd($this->getContentIdByKey($type));
         return $query
             ->select('contents.id', 'contents.status', 'contents.revision', 'contents.language', 'contents.title', 'contents.key')
             ->join('content_relations AS type', function ($join) use ($type, $relation) {
-                $join->on('contents.id', '=', 'type.content_id')
+                $join->on('r.id', '=', 'type.content_id')
                      ->where('type.relation_type_id', $this->getContentIdByKey($relation))
                      ->where('type.relation_id', $this->getContentIdByKey($type));
             });
@@ -198,11 +196,11 @@ trait RelationScopes
     {
         return $query
             ->select('r.id', 'r.status', 'r.revision', 'r.language', 'r.title', 'r.key')
-            ->join('content_relations AS type', function ($join) use ($relation) {
-                $join->on('type.content_id', '=', 'contents.id')
-                     ->where('type.relation_type_id', $this->getContentIdByKey($relation));
+            ->join('content_relations AS relation_type', function ($join) use ($relation) {
+                $join->on('relation_type.content_id', '=', 'contents.id')
+                     ->where('relation_type.relation_type_id', $this->getContentIdByKey($relation));
             })
-            ->join('contents AS r', 'r.id', '=', 'type.relation_id')
+            ->join('contents AS r', 'r.id', '=', 'relation_type.relation_id')
             ->where('contents.key', $key);
     }
 
