@@ -22,6 +22,57 @@ trait RelationScopes
     }
 
 
+    public function countChildrenOfTypeById($id, $type)
+    {
+
+        $prefix = env('DB_PREFIX');
+        $language = \App::getLocale();
+
+        return DB::select("SELECT COUNT(resource.key) resource_count
+
+            -- get all closures
+            FROM ${prefix}content_relations closure1
+
+            -- filter closures to have content type relationship only
+            INNER JOIN ${prefix}contents relation ON relation.id = closure1.relation_type_id AND (relation.key = 'content-type' AND relation.language = '${language}')
+
+            -- filter content type to only keep resources content type
+            INNER JOIN ${prefix}contents content_type ON content_type.id = closure1.relation_id AND (content_type.key = ? AND content_type.language = '${language}')
+
+            -- get resources from the resource content type closures
+            INNER JOIN ${prefix}contents resource ON resource.id = closure1.content_id
+
+            -- get all closures associated with the resource
+            INNER JOIN ${prefix}content_relations closure2 ON closure2.content_id = resource.id
+
+            -- filter to keep the parent relations
+            INNER JOIN ${prefix}contents relation_type ON relation_type.id = closure2.relation_type_id AND (relation_type.key = 'parent-id' AND relation_type.language = '${language}')
+
+            -- get parent from parent closures
+            INNER JOIN ${prefix}contents parent ON parent.id = closure2.relation_id
+
+            -- final filter to keep only resources with the content passed to this query (@r := var) or any of its descendant as its parent
+            INNER JOIN
+            (
+                SELECT GROUP_CONCAT(T1._id) parent_ids
+                FROM
+                    (SELECT @r := ?, @l := 0) ini_vars,
+                    (SELECT
+                        @r AS _id,
+                            (
+                                SELECT @r := GROUP_CONCAT(closure.content_id)
+                                FROM ${prefix}content_relations closure, ${prefix}contents relation
+                                WHERE relation.id = closure.relation_type_id AND relation.key = 'parent-id' AND relation.language = '${language}' AND FIND_IN_SET(closure.relation_id, _id)
+                            ) AS parent,
+                            @l := @l + 1 AS lvl
+                        FROM
+                            ${prefix}contents m
+                    ) T1
+            ) ids ON FIND_IN_SET(closure2.relation_id, ids.parent_ids);", [$type, $id]);
+    }
+
+
+
     // SELECT T2.id, T2.status, T2.revision, T2.language, T2.key, T2.title
     // FROM (
     //     SELECT
