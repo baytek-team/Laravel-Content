@@ -347,7 +347,10 @@ class ContentController extends Controller
             'content' => serialize($content->load(Content::$eager)),
         ]);
 
-        $request->merge(['language' => \App::getLocale()]);
+        $request->merge([
+            'language' => \App::getLocale(),
+            'revision' => (int)$content->revision + 1
+        ]);
 
         // Update the content
         $content->update($request->all());

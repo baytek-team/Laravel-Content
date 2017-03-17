@@ -18,6 +18,7 @@ class Content extends Model
 
     // Defining the fillable fields when saving records
     protected $fillable = [
+        'revision',
         'status',
         'language',
         'key',
