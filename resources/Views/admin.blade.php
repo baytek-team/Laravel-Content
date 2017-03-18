@@ -32,41 +32,31 @@
                 <div class="item">
                     <img src="http://cdn4.baytek.ca/wp-content/themes/baytek2016/images/logos/baytek-logo.svg" alt="" class="logo" scale="0">
                 </div>
-                {{--
-                    <a class="toc item">
-                        <i class="sidebar icon"></i>
-                    </a>
-                --}}
                 @if( Auth::user() )
-                <a class="item">Home</a>
-                <div class="ui dropdown item">
-                    Users <i class="dropdown icon"></i>
-                    <div class="menu">
-                        <a class="item" href="{{ route('user.index') }}">Users</a>
-                        <a class="item" href="{{ route('role.index') }}">Roles</a>
-                        <a class="item" href="{{ route('user.role.index') }}">User Roles</a>
+                    <a class="item">Home</a>
+                    <div class="ui dropdown item">
+                        Users <i class="dropdown icon"></i>
+                        <div class="menu">
+                            <a class="item" href="{{ route('user.index') }}">Users</a>
+                            <a class="item" href="{{ route('role.index') }}">Roles</a>
+                            <a class="item" href="{{ route('user.role.index') }}">User Roles</a>
+                        </div>
                     </div>
-                </div>
-                <div class="ui dropdown item">
-                    Content
-                    <i class="dropdown icon"></i>
-                    <div class="menu">
-                        <a href="{{ route('content.index') }}" class="item">Contents</a>
-                        <a href="{{ route('webpage.index') }}" class="item">Webpages</a>
-                        <a href="{{ route('menu.index') }}" class="item">Menus</a>
-                        <div class="item">Taxonomy</div>
-                        <!-- <div class="item">Blog</div> -->
-                        <!-- <div class="item">Events</div> -->
-                        <!-- <div class="item">Forum</div> -->
+                    <div class="ui dropdown item">
+                        Content
+                        <i class="dropdown icon"></i>
+                        <div class="menu">
+                            <a href="{{ route('content.index') }}" class="item">Contents</a>
+                            <a href="{{ route('webpage.index') }}" class="item">Webpages</a>
+                            <a href="{{ route('menu.index') }}" class="item">Menus</a>
+                            <div class="item">Taxonomy</div>
+                        </div>
                     </div>
-                </div>
-                <a class="item" href="{{ route('user.index') }}">Profile</a>
-                <a class="item" href="{{ route('settings.index') }}">Settings</a>
+                    <a class="item" href="{{ route('user.index') }}">Profile</a>
+                    <a class="item" href="{{ route('settings.index') }}">Settings</a>
                 @else
                     <a class="item" href="{{ route('login') }}">Login</a>
-
                     <a class="item" href="{{ route('register') }}">Register</a>
-
                 @endif
             </div>
         </div>

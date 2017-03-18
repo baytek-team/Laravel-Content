@@ -24,7 +24,6 @@ trait RelationScopes
 
     public function countChildrenOfTypeById($id, $type)
     {
-
         $prefix = env('DB_PREFIX');
         $language = \App::getLocale();
 
