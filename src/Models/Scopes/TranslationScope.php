@@ -17,12 +17,32 @@ class TranslationScope implements Scope
      */
     public function apply(Builder $builder, Model $model)
     {
-        return $builder
-            ->select('contents.id', 'contents.key', 'contents.status', 'contents.revision', 'language.language', 'language.title', 'language.content')
-            ->join('content_relations AS languages', 'contents.id', '=', 'languages.content_id')
-            ->join('contents AS language', function ($join) {
+        $prefix = $builder->getQuery()->grammar->getTablePrefix();
+        $context = isset($builder->selectContext) ? $builder->selectContext : 'contents';
+
+        $query = $builder
+            ->select(
+                \DB::raw("
+                    $prefix$context.id,
+                    $prefix$context.key,
+                    $prefix$context.status,
+                    $prefix$context.revision,
+                    IFNULL(${prefix}language.language, $prefix$context.language) as language,
+                    IFNULL(${prefix}language.title, $prefix$context.title) as title,
+                    IFNULL(${prefix}language.content, $prefix$context.content) as content
+                ")
+            )
+            // ->select($context . '.id', $context . '.key', $context . '.status', $context . '.revision', 'language.language', 'language.title', 'language.content')
+            // ->leftJoin('content_relations AS languages', 'contents.id', '=', 'languages.content_id')
+            ->leftJoin('content_relations AS languages', function ($join) use ($context) {
+                $join->on($context . '.id', '=', 'languages.content_id')
+                     ->where('languages.relation_type_id', 5);
+            })
+            ->leftJoin('contents AS language', function ($join) {
                 $join->on('language.id', '=', 'languages.relation_id')
                      ->where('language.language', \App::getLocale());
             });
+
+        return $query;
     }
 }
