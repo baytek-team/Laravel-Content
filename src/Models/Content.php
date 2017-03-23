@@ -2,6 +2,7 @@
 
 namespace Baytek\Laravel\Content\Models;
 
+use Baytek\Laravel\Content\Models\Scopes\TranslationScope;
 use Illuminate\Database\Eloquent\Model;
 
 class Content extends Model
@@ -43,6 +44,20 @@ class Content extends Model
         'content-type',
         'relation-type',
     ];
+
+    /**
+     * The "booting" method of the model.
+     *
+     * @return void
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        if(\App::getLocale() != 'en') {
+            static::addGlobalScope(new TranslationScope);
+        }
+    }
 
     public function meta()
     {

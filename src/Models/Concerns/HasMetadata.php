@@ -43,6 +43,9 @@ trait HasMetadata
                 }
 
                 foreach ($value as $relation) {
+                    if(!$relation->relations['relationType'])
+                        continue;
+
                     $newKey = str_replace('-', '_', $relation->relations['relationType']->key);
 
                     if (!isset($attributes['relationships'][$newKey])) {

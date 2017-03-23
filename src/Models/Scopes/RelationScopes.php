@@ -144,7 +144,7 @@ trait RelationScopes
     public function scopeOfRelation($query, $relation, $type)
     {
         return $query
-            ->select('contents.id', 'contents.status', 'contents.revision', 'contents.language', 'contents.title', 'contents.key')
+            // ->select('contents.id', 'contents.status', 'contents.revision', 'contents.language', 'contents.title', 'contents.key')
             ->join('content_relations AS type', function ($join) use ($type, $relation) {
                 $join->on('contents.id', '=', 'type.content_id')
                      ->where('type.relation_type_id', $this->getContentIdByKey($relation))

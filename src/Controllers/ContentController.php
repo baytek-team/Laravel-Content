@@ -399,13 +399,13 @@ class ContentController extends Controller
             $metaRecord->save();
         }
 
-        foreach($orignal->relations as $relation) {
-            (new ContentRelation([
-                'content_id'  => $content->id,
-                'relation_id' => $relation->relation_id,
-                'relation_type_id' => $relation->relation_type_id,
-            ]))->save();
-        }
+        // foreach($orignal->relations as $relation) {
+        //     (new ContentRelation([
+        //         'content_id'  => $content->id,
+        //         'relation_id' => $relation->relation_id,
+        //         'relation_type_id' => $relation->relation_type_id,
+        //     ]))->save();
+        // }
 
         $content->saveRelation('translations', $orignal->id);
         $orignal->saveRelation('translations', $content->id);
