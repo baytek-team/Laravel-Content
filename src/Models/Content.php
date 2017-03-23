@@ -3,12 +3,15 @@
 namespace Baytek\Laravel\Content\Models;
 
 use Baytek\Laravel\Content\Models\Scopes\TranslationScope;
+use Baytek\LaravelStatusBit\Statusable;
+use Baytek\LaravelStatusBit\StatusInterface;
 use Illuminate\Database\Eloquent\Model;
 
-class Content extends Model
+class Content extends Model implements StatusInterface
 {
     use Concerns\HasMetadata,
-        Scopes\RelationScopes;
+        Scopes\RelationScopes,
+        Statusable;
 
     // Defining the table we want to use for all content
     protected $table = 'contents';
