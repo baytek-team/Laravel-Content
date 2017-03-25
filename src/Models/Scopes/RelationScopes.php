@@ -118,24 +118,25 @@ trait RelationScopes
         $prefix = env('DB_PREFIX');
 
         return DB::select("SELECT T2.id, T2.status, T2.revision, T2.language, T2.key, T2.title
-        FROM (
-            SELECT
-                @r AS _id,
-                (
-                    SELECT @r := closure.relation_id
-                    FROM ${prefix}content_relations closure, ${prefix}contents relation
-                    WHERE relation.id = closure.relation_type_id AND relation.key = 'parent-id' AND relation.language = 'en' AND closure.content_id = _id
-                 ) AS parent,
-                @l := @l + 1 AS lvl
-            FROM
-                (SELECT @r := 41, @l := 0) initialize,
-                ${prefix}contents m
-            GROUP BY _id
-            ) T1
-        JOIN ${prefix}contents T2
-        ON T1._id = T2.id
-        ORDER BY T1.lvl DESC;", [$id]);
-
+            FROM (
+                SELECT
+                    @r AS _id,
+                    (
+                        SELECT @r := rel.relation_id
+                        FROM ${prefix}contents
+                        LEFT JOIN ${prefix}content_relations rel
+                        ON rel.content_id = @r AND rel.relation_type_id = 4
+                        WHERE ${prefix}contents.id = _id
+                    ) AS parent_id,
+                    @l := @l + 1 AS lvl
+                FROM
+                    (SELECT @r := ?, @l := 0) vars,
+                    ${prefix}contents m
+                WHERE @r <> 0) T1
+            JOIN ${prefix}contents T2
+            ON T1._id = T2.id
+            ORDER BY T1.lvl DESC;
+        ", [$id]);
     }
 
     public function scopeWhereMetadata($query, $key, $value)
