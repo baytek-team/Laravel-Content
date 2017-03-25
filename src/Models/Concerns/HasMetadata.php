@@ -7,6 +7,8 @@ use Illuminate\Support\Str;
 trait HasMetadata
 {
     protected static $metadataCache = [];
+    protected $customCache = [];
+
     /**
      * Convert the model instance to an array.
      *
@@ -18,13 +20,41 @@ trait HasMetadata
     }
 
     /**
-     * Get the model's relationships in array form.
+     * Get and cache metadata
+     *
+     * @return Illuminate\Database\Eloquent\Collection
+     */
+    public function metadata()
+    {
+        if(empty($this->customCache) || !array_key_exists('metadata', $this->customCache)) {
+            $this->customCache = $this->populateMetadata();
+        }
+
+        return collect($this->customCache['metadata']);
+    }
+
+    /**
+     * Get and cache relationships
+     *
+     * @return Illuminate\Database\Eloquent\Collection
+     */
+    public function relationships()
+    {
+        if(empty($this->customCache) || !array_key_exists('relationships', $this->customCache)) {
+            $this->customCache = $this->populateCustomRelationships();
+        }
+
+        return collect($this->customCache['relationships']);
+    }
+
+    /**
+     * Return metadata relations in array form.
      *
      * @return array
      */
-    public function metaDataToArray()
+    public function populateMetadata()
     {
-        $attributes = []; //parent::relationsToArray();
+        $attributes = [];
 
         foreach ($this->getArrayableRelations() as $key => $value) {
             if ($key == 'meta') {
@@ -36,6 +66,29 @@ trait HasMetadata
                     $attributes['metadata'][str_replace('-', '_', $metadata->key)] = $metadata->value;
                 });
             }
+        }
+
+        if (isset($attributes['metadata'])) {
+            foreach ($this->getMetadataAttributes() as $key) {
+                $attributes['metadata'][$key] = $this->populateMetadataAttribute(
+                    $key, array_key_exists($key, $attributes['metadata']) ? $attributes['metadata'][$key] : null
+                );
+            }
+        }
+
+        return $attributes;
+    }
+
+    /**
+     * Return relationship relations in array form.
+     *
+     * @return array
+     */
+    public function populateCustomRelationships()
+    {
+        $attributes = [];
+
+        foreach ($this->getArrayableRelations() as $key => $value) {
 
             if ($key == 'relations') {
                 if (!isset($attributes['related'])) {
@@ -66,12 +119,24 @@ trait HasMetadata
             }
         }
 
-        if (isset($attributes['metadata'])) {
-            foreach ($this->getMetadataAttributes() as $key) {
-                $attributes['metadata'][$key] = $this->populateMetadataAttribute(
-                    $key, array_key_exists($key, $attributes['metadata']) ? $attributes['metadata'][$key] : null
-                );
-            }
+        return $attributes;
+    }
+
+    /**
+     * Get the model's relationships in array form.
+     *
+     * @return array
+     */
+    public function metaDataToArray()
+    {
+        $attributes = []; //parent::relationsToArray();
+
+        if(empty($this->customCache) || !array_key_exists('metadata', $this->customCache)) {
+            $attributes = array_merge($this->customCache, $this->populateMetadata());
+        }
+
+        if(empty($this->customCache) || !array_key_exists('relations', $this->customCache)) {
+            $attributes = array_merge($this->customCache, $this->populateCustomRelationships());
         }
 
         return $attributes;
