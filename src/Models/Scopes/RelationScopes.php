@@ -2,6 +2,9 @@
 
 namespace Baytek\Laravel\Content\Models\Scopes;
 
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+
 use DB;
 
 trait RelationScopes
@@ -75,7 +78,7 @@ trait RelationScopes
     {
         $language = \App::getLocale();
 
-        return DB::select("SELECT content.id, content.status, content.revision, content.language, content.key, content.title
+        $result = DB::select("SELECT content.id, content.status, content.revision, content.language, content.key, content.title
 
         -- get all content
         FROM pretzel_contents content
@@ -92,6 +95,7 @@ trait RelationScopes
         -- concat the parent key with the content key to set a unique pair to check against the path provided
         WHERE CONCAT(parent.key, '/', content.`key`) = SUBSTRING_INDEX(?, '/', -2);", [$language, $path]);
 
+        return static::hydrate($result);
     }
 
 
@@ -192,7 +196,7 @@ trait RelationScopes
     public function scopeChildrenOfType($query, $key, $type)
     {
         $query->selectContext = 'r';
-        return $query
+        $query
             ->select('r.id', 'r.status', 'r.revision', 'r.language', 'r.title', 'r.key')
             ->join('content_relations AS children_of_type', function ($join) {
                 $join->on('contents.id', '=', 'children_of_type.relation_id')
@@ -203,11 +207,20 @@ trait RelationScopes
                 $join->on('relation_type.content_id', '=', 'children_of_type.content_id')
                      ->where('relation_type.relation_type_id', $this->getContentIdByKey('content-type'))
                      ->where('relation_type.relation_id', $this->getContentIdByKey($type));
-            })
+            });
 
-            ->where('contents.key', $key);
+            if(is_string($key)) {
+                $query->where('contents.key', $key);
+            }
+            else if(is_object($key) && $key instanceof Collection) {
+                $query->whereIn('contents.key', $key->pluck('key'));
+            }
+            else if(is_object($key) && $key instanceof Model) {
+                $query->where('contents.key', $key->key);
+            }
+
+        return $query;
     }
-
 
 
     // select content.* from pretzel_contents c
@@ -244,7 +257,7 @@ trait RelationScopes
                      ->where('type.relation_id', $this->getContentIdByKey($type));
             })
             ->where('r.key', $key)
-            ->where('contents.key', $parent);
+            ->whereIn('contents.id', $parent->pluck('id'));
     }
 
     public function scopeSortAlphabetical($query)
