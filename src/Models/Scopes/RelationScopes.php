@@ -77,20 +77,20 @@ trait RelationScopes
     public function getWithPath($path)
     {
         $language = \App::getLocale();
-
+        $prefix = env('DB_PREFIX');
         $result = DB::select("SELECT content.id, content.status, content.revision, content.language, content.key, content.title
 
         -- get all content
-        FROM pretzel_contents content
+        FROM ${prefix}contents content
 
         -- get all related closures
-        INNER JOIN pretzel_content_relations closure ON closure.content_id = content.id
+        INNER JOIN ${prefix}content_relations closure ON closure.content_id = content.id
 
         -- filter to keep the parent relations
-        INNER JOIN pretzel_contents relation_type ON relation_type.id = closure.relation_type_id AND (relation_type.key = 'parent-id' AND relation_type.language = ?)
+        INNER JOIN ${prefix}contents relation_type ON relation_type.id = closure.relation_type_id AND (relation_type.key = 'parent-id' AND relation_type.language = ?)
 
         -- get parent from parent closures
-        INNER JOIN pretzel_contents parent ON parent.id = closure.relation_id
+        INNER JOIN ${prefix}contents parent ON parent.id = closure.relation_id
 
         -- concat the parent key with the content key to set a unique pair to check against the path provided
         WHERE CONCAT(parent.key, '/', content.`key`) = SUBSTRING_INDEX(?, '/', -2);", [$language, $path]);
