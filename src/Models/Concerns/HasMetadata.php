@@ -129,17 +129,15 @@ trait HasMetadata
      */
     public function metaDataToArray()
     {
-        $attributes = []; //parent::relationsToArray();
-
         if(empty($this->customCache) || !array_key_exists('metadata', $this->customCache)) {
-            $attributes = array_merge($this->customCache, $this->populateMetadata());
+            $this->customCache = array_merge($this->customCache, $this->populateMetadata());
         }
 
         if(empty($this->customCache) || !array_key_exists('relations', $this->customCache)) {
-            $attributes = array_merge($this->customCache, $this->populateCustomRelationships());
+            $this->customCache = array_merge($this->customCache, $this->populateCustomRelationships());
         }
 
-        return $attributes;
+        return $this->customCache;
     }
 
     /**
