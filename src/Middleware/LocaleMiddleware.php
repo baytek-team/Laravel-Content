@@ -4,6 +4,7 @@ namespace Baytek\Laravel\Content\Middleware;
 
 use App;
 use Closure;
+use Session;
 
 class LocaleMiddleware
 {
@@ -31,6 +32,11 @@ class LocaleMiddleware
             if($localeDomain == $domain) {
                 $language = $localeKey;
             }
+        }
+
+        // Check the session to see if there's an override from the app
+        if (Session::has('locale')) {
+            $language = Session::get('locale');
         }
 
         App::setLocale($language);
