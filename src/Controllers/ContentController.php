@@ -159,13 +159,13 @@ class ContentController extends Controller
      */
     protected function view($name)
     {
-        if(View::exists($view = implode('::', [$this->names['class'], $this->views[$name]]))) {
+        if(View::exists($view = implode('::', [strtolower($this->names['class']), $this->views[$name]]))) {
             return $view;
         }
-        else if(View::exists($view = implode('/', array_filter([$this->viewPrefix, $this->names['class'], $this->views[$name]]) ) ) )  {
+        else if(View::exists($view = implode('/', array_filter([$this->viewPrefix, strtolower($this->names['class']), $this->views[$name]]) ) ) )  {
             return $view;
         }
-        else if(View::exists($view = implode('/', [$this->names['class'], $this->views[$name]]))) {
+        else if(View::exists($view = implode('/', [strtolower($this->names['class']), $this->views[$name]]))) {
             return $view;
         }
 
