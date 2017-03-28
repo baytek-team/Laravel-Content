@@ -24,6 +24,8 @@ class TranslationScope implements Scope
             ->select(
                 \DB::raw("
                     $prefix$context.id,
+                    $prefix$context.created_at,
+                    $prefix$context.updated_at,
                     $prefix$context.key,
                     $prefix$context.status,
                     $prefix$context.revision,
