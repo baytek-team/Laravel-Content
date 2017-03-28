@@ -78,7 +78,7 @@ trait RelationScopes
     {
         $language = \App::getLocale();
         $prefix = env('DB_PREFIX');
-        $result = DB::select("SELECT content.id, content.status, content.revision, content.language, content.key, content.title
+        $result = DB::select("SELECT content.id, content.created_at, content.updated_at, content.status, content.revision, content.language, content.key, content.title
 
         -- get all content
         FROM ${prefix}contents content
@@ -121,7 +121,7 @@ trait RelationScopes
     {
         $prefix = env('DB_PREFIX');
 
-        return DB::select("SELECT T2.id, T2.status, T2.revision, T2.language, T2.key, T2.title
+        return DB::select("SELECT T2.id, T2.created_at, T2.updated_at, T2.status, T2.revision, T2.language, T2.key, T2.title
             FROM (
                 SELECT
                     @r AS _id,
@@ -157,7 +157,7 @@ trait RelationScopes
     {
         $query->selectContext = 'r';
         return $query
-            ->select('r.id', 'r.status', 'r.revision', 'r.language', 'r.title', 'r.key')
+            ->select('r.id', 'r.created_at', 'r.updated_at', 'r.status', 'r.revision', 'r.language', 'r.title', 'r.key')
             ->join('content_relations AS children_of', 'contents.id', '=', 'children_of.relation_id')
             ->join('contents AS r', 'r.id', '=', 'children_of.content_id')
             ->where('children_of.relation_type_id', $this->getContentIdByKey('parent-id'))
@@ -173,7 +173,7 @@ trait RelationScopes
     {
         $query->selectContext = 'contents';
         return $query
-            ->select('contents.id', 'contents.status', 'contents.revision', 'contents.language', 'contents.title', 'contents.key')
+            ->select('contents.id', 'contents.created_at', 'contents.updated_at', 'contents.status', 'contents.revision', 'contents.language', 'contents.title', 'contents.key')
             ->join('content_relations AS of_relation_type', function ($join) use ($type, $relation) {
                 $join->on('contents.id', '=', 'of_relation_type.content_id')
                      ->where('of_relation_type.relation_type_id', $this->getContentIdByKey($relation))
@@ -197,7 +197,7 @@ trait RelationScopes
     {
         $query->selectContext = 'r';
         $query
-            ->select('r.id', 'r.status', 'r.revision', 'r.language', 'r.title', 'r.key')
+            ->select('r.id', 'r.created_at', 'r.updated_at', 'r.status', 'r.revision', 'r.language', 'r.title', 'r.key')
             ->join('content_relations AS children_of_type', function ($join) {
                 $join->on('contents.id', '=', 'children_of_type.relation_id')
                      ->where('children_of_type.relation_type_id', $this->getContentIdByKey('parent-id'));
@@ -233,7 +233,7 @@ trait RelationScopes
     public function scopeChildrenOfRelation($query, $key, $relation)
     {
         return $query
-            ->select('r.id', 'r.status', 'r.revision', 'r.language', 'r.title', 'r.key')
+            ->select('r.id', 'r.created_at', 'r.updated_at', 'r.status', 'r.revision', 'r.language', 'r.title', 'r.key')
             ->join('content_relations AS children_of_relation', function ($join) use ($relation) {
                 $join->on('children_of_relation.content_id', '=', 'contents.id')
                      ->where('children_of_relation.relation_type_id', $this->getContentIdByKey($relation));
@@ -245,7 +245,7 @@ trait RelationScopes
     public function scopeChildOfType($query, $parent, $type, $key)
     {
         return $query
-            ->select('r.id', 'r.status', 'r.revision', 'r.language', 'r.title', 'r.key')
+            ->select('r.id', 'r.created_at', 'r.updated_at', 'r.status', 'r.revision', 'r.language', 'r.title', 'r.key')
             ->join('content_relations AS child_of_type', function ($join) {
                 $join->on('contents.id', '=', 'child_of_type.relation_id')
                      ->where('child_of_type.relation_type_id', $this->getContentIdByKey('parent-id'));
@@ -287,7 +287,7 @@ trait RelationScopes
     // public function scopeChildrenOfWithId($query, $key, $depth = 1)
     // {
     //     return $query
-    //         ->select('r.id', 'r.status', 'r.revision', 'r.language', 'r.title', 'r.key')
+    //         ->select('r.id', 'r.created_at', 'r.updated_at', 'r.status', 'r.revision', 'r.language', 'r.title', 'r.key')
     //         ->leftJoin('content_relations AS relations', 'contents.id', '=', 'relations.relation_id')
     //         ->leftJoin('contents AS r', 'r.id', '=', 'relations.content_id')
     //         ->where('relations.relation_type_id', 4)
@@ -297,7 +297,7 @@ trait RelationScopes
     public function scopeOfContentType($query, $key)
     {
         return $query
-            ->select('contents.id', 'contents.status', 'contents.revision', 'contents.language', 'contents.title', 'contents.key', 'contents.content')
+            ->select('contents.id', 'contents.created_at', 'contents.updated_at', 'contents.status', 'contents.revision', 'contents.language', 'contents.title', 'contents.key', 'contents.content')
             ->leftJoin('content_relations AS relations', 'contents.id', '=', 'relations.content_id')
             ->leftJoin('contents AS types', 'types.id', '=', 'relations.relation_id')
             ->where('types.key', $key);
