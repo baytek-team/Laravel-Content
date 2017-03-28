@@ -76,7 +76,7 @@ trait RelationScopes
 
     public function getWithPath($path)
     {
-        $language = \App::getLocale();
+        // $language = \App::getLocale();
         $prefix = env('DB_PREFIX');
         $result = DB::select("SELECT content.id, content.created_at, content.updated_at, content.status, content.revision, content.language, content.key, content.title
 
@@ -87,13 +87,13 @@ trait RelationScopes
         INNER JOIN ${prefix}content_relations closure ON closure.content_id = content.id
 
         -- filter to keep the parent relations
-        INNER JOIN ${prefix}contents relation_type ON relation_type.id = closure.relation_type_id AND (relation_type.key = 'parent-id' AND relation_type.language = ?)
+        INNER JOIN ${prefix}contents relation_type ON relation_type.id = closure.relation_type_id AND (relation_type.key = 'parent-id')
 
         -- get parent from parent closures
         INNER JOIN ${prefix}contents parent ON parent.id = closure.relation_id
 
         -- concat the parent key with the content key to set a unique pair to check against the path provided
-        WHERE CONCAT(parent.key, '/', content.`key`) = SUBSTRING_INDEX(?, '/', -2);", [$language, $path]);
+        WHERE CONCAT(parent.key, '/', content.`key`) = SUBSTRING_INDEX(?, '/', -2);", [$path]);
 
         return static::hydrate($result);
     }
@@ -232,6 +232,7 @@ trait RelationScopes
 
     public function scopeChildrenOfRelation($query, $key, $relation)
     {
+        $query->selectContext = 'r';
         return $query
             ->select('r.id', 'r.created_at', 'r.updated_at', 'r.status', 'r.revision', 'r.language', 'r.title', 'r.key')
             ->join('content_relations AS children_of_relation', function ($join) use ($relation) {
@@ -244,6 +245,7 @@ trait RelationScopes
 
     public function scopeChildOfType($query, $parent, $type, $key)
     {
+        $query->selectContext = 'r';
         return $query
             ->select('r.id', 'r.created_at', 'r.updated_at', 'r.status', 'r.revision', 'r.language', 'r.title', 'r.key')
             ->join('content_relations AS child_of_type', function ($join) {
@@ -296,6 +298,7 @@ trait RelationScopes
 
     public function scopeOfContentType($query, $key)
     {
+        $query->selectContext = 'contents';
         return $query
             ->select('contents.id', 'contents.created_at', 'contents.updated_at', 'contents.status', 'contents.revision', 'contents.language', 'contents.title', 'contents.key', 'contents.content')
             ->leftJoin('content_relations AS relations', 'contents.id', '=', 'relations.content_id')
