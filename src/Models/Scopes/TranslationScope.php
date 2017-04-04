@@ -34,8 +34,6 @@ class TranslationScope implements Scope
                     IFNULL(${prefix}language.content, $prefix$context.content) as content
                 ")
             )
-            // ->select($context . '.id', $context . '.key', $context . '.status', $context . '.revision', 'language.language', 'language.title', 'language.content')
-            // ->leftJoin('content_relations AS languages', 'contents.id', '=', 'languages.content_id')
             ->leftJoin('content_relations AS languages', function ($join) use ($context) {
                 $join->on($context . '.id', '=', 'languages.content_id')
                      ->where('languages.relation_type_id', 5);

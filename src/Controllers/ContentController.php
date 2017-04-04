@@ -63,7 +63,7 @@ class ContentController extends Controller
      *
      * @var boolean
      */
-    protected $redirects = true;
+    public $redirects = true;
 
     /**
      * List of names that the class needs to use
@@ -144,7 +144,7 @@ class ContentController extends Controller
      */
     protected function loadViewsFrom($path, $namespace)
     {
-        if (is_dir($appPath = app()->resourcePath().'/views/vendor/'.$namespace)) {
+        if(is_dir($appPath = app()->resourcePath().'/views/vendor/'.$namespace)) {
             app()['view']->addNamespace($namespace, $appPath);
         }
 
@@ -212,6 +212,7 @@ class ContentController extends Controller
         // $content = $model->with($model::$eager)->paginate(10);
 
         if (!$view = $this->view('index')) {
+            return 'Content view should be used.';
             return $model->with($model::$eager)->get();
         }
 

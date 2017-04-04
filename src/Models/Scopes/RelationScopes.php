@@ -286,16 +286,6 @@ trait RelationScopes
         return $query->select( (explode('.', $query->getQuery()->columns[0])[0] ?: 'contents')  .'.*');
     }
 
-    // public function scopeChildrenOfWithId($query, $key, $depth = 1)
-    // {
-    //     return $query
-    //         ->select('r.id', 'r.created_at', 'r.updated_at', 'r.status', 'r.revision', 'r.language', 'r.title', 'r.key')
-    //         ->leftJoin('content_relations AS relations', 'contents.id', '=', 'relations.relation_id')
-    //         ->leftJoin('contents AS r', 'r.id', '=', 'relations.content_id')
-    //         ->where('relations.relation_type_id', 4)
-    //         ->where('contents.id', );
-    // }
-
     public function scopeOfContentType($query, $key)
     {
         $query->selectContext = 'contents';

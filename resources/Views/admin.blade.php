@@ -125,10 +125,6 @@
     <script src="/js/all.js"></script>
     <!-- <script src="http://192.168.2.25:1337/pretzel.js"></script> -->
 
-    <script>
-
-    </script>
-
     @yield('scripts')
 
     <script src="/js/global.js"></script>
