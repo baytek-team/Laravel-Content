@@ -134,6 +134,17 @@ class ContentController extends Controller
     }
 
     /**
+     * Set the controllers default model
+     * @param Mixed $model model to return
+     */
+    public function setmodel($model)
+    {
+        $this->model = $model;
+
+        return $this->model;
+    }
+
+    /**
      * Register a view file namespace.
      *
      * Illuminate\Support\ServiceProvider
@@ -255,11 +266,12 @@ class ContentController extends Controller
         $request->merge(['language' => \App::getLocale()]);
 
         $content = new $this->model($request->all());
-
         $content->save();
 
         $this->saveMetaData($content, $request);
         $this->saveRelationships($content, $request);
+
+
 
         foreach ($content->relationships as $contentType => $type) {
             // $typeID = (is_object($t) && ($t instanceof Closure)) ? $t($request) : $t;
