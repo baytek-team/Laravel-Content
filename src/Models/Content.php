@@ -145,12 +145,14 @@ class Content extends Model implements StatusInterface
             $metadata->first()->save();
         }
         else {
-            (new ContentMeta([
+            $meta = (new ContentMeta([
                 'content_id' => $this->id,
                 'key' => $key,
                 'language' => \App::getLocale(),
                 'value' => $value,
-            ]))->save();
+            ]));
+            $meta->save();
+            $this->meta()->save($meta);
         }
     }
 }
