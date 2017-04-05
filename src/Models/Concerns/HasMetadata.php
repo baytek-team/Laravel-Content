@@ -24,10 +24,14 @@ trait HasMetadata
      *
      * @return Illuminate\Database\Eloquent\Collection
      */
-    public function metadata()
+    public function metadata($key = null)
     {
         if(empty($this->customCache) || !array_key_exists('metadata', $this->customCache)) {
             $this->customCache = $this->populateMetadata();
+        }
+
+        if(!is_null($key)) {
+            return $this->customCache['metadata'][$key];
         }
 
         return collect($this->customCache['metadata']);
