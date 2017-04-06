@@ -6,11 +6,13 @@ use Baytek\Laravel\Content\Models\Scopes\TranslationScope;
 use Baytek\LaravelStatusBit\Statusable;
 use Baytek\LaravelStatusBit\StatusInterface;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Content extends Model implements StatusInterface
 {
     use Concerns\HasMetadata,
         Scopes\RelationScopes,
+        SoftDeletes,
         Statusable;
 
     // Defining the table we want to use for all content
