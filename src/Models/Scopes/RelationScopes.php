@@ -286,6 +286,19 @@ trait RelationScopes
         return $query->select( (explode('.', $query->getQuery()->columns[0])[0] ?: 'contents')  .'.*');
     }
 
+    /**
+     * Orders the query by the specified meta key value.
+     */
+    public function scopeOrderByMeta($query, $key, $direction = 'asc')
+    {
+        return $query
+            ->join('content_meta AS metadata_order', function($join) use ($key) {
+                $join->on('contents.id', '=', 'metadata_order.content_id')
+                    ->where('metadata_order.key', $key);
+            })
+            ->orderBy('metadata_order.value', $direction);
+    }
+
     public function scopeOfContentType($query, $key)
     {
         $query->selectContext = 'contents';
