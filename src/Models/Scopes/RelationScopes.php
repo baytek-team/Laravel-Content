@@ -21,7 +21,7 @@ trait RelationScopes
             $query->where('contents.key', $value);
         }
         else if(is_object($value) && $value instanceof Collection) {
-            $query->whereIn('contents.key', $value->pluck('key'));
+            $query->whereIn('contents.id', $value->pluck('id'));
         }
         else if(is_object($value) && $value instanceof Model) {
             $query->where('contents.key', $value->key);
@@ -234,7 +234,7 @@ trait RelationScopes
                 $query->where('contents.key', $key);
             }
             else if(is_object($key) && $key instanceof Collection) {
-                $query->whereIn('contents.key', $key->pluck('key'));
+                $query->whereIn('contents.id', $key->pluck('id'));
             }
             else if(is_object($key) && $key instanceof Model) {
                 $query->where('contents.key', $key->key);
