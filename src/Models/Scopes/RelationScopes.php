@@ -9,6 +9,27 @@ use DB;
 
 trait RelationScopes
 {
+
+    public function getContent($value)
+    {
+        $query = parent::withoutGlobalScopes();
+
+        if(is_numeric($value)) {
+            $query->find($value);
+        }
+        else if(is_string($value)) {
+            $query->where('contents.key', $value);
+        }
+        else if(is_object($value) && $value instanceof Collection) {
+            $query->whereIn('contents.key', $value->pluck('key'));
+        }
+        else if(is_object($value) && $value instanceof Model) {
+            $query->where('contents.key', $value->key);
+        }
+
+        return $query;
+    }
+
     public function getContentByKey($type)
     {
         return parent::withoutGlobalScopes()->where('key', $type)->firstOrFail();
