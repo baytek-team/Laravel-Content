@@ -243,6 +243,40 @@ trait RelationScopes
         return $query;
     }
 
+    public function scopeChildenOfTypeWhereMetadata($query, $key, $type, $metakey, $metavalue = '')
+    {
+        $query->selectContext = 'r';
+        $query
+            ->select('r.id', 'r.created_at', 'r.updated_at', 'r.status', 'r.revision', 'r.language', 'r.title', 'r.key')
+            ->join('content_relations AS children_of_type', function ($join) {
+                $join->on('contents.id', '=', 'children_of_type.relation_id')
+                     ->where('children_of_type.relation_type_id', $this->getContentIdByKey('parent-id'));
+            })
+            ->join('contents AS r', 'r.id', '=', 'children_of_type.content_id')
+            ->join('content_relations AS relation_type', function ($join) use ($type) {
+                $join->on('relation_type.content_id', '=', 'children_of_type.content_id')
+                     ->where('relation_type.relation_type_id', $this->getContentIdByKey('content-type'))
+                     ->where('relation_type.relation_id', $this->getContentIdByKey($type));
+            })
+            ->join('content_meta AS metadata', function($join) use ($metakey, $metavalue) {
+                $join->on('r.id', '=', 'metadata.content_id')
+                    ->where('metadata.key', $metakey)
+                    ->where('metadata.value', $metavalue);
+            });
+
+            if(is_string($key)) {
+                $query->where('contents.key', $key);
+            }
+            else if(is_object($key) && $key instanceof Collection) {
+                $query->whereIn('contents.id', $key->pluck('id'));
+            }
+            else if(is_object($key) && $key instanceof Model) {
+                $query->where('contents.key', $key->key);
+            }
+
+        return $query;
+    }
+
 
     // select content.* from pretzel_contents c
 
