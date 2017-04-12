@@ -243,7 +243,7 @@ trait RelationScopes
         return $query;
     }
 
-    public function scopeChildenOfTypeWhereMetadata($query, $key, $type, $metakey, $metavalue = '')
+    public function scopeChildenOfTypeWhereMetadata($query, $key, $type, $metakey, $metavalue)
     {
         $query->selectContext = 'r';
         $query
