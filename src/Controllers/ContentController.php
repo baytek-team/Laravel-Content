@@ -14,6 +14,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 
+use Auth;
 use DB;
 use ReflectionClass;
 use Route;
@@ -221,15 +222,14 @@ class ContentController extends Controller
         $this->authorize('view', $this->model);
 
         $model = $this->instance;
-        // $content = $model->with($model::$eager)->paginate(10);
 
         if (!$view = $this->view('index')) {
             return 'Content view should be used.';
-            return $model->with($model::$eager)->get();
+            // return $model->with($model::$eager)->get();
         }
 
         return View::make($view, $this->params([
-            // $this->names['plural'] => $content
+            $this->names['plural'] => $model->with($model::$eager)->paginate(20)
         ], $this->viewData[__FUNCTION__]));
     }
 
@@ -269,10 +269,10 @@ class ContentController extends Controller
         $content = new $this->model($request->all());
         $content->save();
 
+        $content->saveMetadata('author_id', Auth::user()->id);
+
         $this->saveMetaData($content, $request);
         $this->saveRelationships($content, $request);
-
-
 
         foreach ($content->relationships as $contentType => $type) {
             // $typeID = (is_object($t) && ($t instanceof Closure)) ? $t($request) : $t;
@@ -298,13 +298,23 @@ class ContentController extends Controller
      * @param  int  $contentID
      * @return \Illuminate\Http\Response
      */
-    public function show($contentID)
+    public function show($id)
     {
+        if(is_null($id)) {
+            abort(404);
+        }
+
         $model = $this->instance;
         $view = $this->view('show');
 
         // Eager load the subset models, meta data and relationships
-        $content = $this->bound($contentID)->load($model::$eager);
+        $content = $this->bound($id);
+
+        if(is_null($content)) {
+            abort(404);
+        }
+
+        $content->load($model::$eager);
 
         $this->authorize('view', $content);
 

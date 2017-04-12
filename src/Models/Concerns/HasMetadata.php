@@ -30,7 +30,15 @@ trait HasMetadata
             $this->customCache = $this->populateMetadata();
         }
 
+        if(!array_key_exists('metadata', $this->customCache)) {
+            return;
+        }
+
         if(!is_null($key)) {
+            if(!array_key_exists($key, $this->customCache['metadata'])) {
+                return;
+            }
+
             return $this->customCache['metadata'][$key];
         }
 

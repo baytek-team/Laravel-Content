@@ -38,11 +38,9 @@ abstract class Seeder extends IlluminateSeeder
 
     }
 
-    protected function seedMeta($content, $meta)
+    protected function seedMeta($content, $meta = [])
     {
-        if (empty($meta)) {
-            return false;
-        }
+        $meta['author_id'] = 1;
 
         foreach ($meta as $key => $value) {
             $metaRecord = (new ContentMeta(['language' => \App::getLocale(), 'key' => $key, 'value' => $value]));
