@@ -40,6 +40,10 @@ abstract class Seeder extends IlluminateSeeder
 
     protected function seedMeta($content, $meta = [])
     {
+        if(is_null($meta)) {
+            $meta = [];
+        }
+
         if(!array_key_exists('author_id', $meta)) {
             $meta['author_id'] = 1;
         }
