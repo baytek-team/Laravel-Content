@@ -54,7 +54,7 @@ class GeneralPolicy
      */
     public function update(User $user, $content)
     {
-        return (!is_null($content) && $content->load('meta')->metadata('author_id') == $user->id) || $user->can('Update '.title_case($this->contentType));
+        return $content->load('meta')->metadata('author_id') == $user->id || $user->can('Update '.title_case($this->contentType));
     }
 
     /**
@@ -66,6 +66,6 @@ class GeneralPolicy
      */
     public function delete(User $user, $content)
     {
-        return (!is_null($content) && $content->load('meta')->metadata('author_id') == $user->id) || $user->can('Delete '.title_case($this->contentType));
+        return $content->load('meta')->metadata('author_id') == $user->id || $user->can('Delete '.title_case($this->contentType));
     }
 }

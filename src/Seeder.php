@@ -40,7 +40,9 @@ abstract class Seeder extends IlluminateSeeder
 
     protected function seedMeta($content, $meta = [])
     {
-        $meta['author_id'] = 1;
+        if(!array_key_exists('author_id', $meta)) {
+            $meta['author_id'] = 1;
+        }
 
         foreach ($meta as $key => $value) {
             $metaRecord = (new ContentMeta(['language' => \App::getLocale(), 'key' => $key, 'value' => $value]));
