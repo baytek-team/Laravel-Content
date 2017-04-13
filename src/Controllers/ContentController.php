@@ -14,6 +14,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 
+use App;
 use Auth;
 use DB;
 use ReflectionClass;
@@ -264,7 +265,7 @@ class ContentController extends Controller
     {
         $this->authorize('create', $this->model);
 
-        $request->merge(['language' => \App::getLocale()]);
+        $request->merge(['language' => App::getLocale()]);
 
         $content = new $this->model($request->all());
         $content->save();
@@ -367,12 +368,12 @@ class ContentController extends Controller
 
         DB::table($this->historyTable)->insert([
             'content_id' => $content->id,
-            'user_id' => \Auth::id(),
+            'user_id' => Auth::id(),
             'content' => serialize($content->load(Content::$eager)),
         ]);
 
         $request->merge([
-            'language' => \App::getLocale(),
+            'language' => App::getLocale(),
             'revision' => (int)$content->revision + 1
         ]);
 
@@ -423,26 +424,8 @@ class ContentController extends Controller
             $metaRecord->save();
         }
 
-        // foreach($orignal->relations as $relation) {
-        //     (new ContentRelation([
-        //         'content_id'  => $content->id,
-        //         'relation_id' => $relation->relation_id,
-        //         'relation_type_id' => $relation->relation_type_id,
-        //     ]))->save();
-        // }
-
         $content->saveRelation('translations', $orignal->id);
         $orignal->saveRelation('translations', $content->id);
-
-
-        // foreach ($content->relationships as $contentType => $type) {
-        //     // $typeID = (is_object($t) && ($t instanceof Closure)) ? $t($request) : $t;
-        //     // Lookup the type id
-        //     $typeID = $content::withoutGlobalScopes()->where('contents.key', $type)->first()->id;
-
-        //     // Save the actual relationship ID
-        //     $content->saveRelation($contentType, $typeID);
-        // }
 
         if ($this->redirects) {
             return redirect(route(($this->redirectsKey ?: $this->names['singular']).'.index', $content));
@@ -499,7 +482,8 @@ class ContentController extends Controller
                         ]);
 
                     unset($metaIds[array_search($id, $metaIds)]);
-                } else {
+                }
+                else {
                     $metaRecord = (new ContentMeta([
                         'key' => $key,
                         'value' => $request->meta_value[$id]
@@ -538,7 +522,8 @@ class ContentController extends Controller
                     ]);
 
                 unset($resourceIds[array_search($id, $resourceIds)]);
-            } else {
+            }
+            else {
                 if (!empty($content_id) && !empty($request->relation_id[$id]) && !empty($request->relation_type_id[$id])) {
                     (new ContentRelation([
                         'content_id'  => $content->id,

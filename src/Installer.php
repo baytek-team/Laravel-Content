@@ -39,12 +39,13 @@ abstract class Installer implements InstallerContract
             $this->line('Checking if permission seeding is required: ');
             $this->info($installer->protect() ? 'Yes! Generating Permissions.' : 'No! Skipping.');
 
-            if($installer->shouldPublish()) {
-                if($this->confirm('Would your like to publish and/or overwrite publishable assets?')) {
-                    $this->info('Publishing Assets.');
-                    $installer->publish();
-                }
-            }
+            // Stop asking if we want to publish, this should be up to the developer.
+            // if($installer->shouldPublish()) {
+            //     if($this->confirm('Would your like to publish and/or overwrite publishable assets?')) {
+            //         $this->info('Publishing Assets.');
+            //         $installer->publish();
+            //     }
+            // }
 
             $this->line('');
             $this->info('Installation Complete.');
