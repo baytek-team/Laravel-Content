@@ -22,7 +22,8 @@ trait HasMetadata
     /**
      * Get and cache metadata
      *
-     * @return Illuminate\Database\Eloquent\Collection
+     * @param  array|null $key Optional key used to return a specific metadata
+     * @return Illuminate\Database\Eloquent\Collection|null
      */
     public function metadata($key = null)
     {

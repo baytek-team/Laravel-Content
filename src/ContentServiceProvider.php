@@ -17,6 +17,20 @@ use DB;
 
 class ContentServiceProvider extends AuthServiceProvider
 {
+    /**
+     * List of artisan commands to be added to command kernel
+     * @var array
+     */
+    protected $commands = [
+        Commands\MakeContentSeeder::class,
+        Commands\RandomContentSeeder::class,
+        Commands\CacheContent::class,
+    ];
+
+    /**
+     * List of policies to be registered to the AuthServiceProvider
+     * @var array
+     */
     protected $policies = [
         Content::class => ContentPolicy::class,
     ];
@@ -68,71 +82,7 @@ class ContentServiceProvider extends AuthServiceProvider
     {
         (new ContentInstaller)->installCommand();
         // $this->bootArtisanInstallCommand();
-        $this->bootArtisanSeedCommand();
     }
-
-    public function bootArtisanSeedCommand()
-    {
-        Artisan::command('content:seed', function () {
-            $this->info("Seeding Content");
-
-            if(app()->environment() === 'production') {
-                $this->error("You are in a production environment, aborting.");
-                exit();
-            }
-
-            $faker = new Generator;
-            $factory = app(Factory::class);
-
-            $factory->define(Content::class, function (Generator $faker) {
-                static $password;
-
-                $title = $faker->sentence(rand(2, 10));
-
-                return [
-                    'key' => str_slug($title),
-                    'title' => $title,
-                    'content' => $faker->paragraph(rand(2, 10)),
-                ];
-            });
-
-            factory(Content::class, 1000)->create()->each(function ($content, $index) {
-                // Save item as webpage
-                (new ContentRelation([
-                    'content_id'  => $content->id,
-                    'relation_id' => 4,
-                    'relation_type_id' => 2,
-                ]))->save();
-
-                // Pick a random piece of content as parent id
-                (new ContentRelation([
-                    'content_id'  => $content->id,
-                    'relation_id' => Content::ofContentType('webpage')->inRandomOrder()->limit(1)->first()->id,
-                    'relation_type_id' => 3,
-                ]))->save();
-            });
-
-            // $factory->define(Baytek\Laravel\Content\Models\ContentMeta::class, function (Faker\Generator $faker) {
-            //     static $password;
-
-            //     $title = $faker->sentence();
-
-            //     return [
-            //         'key' => str_slug($title),
-            //         'title' => $title,
-            //         'content' => $faker->paragraphs(rand(2, 10)),
-            //     ];
-            // });
-
-            // Here we need to check to see if the base content was already seeded.
-
-            $this->info("Seeding Base Content");
-            // (new \Baytek\Laravel\Content\Seeds\RandomSeeder)->run();
-
-
-        })->describe('Seed tables with random data');
-    }
-
 
     /**
      * Register the application services.
@@ -141,6 +91,9 @@ class ContentServiceProvider extends AuthServiceProvider
      */
     public function register()
     {
+        // Register commands
+        $this->commands($this->commands);
+
         $this->app->register(\Baytek\Laravel\Settings\SettingsServiceProvider::class);
         $this->app->register(\Baytek\LaravelStatusBit\StatusBitServiceProvider::class);
         $this->app->register(\Baytek\Laravel\Users\ServiceProvider::class);

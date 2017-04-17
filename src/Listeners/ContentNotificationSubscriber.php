@@ -3,8 +3,8 @@
 namespace Baytek\Laravel\Content\Listeners;
 
 use Baytek\Laravel\Content\Events\ContentEvent;
-use Baytek\Laravel\Content\Listeners\ContentNotificationSubscriber;
 
+use DB;
 use Cache;
 
 class ContentNotificationSubscriber
@@ -17,13 +17,14 @@ class ContentNotificationSubscriber
         // dump('Content Event Fires');
     }
 
-
     /**
-     * Handle user login events.
+     * Cache the content id value pairs for quicker lookups
+     * @param  Baytek\Laravel\Content\Events\ContentEvent  $event Content event class
+     * @return void
      */
     public function cache($event)
     {
-        $dates = \DB::table('contents')->select('id', 'updated_at')->get();
+        $dates = DB::table('contents')->select('id', 'updated_at')->get();
 
         $result = collect([]);
 
@@ -46,12 +47,12 @@ class ContentNotificationSubscriber
     {
         $events->listen(
             ContentEvent::class,
-            ContentNotificationSubscriber::class.'@create'
+            static::class.'@create'
         );
 
         $events->listen(
             ContentEvent::class,
-            ContentNotificationSubscriber::class.'@cache'
+            static::class.'@cache'
         );
     }
 }

@@ -13,6 +13,11 @@ use DB;
 
 abstract class Seeder extends IlluminateSeeder
 {
+    /**
+     * Method used to seed database structure array.
+     * @param  Array $databaseStructure Structure of the database
+     * @return Null
+     */
     protected function seedStructure($databaseStructure)
     {
         $relations = [];
@@ -36,8 +41,15 @@ abstract class Seeder extends IlluminateSeeder
             $this->seedRelations($id, $relation);
         }
 
+        return;
     }
 
+    /**
+     * Seed the metadata table with structured data array
+     * @param  Content $content Content Model
+     * @param  Array  $meta    Keyed array of metadata key value pairs
+     * @return Null
+     */
     protected function seedMeta($content, $meta = [])
     {
         if(is_null($meta)) {
@@ -55,8 +67,16 @@ abstract class Seeder extends IlluminateSeeder
 
             $metaRecord->save();
         }
+
+        return;
     }
 
+    /**
+     * Seed the content relations of a content
+     * @param  Int $content_id Content ID that we wish to save relations for
+     * @param  Array $relations  Relations array containing the relation ID and relation type ID
+     * @return Null
+     */
     protected function seedRelations($content_id, $relations)
     {
         // Loop through the sets of relations, first index is the relation type, the second index is the relation value
@@ -75,5 +95,7 @@ abstract class Seeder extends IlluminateSeeder
                 'relation_id' => $relation_record->id,
             ]))->save();
         });
+
+        return;
     }
 }
