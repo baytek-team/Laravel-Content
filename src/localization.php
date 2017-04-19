@@ -13,7 +13,7 @@ if (! function_exists('___')) {
     {
         $result = app('translator')->getFromJson($key, $replace, $locale);
 
-        if($key == $result) {
+        if($key == $result && app()->getLocale() != 'en') {
             if(!\DB::table('translations')->where('content', $key)->count()) {
                 \DB::table('translations')->insert([
                     'content' => $key,

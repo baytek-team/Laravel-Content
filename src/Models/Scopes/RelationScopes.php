@@ -6,10 +6,15 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 use DB;
+use Cache;
 
 trait RelationScopes
 {
-
+    /**
+     * [getContent description]
+     * @param  [type] $value [description]
+     * @return [type]        [description]
+     */
     public function getContent($value)
     {
         $query = parent::withoutGlobalScopes();
@@ -30,6 +35,37 @@ trait RelationScopes
         return $query;
     }
 
+    /**
+     *
+     * @return [type] [description]
+     */
+    public function relatedBy($type)
+    {
+        $contentId = $this->id;
+        $relations = Cache::get('content.cache.relations', []);
+        $parentTypeId = $this->getContentIdByKey($type);
+
+        return $relations->filter(function ($relation) use ($contentId, $parentTypeId) {
+            return $relation->content_id == $contentId && $relation->relation_type_id == $parentTypeId;
+        });
+    }
+
+    /**
+     *
+     * @return [type] [description]
+     */
+    public function parent()
+    {
+        $result = $this->relatedBy('parent-id');
+
+        if($result->isEmpty()) {
+            return null;
+        }
+
+        return $result->pluck('relation_id')->first();
+    }
+
+
     public function getContentByKey($type)
     {
         return parent::withoutGlobalScopes()->where('key', $type)->firstOrFail();
@@ -37,12 +73,35 @@ trait RelationScopes
 
     public function getContentIdByKey($type)
     {
+        if($cache = Cache::get('content.cache.keys')) {
+            if($cached = $cache->flip()->get($type, false)) {
+                return $cached;
+            }
+        }
+
         return $this->getContentByKey($type)->id;
     }
 
     public function getParents()
     {
         return $this->getParentsOf($this->id);
+    }
+
+    // Alias for getContentIdByKey
+    public function getIdWithKey($key)
+    {
+        return $this->getContentIdByKey($key);
+    }
+
+    //
+    public function getKeyWithId($id)
+    {
+        if($cache = Cache::get('content.cache.keys')) {
+            if($cached = $cache->get($id, false)) {
+                return $cached;
+            }
+        }
+        return false;
     }
 
 
@@ -138,11 +197,12 @@ trait RelationScopes
     // JOIN pretzel_contents T2
     // ON T1._id = T2.id
     // ORDER BY T1.lvl DESC;
+
     public function getParentsOf($id)
     {
         $prefix = env('DB_PREFIX');
 
-        return DB::select("SELECT T2.id, T2.created_at, T2.updated_at, T2.status, T2.revision, T2.language, T2.key, T2.title
+        $result = DB::select("SELECT T2.id, T2.created_at, T2.updated_at, T2.status, T2.revision, T2.language, T2.key, T2.title
             FROM (
                 SELECT
                     @r AS _id,
@@ -162,6 +222,8 @@ trait RelationScopes
             ON T1._id = T2.id
             ORDER BY T1.lvl DESC;
         ", [$id]);
+
+        return $result;
     }
 
     public function scopeWhereMetadata($query, $key, $value)

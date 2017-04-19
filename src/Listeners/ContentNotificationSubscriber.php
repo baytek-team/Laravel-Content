@@ -24,18 +24,22 @@ class ContentNotificationSubscriber
      */
     public function cache($event)
     {
-        $dates = DB::table('contents')->select('id', 'updated_at')->get();
+        $dates = DB::table('contents')->select('id', 'key', 'updated_at')->get();
+        $relations = DB::table('content_relations')->get();
+        $timestamps = collect([]);
+        $keys = collect([]);
 
-        $result = collect([]);
-
-        $dates->each(function(&$item) use (&$result) {
-            $result->put($item->id, $item->updated_at);
+        $dates->each(function(&$item) use (&$timestamps, &$keys) {
+            $timestamps->put($item->id, $item->updated_at);
+            $keys->put($item->id, $item->key);
         });
 
-        $json = $result->toJson();
+        $json = $timestamps->toJson();
 
         Cache::forever('content.cache.hash', md5($json));
         Cache::forever('content.cache.json', $json);
+        Cache::forever('content.cache.keys', $keys);
+        Cache::forever('content.cache.relations', $relations);
     }
 
     /**

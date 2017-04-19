@@ -96,18 +96,20 @@ class Content extends Model implements StatusInterface
 
     public function getRelationship($type)
     {
-        foreach($this->relations()->get() as $relation) {
-            if($relation->relation_type_id == $this->getContentByKey($type)->id) {
-                return Content::find($relation->relation_id);
-            }
-        }
+        return Content::find($this->relatedBy($type)->pluck('relation_id')->all())->first();
+
+        // foreach($this->relations()->get() as $relation) {
+        //     if($relation->relation_type_id == $this->getContentIdByKey($type)) {
+        //         return Content::find($relation->relation_id);
+        //     }
+        // }
     }
 
     public function removeRelationByType($type)
     {
         $relation = ContentRelation::where([
             'content_id' => $this->id,
-            'relation_type_id' => $this->getContentByKey($type)->id
+            'relation_type_id' => $this->getContentIdByKey($type)
         ])->delete();
     }
 
@@ -117,7 +119,7 @@ class Content extends Model implements StatusInterface
         $relation = ContentRelation::where([
             'content_id' => $this->id,
             'relation_id' => $relation_id,
-            'relation_type_id' => $this->getContentByKey($type)->id
+            'relation_type_id' => $this->getContentIdByKey($type)
         ])->get();
 
         if($relation->count()) {
@@ -129,7 +131,7 @@ class Content extends Model implements StatusInterface
             (new ContentRelation([
                 'content_id' => $this->id,
                 'relation_id' => $relation_id,
-                'relation_type_id' => $this->getContentByKey($type)->id,
+                'relation_type_id' => $this->getContentIdByKey($type),
             ]))->save();
         }
     }
