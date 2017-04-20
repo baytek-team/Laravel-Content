@@ -42,7 +42,7 @@ trait RelationScopes
     public function relatedBy($type)
     {
         $contentId = $this->id;
-        $relations = Cache::get('content.cache.relations', []);
+        $relations = Cache::get('content.cache.relations', collect([]));
         $parentTypeId = $this->getContentIdByKey($type);
 
         return $relations->filter(function ($relation) use ($contentId, $parentTypeId) {
