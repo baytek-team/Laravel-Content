@@ -94,6 +94,10 @@ class ContentServiceProvider extends AuthServiceProvider
         // Register commands
         $this->commands($this->commands);
 
+        if(config('app.debug') && class_exists(\Clockwork\Support\Laravel\ClockworkServiceProvider::class)) {
+            $this->app->register(\Clockwork\Support\Laravel\ClockworkServiceProvider::class);
+        }
+
         $this->app->register(\Baytek\Laravel\Settings\SettingsServiceProvider::class);
         $this->app->register(\Baytek\LaravelStatusBit\StatusBitServiceProvider::class);
         $this->app->register(\Baytek\Laravel\Users\ServiceProvider::class);
