@@ -7,13 +7,15 @@ use Baytek\Laravel\Content\Models\ContentRelation;
 use Baytek\Laravel\Content\Policies\ContentPolicy;
 use Baytek\Laravel\Content\Middleware\LocaleMiddleware;
 
-use Illuminate\Foundation\Support\Providers\AuthServiceProvider;
-use Illuminate\Support\Facades\Gate;
 use Faker\Generator;
 use Illuminate\Database\Eloquent\Factory;
+use Illuminate\Foundation\Support\Providers\AuthServiceProvider;
+use Illuminate\Support\Facades\Gate;
+
 use Artisan;
-use Event;
 use DB;
+use Event;
+use Validator;
 
 class ContentServiceProvider extends AuthServiceProvider
 {
@@ -74,6 +76,17 @@ class ContentServiceProvider extends AuthServiceProvider
             $router->resource('content', 'ContentController');
             $router->put('translation/{content}/translate', 'ContentController@translate')->name('translation.translate');
             $router->resource('translation', 'ContentController');
+        });
+
+        Validator::extend('unique_key', function ($attribute, $value, $parameters, $validator) {
+            $data = $validator->getData();
+            $id = isset($data['id']) ? $data['id']: null;
+            $parent_id = $data[$parameters[1]];
+            $children = Content::childrenOf($parent_id, 'id')->get()
+                ->filter(function ($item, $key) use ($id) {
+                    return $item->id != $id;
+                });
+            return !$children->pluck('key')->contains(str_slug($value));
         });
 
     }
