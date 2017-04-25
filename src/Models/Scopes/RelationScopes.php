@@ -45,9 +45,11 @@ trait RelationScopes
         $relations = Cache::get('content.cache.relations', collect([]));
         $parentTypeId = $this->getContentIdByKey($type);
 
-        return $relations->filter(function ($relation) use ($contentId, $parentTypeId) {
+        $result = $relations->filter(function ($relation) use ($contentId, $parentTypeId) {
             return $relation->content_id == $contentId && $relation->relation_type_id == $parentTypeId;
         });
+
+        return $result;
     }
 
     /**
@@ -65,6 +67,21 @@ trait RelationScopes
         return $result->pluck('relation_id')->first();
     }
 
+
+    /**
+     *
+     * @return [type] [description]
+     */
+    public function translation()
+    {
+        $result = $this->relatedBy('translations');
+
+        if($result->isEmpty()) {
+            return null;
+        }
+
+        return $result->pluck('relation_id')->first();
+    }
 
     public function getContentByKey($type)
     {
