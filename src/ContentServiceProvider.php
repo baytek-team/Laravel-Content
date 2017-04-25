@@ -27,6 +27,7 @@ class ContentServiceProvider extends AuthServiceProvider
         Commands\MakeContentSeeder::class,
         Commands\RandomContentSeeder::class,
         Commands\CacheContent::class,
+        Commands\ContentInstaller::class,
     ];
 
     /**
@@ -46,27 +47,25 @@ class ContentServiceProvider extends AuthServiceProvider
     {
         // AliasLoader::getInstance()->alias('Form', 'Collective\Html\FormFacade');
         $this->registerPolicies();
-        $this->loadViewsFrom(__DIR__.'/../resources/Views', 'Content');
+        $this->loadViewsFrom(__DIR__.'/../views', 'Content');
 
         $this->publishes([
-            __DIR__.'/../resources/Views' => resource_path('views/vendor/content'),
+            __DIR__.'/../views' => resource_path('views/vendor/content'),
         ], 'views');
 
-        $this->loadMigrationsFrom(__DIR__.'/../resources/Database/Migrations');
+        $this->loadMigrationsFrom(__DIR__.'/../database/Migrations');
         $this->publishes([
-            __DIR__.'/../resources/Database/Migrations/' => database_path('migrations')
+            __DIR__.'/../database/Migrations/' => database_path('migrations')
         ], 'migrations');
 
-        $this->publishes([
-            __DIR__.'/../resources/Database/Seeds/' => database_path('seeds')
-        ], 'seeds');
+        // $this->publishes([
+        //     __DIR__.'/../database/Seeds/' => database_path('seeds')
+        // ], 'seeds');
 
         $this->publishes([
-            __DIR__.'/../resources/Config/content.php' => config_path('content.php'),
-            __DIR__.'/../resources/Config/language.php' => config_path('language.php'),
+            __DIR__.'/../config/content.php' => config_path('content.php'),
+            __DIR__.'/../config/language.php' => config_path('language.php'),
         ], 'config');
-
-        $this->bootArtisanCommands();
 
         $router->group([
             'namespace' => '\Baytek\Laravel\Content\Controllers',
@@ -89,12 +88,6 @@ class ContentServiceProvider extends AuthServiceProvider
             return !$children->pluck('key')->contains(str_slug($value));
         });
 
-    }
-
-    public function bootArtisanCommands()
-    {
-        (new ContentInstaller)->installCommand();
-        // $this->bootArtisanInstallCommand();
     }
 
     /**

@@ -5,7 +5,8 @@ use Baytek\Laravel\Content\Seeder;
 
 class {{seederName}} extends Seeder
 {
-    protected $data = [
+    // Live Seeder
+    protected $live = [
         [
             // Key of content
             'key' => '',
@@ -22,6 +23,10 @@ class {{seederName}} extends Seeder
                 ['sample-key', 'sample-key-type'],
             ]
         ],
+    ];
+
+    // Dev Seeder
+    protected $dev = [
 
     ];
 
@@ -32,6 +37,11 @@ class {{seederName}} extends Seeder
      */
     public function run()
     {
-        $this->seedStructure($this->data);
+        $this->seedStructure($this->live);
+
+        // Seed the dev data if env not set to production
+        if(!in_array(config('app.env'), ['prod', 'production', 'live'])) {
+            $this->seedStructure($this->dev);
+        }
     }
 }

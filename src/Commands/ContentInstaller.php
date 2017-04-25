@@ -1,6 +1,5 @@
 <?php
-
-namespace Baytek\Laravel\Content;
+namespace Baytek\Laravel\Content\Commands;
 
 use Baytek\Laravel\Content\ContentServiceProvider;
 use Baytek\Laravel\Content\Models\Content;
@@ -16,7 +15,7 @@ class ContentInstaller extends Installer
     protected $provider = ContentServiceProvider::class;
     protected $model = Content::class;
     protected $seeder = ContentSeeder::class;
-    protected $migrationPath = __DIR__.'/../resources/Database/Migrations';
+    protected $migrationPath = __DIR__.'/../database/Migrations';
 
     public function beforeInstallation()
     {
