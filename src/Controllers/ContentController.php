@@ -33,7 +33,7 @@ use View;
  * Due to this commonality, it makes sense to have a super class which can handle all
  * data storage and relegate all content specific stuff to the sub classes.
  */
-abstract class ContentController extends Controller
+class ContentController extends Controller
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
