@@ -26,78 +26,153 @@
     </script>
 </head>
 <body>
-    <div class="ui inverted vertical center aligned segment">
-        <div class="ui container inverted">
-            <div class="ui large secondary inverted pointing menu">
+    <div class="full height">
+        <div class="toc">
+            <div class="ui fluid vertical inverted menu ">
                 <div class="item">
-                    <img src="http://cdn4.baytek.ca/wp-content/themes/baytek2016/images/logos/baytek-logo.svg" alt="" class="logo" scale="0">
+                    <img class="ui small image" src="/img/cop_icon_white.svg" alt="" scale="0">
                 </div>
+                <a class="item" href="/app/resources">
+                    <i class="desktop icon"></i>
+                    {{ ___('Public Application') }}
+                </a>
+                <a class="item" href="{{ route('admin.dashboard') }}">
+                    <i class="dashboard icon"></i>
+                    {{ ___('Admin Dashboard') }}
+                </a>
                 @if( Auth::user() )
-                    <a class="item">Home</a>
-                    <div class="ui dropdown item">
-                        Users <i class="dropdown icon"></i>
+                    {{-- <a class="item" href="{{ route('admin.dashboard') }}">
+                        <i class="dashboard icon"></i>
+                        Dashboard
+                    </a> --}}
+                    @can('View Member')
+                        <a class="item" href="{{ route('members.index') }}">
+                            <i class="user group icon"></i>
+                            {{ ___('Members') }}
+                        </a>
                         <div class="menu">
-                            <a class="item" href="{{ route('user.index') }}">Users</a>
-                            <a class="item" href="{{ route('role.index') }}">Roles</a>
-                            <a class="item" href="{{ route('user.role.index') }}">User Roles</a>
+                            <a class="item" href="{{ route('members.edit', \Auth::user()->id) }}">{{ ___('My Profile') }}</a>
+                            @if(Auth::user()->hasRole([\Baytek\Laravel\Users\Roles\Root::ROLE, \Baytek\Laravel\Users\Roles\Administrator::ROLE]))
+                                <a class="item" href="{{ route('members.adminindex') }}">{{ ___('Administrators') }}</a>
+                            @endif
                         </div>
-                    </div>
-                    <div class="ui dropdown item">
-                        Content
-                        <i class="dropdown icon"></i>
+                        <div class="ui hidden divider"></div>
+                    @endcan
+
+                    @cannot('View Member')
+                        <a class="item" href="{{ route('members.edit', \Auth::user()->id) }}">
+                            <i class="user group icon"></i>
+                            {{ ___('My Profile') }}
+                        </a>
+                    @endcannot
+
+
+
+                    @if(Auth::user()->hasRole( \Baytek\Laravel\Users\Roles\Root::ROLE ))
+
+                        {{-- <a class="item" href="{{ route('webpage.index') }}">
+                            <i class="world icon"></i>
+                            Webpages
+                        </a> --}}
+                        <a class="item" href="{{ route('settings.index') }}">
+                            <i class="settings icon"></i>
+                            {{ ___('Settings') }}
+                        </a>
                         <div class="menu">
-                            <a href="{{ route('content.index') }}" class="item">Contents</a>
-                            <a href="{{ route('webpage.index') }}" class="item">Webpages</a>
-                            <a href="{{ route('menu.index') }}" class="item">Menus</a>
-                            <div class="item">Taxonomy</div>
+                            <a class="item" href="{{ route('menu.index') }}">{{ ___('Manage Menus') }}</a>
+                            <a class="item" href="{{ route('settings.index') }}">{{ ___('General Settings') }}</a>
                         </div>
-                    </div>
-                    <a class="item" href="{{ route('user.index') }}">Profile</a>
-                    <a class="item" href="{{ route('settings.index') }}">Settings</a>
+                        <div class="ui hidden divider"></div>
+                        <div class="item">
+                            <i class="configure icon"></i>
+                            {{ ___('Tools') }}
+                        </div>
+                        <div class="menu">
+                            @can('create', \Baytek\Laravel\Content\Models\Content::class)
+                                <a class="item" href="{{ route('content.index') }}">{{ ___('Contents List') }}</a>
+                            @endcan
+                            @if(Auth::user()->hasRole( \Baytek\Laravel\Users\Roles\Root::ROLE ))
+                                <a class="item" href="{{ route('user.index') }}">{{ ___('All Users') }}</a>
+                            @endif
+                            <a class="item" href="{{ route('role.index') }}">{{ ___('System Roles') }}</a>
+                            <a class="item" href="{{ route('permission.index') }}">{{ ___('System Permissions') }}</a>
+                            <a class="item" href="{{ route('user.role.index') }}">{{ ___('Permissions Matrix') }}</a>
+                        </div>
+                        <div class="ui hidden divider"></div>
+                    @endif
+                    <a class="item" href="/{{ strtolower( ___('Fr') ) }}">
+                        <i class="random icon"></i>
+                        {{ ___('Switch Language') }}
+                    </a>
+
+                    @link(___('Logout'), [
+                        'method' => 'post',
+                        'location' => 'logout',
+                        'type' => 'route',
+                        'class' => 'item action',
+                        'prepend' => '<i class="sign out icon"></i>',
+                    ])
                 @else
-                    <a class="item" href="{{ route('login') }}">Login</a>
-                    <a class="item" href="{{ route('register') }}">Register</a>
+                    <a class="item" href="{{ route('login') }}">{{ ___('Login') }}</a>
+                    <a class="item" href="{{ route('register') }}">{{ ___('Register') }}</a>
                 @endif
             </div>
         </div>
-    </div>
-
-    <div class="ui hidden divider"></div>
-    <div class="ui hidden divider"></div>
-
-    <div id="app" class="ui container">
-        <div class="ui grid">
-            <div class="two column row">
-                <div class="left floated column">
-                    @yield('page.head.header')
-                </div>
-                <div class="">
-                    @yield('page.head.menu')
-                </div>
-            </div>
-        </div>
-        <div class="ui hidden divider"></div>
-        <div class="ui hidden divider"></div>
-
-        <!-- <div class=" ui container" @if (!isset($notifications) || $notifications->count() == 0) style="display: none" @endif>
-            <div class="ui hidden divider"></div>
-            <div class="row">
-                <div class="ui icon message">
-                    <i class="exclamation circle icon"></i>
-                    <div class="content">
-                        <div class="header">Notifications</div>
-                        @if (isset($notifications) && $notifications->count() > 0)
-                            @foreach ($notifications as $notification)
-                                <li>{!! $notification->data['message'] !!}</li>
-                            @endforeach
-                        @endif
+        <div class="content">
+            <div class="ui container">
+                <div class="ui hidden divider"></div>
+                <div class="ui grid">
+                    <div class="two column row">
+                        <div class="left floated column">
+                            @yield('page.head.header')
+                        </div>
+                        <div class="">
+                            @yield('page.head.menu')
+                        </div>
                     </div>
                 </div>
+                <div class="ui hidden divider"></div>
+                <div class="ui hidden divider"></div>
+
+                @if (count($errors) > 0)
+                <div class="ui container">
+                    <div class="ui hidden divider"></div>
+                    <div class="row">
+                        <div class="ui icon message error">
+                            <i class="exclamation circle icon"></i>
+                            <div class="content">
+                                <div class="header">Application Level Error</div>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endif
+
+                <div class=" ui container" @if (!isset($notifications) || $notifications->count() == 0) style="display: none" @endif>
+                    <div class="ui hidden divider"></div>
+                    <div class="row">
+                        <div class="ui icon message">
+                            <i class="exclamation circle icon"></i>
+                            <div class="content">
+                                <div class="header">Notifications</div>
+                                @if (isset($notifications) && $notifications->count() > 0)
+                                    @foreach ($notifications as $notification)
+                                        <li>{!! $notification->data['message'] !!}</li>
+                                    @endforeach
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ui hidden divider"></div>
+                    <div class="ui hidden divider"></div>
+                </div>
+                @yield('content')
+                <div class="ui hidden divider"></div>
             </div>
-            <div class="ui hidden divider"></div>
-            <div class="ui hidden divider"></div>
-        </div> -->
-        @yield('content')
+        </div>
     </div>
 
     <div class="ui basic force modal">
@@ -120,14 +195,18 @@
         </div>
     </div>
 
+    <script>
+        window.backend = true;
+    </script>
+
     <!-- Scripts -->
     {{-- <script src="//{{ Request::getHost() }}:6001/socket.io/socket.io.js"></script> --}}
     <script src="/js/all.js"></script>
-    <!-- <script src="http://192.168.2.25:1337/pretzel.js"></script> -->
+    {{-- <script src="/js/dropzone.js"></script> --}}
+    {{-- <script src="http://192.168.2.25:1337/pretzel.js"></script> --}}
+    {{-- <script src="/js/dropzone.js"></script> --}}
 
     @yield('scripts')
-
-    <script src="/js/global.js"></script>
 
     @if(isset($validation)) {!! $validation !!} @endif
 
