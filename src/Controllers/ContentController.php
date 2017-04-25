@@ -33,7 +33,7 @@ use View;
  * Due to this commonality, it makes sense to have a super class which can handle all
  * data storage and relegate all content specific stuff to the sub classes.
  */
-class ContentController extends Controller
+abstract class ContentController extends Controller
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
@@ -218,7 +218,7 @@ class ContentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function contentIndex()
     {
         $this->authorize('view', $this->model);
 
@@ -239,7 +239,7 @@ class ContentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function contentCreate()
     {
         $this->authorize('create', $this->model);
 
@@ -261,7 +261,7 @@ class ContentController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function contentStore(Request $request)
     {
         $this->authorize('create', $this->model);
 
@@ -299,7 +299,7 @@ class ContentController extends Controller
      * @param  int  $contentID
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function contentShow($id)
     {
         if(is_null($id)) {
             abort(404);
@@ -335,7 +335,7 @@ class ContentController extends Controller
      * @param  int  $contentID
      * @return \Illuminate\Http\Response
      */
-    public function edit($contentID)
+    public function contentEdit($contentID)
     {
         $content = $this->bound($contentID);
 
@@ -360,7 +360,7 @@ class ContentController extends Controller
      * @param  int  $contentID
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $contentID)
+    public function contentUpdate(Request $request, $contentID)
     {
         $content = $this->bound($contentID);
 
@@ -440,7 +440,7 @@ class ContentController extends Controller
      * @param  int  $contentID
      * @return \Illuminate\Http\Response
      */
-    public function destroy($contentID)
+    public function contentDestroy($contentID)
     {
         $content = $this->bound($contentID);
 
