@@ -231,7 +231,7 @@ abstract class ContentController extends Controller
 
         return View::make($view, $this->params([
             $this->names['plural'] => $model->with($model::$eager)->paginate(20)
-        ], $this->viewData[__FUNCTION__]));
+        ], $this->viewData['index']));
     }
 
     /**
@@ -252,7 +252,7 @@ abstract class ContentController extends Controller
             $this->names['singular'] => $model,
             // Get the relationship types
             'relationTypes' => Content::childrenOf('relation-type')->get(),
-        ], $this->viewData[__FUNCTION__]));
+        ], $this->viewData['create']));
     }
 
     /**
@@ -326,7 +326,7 @@ abstract class ContentController extends Controller
         return View::make($view, $this->params([
             // return an instance of content that should have been route model binded
             $this->names['singular'] => $content
-        ], $this->viewData[__FUNCTION__]));
+        ], $this->viewData['show']));
     }
 
     /**
@@ -350,7 +350,7 @@ abstract class ContentController extends Controller
             $this->names['singular'] => $content,
             // Get the relationship types
             'relationTypes' => Content::ofRelation('content-type', 'relation-type')->get(),
-        ], $this->viewData[__FUNCTION__]));
+        ], $this->viewData['edit']));
     }
 
     /**
