@@ -19,6 +19,13 @@ abstract class Installer extends Command implements InstallerContract
     protected $signature;
 
     /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $package;
+
+    /**
      * The console command description.
      *
      * @var string
@@ -30,6 +37,8 @@ abstract class Installer extends Command implements InstallerContract
      */
     public function __construct()
     {
+        $this->package = $this->name;
+
         if(empty($this->signature)) {
             $this->signature = 'install:'.strtolower($this->name);
         }
@@ -110,10 +119,10 @@ abstract class Installer extends Command implements InstallerContract
     public function protect()
     {
         if($this->shouldProtect()) {
-            $view = Permission::create(['name' => ucwords('view '   . $this->name)]);
-            $create = Permission::create(['name' => ucwords('create ' . $this->name)]);
-            $update = Permission::create(['name' => ucwords('update ' . $this->name)]);
-            $delete = Permission::create(['name' => ucwords('delete ' . $this->name)]);
+            $view = Permission::create(['name' => ucwords('view '   . $this->package)]);
+            $create = Permission::create(['name' => ucwords('create ' . $this->package)]);
+            $update = Permission::create(['name' => ucwords('update ' . $this->package)]);
+            $delete = Permission::create(['name' => ucwords('delete ' . $this->package)]);
 
             Role::findByName('Root')->permissions()->saveMany([$view, $create, $update, $delete]);
 

@@ -74,7 +74,10 @@ class ContentServiceProvider extends AuthServiceProvider
         ], function () use ($router) {
             $router->resource('content', 'ContentController');
             $router->put('translation/{content}/translate', 'ContentController@translate')->name('translation.translate');
-            $router->resource('translation', 'ContentController');
+            $router->get('translation/create', 'ContentController@contentCreate')->name('translation.create');
+            $router->get('translation/{content}/edit', 'ContentController@contentEdit')->name('translation.edit');
+
+            // $router->resource('translation', 'ContentController');
         });
 
         Validator::extend('unique_key', function ($attribute, $value, $parameters, $validator) {
