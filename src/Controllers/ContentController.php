@@ -286,9 +286,7 @@ class ContentController extends Controller
             $content->saveRelation($contentType, $typeID);
         }
 
-        $content->callback = function($content){
-            event(new ContentEvent($content));
-        };
+        event(new ContentEvent($content));
 
         if ($this->redirects) {
             return redirect(route(($this->redirectsKey ?: $this->names['singular']).'.index', $content));
