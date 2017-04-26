@@ -39,7 +39,7 @@
 
         <div class="ui error message"></div>
         <div class="field actions">
-            <a class="ui button" href="{{ action('\Baytek\Laravel\Content\Controllers\ContentController@index') }}">{{ ___('Cancel') }}</a>
+            <a class="ui button" href="{{ action('\Baytek\Laravel\Content\Controllers\ContentController@contentIndex') }}">{{ ___('Cancel') }}</a>
             <button type="submit" class="ui right floated primary button">
                 {{ ___('Update Content') }}
             </button>

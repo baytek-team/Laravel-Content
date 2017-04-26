@@ -17,13 +17,13 @@
 
 <div class="flex-center position-ref full-height">
     <div class="content">
-        <form action="{{action('\Baytek\Laravel\Content\Controllers\ContentController@store')}}" method="POST" class="ui form">
+        <form action="{{action('\Baytek\Laravel\Content\Controllers\ContentController@contentStore')}}" method="POST" class="ui form">
             {{ csrf_field() }}
 
             @include('Content::translate.form')
 
             <div class="field actions">
-	            <a class="ui button" href="{{ action('\Baytek\Laravel\Content\Controllers\ContentController@index') }}">{{ ___('Cancel') }}</a>
+	            <a class="ui button" href="{{ action('\Baytek\Laravel\Content\Controllers\ContentController@contentIndex') }}">{{ ___('Cancel') }}</a>
 	            <button type="submit" class="ui right floated primary button">
 	            	{{ ___('Save all the things') }}
             	</button>
