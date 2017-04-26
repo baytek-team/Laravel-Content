@@ -127,6 +127,8 @@ class ContentController extends Controller
                 'edit' => 'translate.edit',
                 'show' => 'translate.show',
             ];
+
+            $this->redirectsKey = 'admin';
         }
 
         $this->instance = new $this->model;
@@ -288,7 +290,7 @@ class ContentController extends Controller
 
         event(new ContentEvent($content));
 
-        if ($this->redirects) {
+        if($this->redirects) {
             return redirect(route(($this->redirectsKey ?: $this->names['singular']).'.index', $content));
         }
 

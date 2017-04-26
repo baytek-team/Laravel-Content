@@ -23,7 +23,7 @@
             @include('Content::translate.form')
 
             <div class="field actions">
-	            <a class="ui button" href="{{ action('\Baytek\Laravel\Content\Controllers\ContentController@contentIndex') }}">{{ ___('Cancel') }}</a>
+	            {{-- <a class="ui button" href="{{ action('\Baytek\Laravel\Content\Controllers\ContentController@contentIndex') }}">{{ ___('Cancel') }}</a> --}}
 	            <button type="submit" class="ui right floated primary button">
 	            	{{ ___('Save all the things') }}
             	</button>
