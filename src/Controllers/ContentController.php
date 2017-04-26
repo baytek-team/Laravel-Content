@@ -115,7 +115,10 @@ class ContentController extends Controller
      */
     public function __construct(/*SettingsProvider $settings*/)
     {
-        if(!is_null(Route::current()) && (collect(Route::current()->parameterNames)->first() == 'translation' || stripos(Route::current()->getAction()['as'], 'translation') === 0)) {
+        $current = Route::current();
+        $action = $current->getAction();
+
+        if(!is_null($current) && (collect($current->parameterNames)->first() == 'translation' || (isset($action['as']) && stripos($action['as'], 'translation') === 0))) {
             $this->isTranslation = true;
 
             $this->views = [
