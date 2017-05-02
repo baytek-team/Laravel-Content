@@ -11,6 +11,7 @@ class ContentMeta extends Model
 	protected $fillable = [
 		'status',
 		'key',
+		'language',
 		'value',
 	];
 
