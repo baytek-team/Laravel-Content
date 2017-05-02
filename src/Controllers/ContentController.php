@@ -481,6 +481,7 @@ class ContentController extends Controller
                 if (in_array($id, $metaIds) && $metaRecord = ContentMeta::where('id', $id)) {
                     $metaRecord
                         ->update([
+                            'language' => \App::getLocale(),
                             'key'   => $key,
                             'value' => $request->meta_value[$id]
                         ]);
@@ -489,6 +490,7 @@ class ContentController extends Controller
                 }
                 else {
                     $metaRecord = (new ContentMeta([
+                        'language' => \App::getLocale(),
                         'key' => $key,
                         'value' => $request->meta_value[$id]
                     ]));
