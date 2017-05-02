@@ -39,7 +39,9 @@ class LocaleMiddleware
             $language = Session::get('locale');
         }
 
-        App::setLocale($language);
+        if(!is_null($language)) {
+            App::setLocale($language);
+        }
 
         return $next($request);
     }
