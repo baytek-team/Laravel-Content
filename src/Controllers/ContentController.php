@@ -431,6 +431,8 @@ class ContentController extends Controller
         $content->saveRelation('translations', $orignal->id);
         $orignal->saveRelation('translations', $content->id);
 
+        event(new ContentEvent($content));
+
         if ($this->redirects) {
             return redirect(route(($this->redirectsKey ?: $this->names['singular']).'.index', $content));
         }
