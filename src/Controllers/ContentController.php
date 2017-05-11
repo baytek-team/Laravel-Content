@@ -116,19 +116,23 @@ class ContentController extends Controller
     public function __construct(/*SettingsProvider $settings*/)
     {
         $current = Route::current();
-        $action = $current->getAction();
 
-        if(!is_null($current) && (collect($current->parameterNames)->first() == 'translation' || (isset($action['as']) && stripos($action['as'], 'translation') === 0))) {
-            $this->isTranslation = true;
+        if(!is_null($current)) {
 
-            $this->views = [
-                'index' => 'translate.index',
-                'create' => 'translate.create',
-                'edit' => 'translate.edit',
-                'show' => 'translate.show',
-            ];
+            $action = $current->getAction();
 
-            $this->redirectsKey = 'admin';
+            if(!is_null($current) && (collect($current->parameterNames)->first() == 'translation' || (isset($action['as']) && stripos($action['as'], 'translation') === 0))) {
+                $this->isTranslation = true;
+
+                $this->views = [
+                    'index' => 'translate.index',
+                    'create' => 'translate.create',
+                    'edit' => 'translate.edit',
+                    'show' => 'translate.show',
+                ];
+
+                $this->redirectsKey = 'admin';
+            }
         }
 
         $this->instance = new $this->model;

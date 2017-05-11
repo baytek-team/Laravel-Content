@@ -256,6 +256,7 @@ trait RelationScopes
     public function scopeChildrenOf($query, $key, $column = 'key', $depth = 1)
     {
         $query->selectContext = 'r';
+
         return $query
             ->select('r.id', 'r.created_at', 'r.updated_at', 'r.status', 'r.revision', 'r.language', 'r.title', 'r.key')
             ->join('content_relations AS children_of', 'contents.id', '=', 'children_of.relation_id')
@@ -367,6 +368,7 @@ trait RelationScopes
     public function scopeChildrenOfRelation($query, $key, $relation)
     {
         $query->selectContext = 'r';
+
         return $query
             ->select('r.id', 'r.created_at', 'r.updated_at', 'r.status', 'r.revision', 'r.language', 'r.title', 'r.key')
             ->join('content_relations AS children_of_relation', function ($join) use ($relation) {
@@ -380,6 +382,7 @@ trait RelationScopes
     public function scopeChildOfType($query, $parent, $type, $key)
     {
         $query->selectContext = 'r';
+
         return $query
             ->select('r.id', 'r.created_at', 'r.updated_at', 'r.status', 'r.revision', 'r.language', 'r.title', 'r.key')
             ->join('content_relations AS child_of_type', function ($join) {
@@ -436,6 +439,7 @@ trait RelationScopes
     public function scopeOfContentType($query, $key)
     {
         $query->selectContext = 'contents';
+
         return $query
             ->select('contents.id', 'contents.created_at', 'contents.updated_at', 'contents.status', 'contents.revision', 'contents.language', 'contents.title', 'contents.key', 'contents.content')
             ->leftJoin('content_relations AS relations', 'contents.id', '=', 'relations.content_id')
