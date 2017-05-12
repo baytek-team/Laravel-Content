@@ -19,11 +19,11 @@ class GeneralPolicy
      */
     private function hasAuthorId($user, $content) {
         try {
-            if($content->load('meta')->metadata('author_id')->id == $user->id) {
+            if(!is_null($content) && $content->load('meta')->metadata('author_id')->id == $user->id) {
                 return true;
             }
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             return false;
         }
 
