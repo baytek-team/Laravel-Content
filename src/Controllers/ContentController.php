@@ -49,16 +49,29 @@ class ContentController extends Controller
      */
     protected $historyTable = 'content_history';
 
+    /**
+     * Prefix used to load views
+     * @var string
+     */
     protected $viewPrefix = '';
 
-    // Reference to the current model instance
+    /**
+     * Reference to the current model instance
+     * @var Model
+     */
     protected $instance;
 
-    // Reference to the current model instance
+    /**
+     * Reference to the current model instance
+     * @var boolean
+     */
     protected $isTranslation = false;
 
-    // I have no clue what this is for, This should be removed if not required
-    protected $type;
+    /**
+     * I have no clue what this is for, This should be removed if not required
+     * @var [type]
+     */
+    // protected $type;
 
     /**
      * Flag that defines whether we should redirect after saving
@@ -71,7 +84,7 @@ class ContentController extends Controller
      * List of names that the class needs to use
      * PS, I don't really like this, perhaps add a bit of abstraction here to clean this up
      *
-     * @var [type]
+     * @var Array
      */
     protected $names = [
         'singular' => '',
@@ -116,9 +129,7 @@ class ContentController extends Controller
     public function __construct(/*SettingsProvider $settings*/)
     {
         $current = Route::current();
-
         if(!is_null($current)) {
-
             $action = $current->getAction();
 
             if(!is_null($current) && (collect($current->parameterNames)->first() == 'translation' || (isset($action['as']) && stripos($action['as'], 'translation') === 0))) {
