@@ -41,7 +41,7 @@
                     </a>
                     <div class="item collapsable">
                         <div class="ui icon input">
-                            <input type="text" placeholder="Search...">
+                            <input type="text" placeholder="{{ ___('Search...') }}">
                             <i class="search icon"></i>
                         </div>
                     </div>
@@ -186,7 +186,7 @@
                                 <div class="ui icon message error">
                                     <i class="exclamation circle icon"></i>
                                     <div class="content">
-                                        <div class="header">Application Level Error</div>
+                                        <div class="header">{{ ___('Application Level Error') }}</div>
                                         @foreach ($errors->all() as $error)
                                             <li>{{ $error }}</li>
                                         @endforeach
@@ -202,7 +202,7 @@
                             <div class="ui icon message">
                                 <i class="exclamation circle icon"></i>
                                 <div class="content">
-                                    <div class="header">Notifications</div>
+                                    <div class="header">{{ ___('Notifications') }}</div>
                                     @if (isset($notifications) && $notifications->count() > 0)
                                         @foreach ($notifications as $notification)
                                             <li>{!! $notification->data['message'] !!}</li>
@@ -233,11 +233,11 @@
         <div class="actions">
             <div class="ui red basic inverted cancel button">
                 <i class="remove icon"></i>
-                <span class="message">Cancel</span>
+                <span class="message">{{ ___('Cancel') }}</span>
             </div>
             <div class="ui primary ok button">
                 <i class="checkmark icon"></i>
-                <span class="message">Yes</span>
+                <span class="message">{{ ___('Yes') }}</span>
             </div>
         </div>
     </div>
@@ -245,7 +245,9 @@
     <!-- Scripts -->
     {{-- <script src="//{{ Request::getHost() }}:6001/socket.io/socket.io.js"></script> --}}
     <script src="/js/app.js"></script>
-    {{-- <script src="http://192.168.2.25:1337/pretzel.js"></script> --}}
+    @if(env('APP_ENV') == 'local')
+        <script src="http://192.168.2.25:1337/pretzel.js"></script>
+    @endif
 
     @yield('scripts')
 
