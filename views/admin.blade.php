@@ -15,6 +15,14 @@
     <link href="/css/app.css" rel="stylesheet">
     <link href="/semantic.min.css" rel="stylesheet">
 
+    <!-- Main Quill library -->
+    <script src="//cdn.quilljs.com/1.2.4/quill.min.js"></script>
+
+    <!-- Theme included stylesheets -->
+    <link href="//cdn.quilljs.com/1.2.4/quill.snow.css" rel="stylesheet">
+    <link href="//cdn.quilljs.com/1.2.4/quill.bubble.css" rel="stylesheet">
+
+
     @yield('head')
 
     <!-- Scripts -->
@@ -31,14 +39,21 @@
 
             <div class="ui sixteen wide column">
                 <div id="primary-navigation" class="ui top menu">
+
                     <a id="menu-toggle" class="item">
                         <i class="content icon"></i>
                     </a>
 
-                    <a class="item collapsable">
+                    @link(___('Site Index') , [
+                        'class' => 'item collapsable',
+                        'prepend' => '<i class="globe icon"></i>',
+                        'location' => '/app'
+                    ])
+
+                    {{-- <a class="item collapsable">
                         <i class="globe icon"></i>
                         {{ ___('Site Index') }}
-                    </a>
+                    </a> --}}
                     <div class="item collapsable">
                         <div class="ui icon input">
                             <input type="text" placeholder="{{ ___('Search...') }}">
@@ -78,83 +93,98 @@
         <div id="main-content" class="row">
             <div id="secondary-navigation" class="three wide column">
                 <div class="ui left vertical fluid pointing stackable menu">
-                    {{-- <div class="item">
-                        <img class="ui small image" src="/img/cop_icon_white.svg" alt="" scale="0">
-                    </div> --}}
-                    {{-- <a class="item" href="/app/resources">
-                        <i class="desktop icon"></i>
-                        {{ ___('Public Application') }}
-                    </a>
-                    <a class="item" href="{{ route('admin.dashboard') }}">
-                        <i class="dashboard icon"></i>
-                        {{ ___('Admin Dashboard') }}
-                    </a> --}}
                     @if( Auth::user() )
-                        {{-- @can('View Member')
-                            <a class="item" href="{{ route('members.index') }}">
-                                <i class="user group icon"></i>
-                                {{ ___('Members') }}
-                            </a>
-                            <div class="menu">
-                                <a class="item" href="{{ route('members.edit', \Auth::user()->id) }}">{{ ___('My Profile') }}</a>
-                                @if(Auth::user()->hasRole([\Baytek\Laravel\Users\Roles\Root::ROLE, \Baytek\Laravel\Users\Roles\Administrator::ROLE]))
-                                    <a class="item" href="{{ route('members.adminindex') }}">{{ ___('Administrators') }}</a>
-                                @endif
-                            </div>
-                            <div class="ui hidden divider"></div>
-                        @endcan
-                        @cannot('View Member')
-                            <a class="item" href="{{ route('members.edit', \Auth::user()->id) }}">
-                                <i class="user group icon"></i>
-                                {{ ___('My Profile') }}
-                            </a>
-                        @endcannot --}}
+                        @link(___('Dashboard'), [
+                            'location' => 'admin.index',
+                            'append' => '<i class="dashboard icon"></i>',
+                            'type' => 'route',
+                            'class' => 'item'
+                        ])
                         @if(Auth::user()->hasRole( \Baytek\Laravel\Users\Roles\Root::ROLE ))
                             <div class="item" href="{{ route('webpage.index') }}">
                                 <i class="world icon"></i>
                                 {{ ___('Webpages') }}
                                 <div class="menu">
-                                    <a class="item" href="{{ route('webpage.create') }}">{{ ___('Create Webpage') }}</a>
-                                    <a class="item" href="{{ route('webpage.index') }}">{{ ___('Manage Webpages') }}</a>
+                                    @link(___('Create Webpage'), [
+                                        'location' => 'webpage.create',
+                                        'type' => 'route',
+                                        'class' => 'item'
+                                    ])
+                                    @link(___('Manage Webpages'), [
+                                        'location' => 'webpage.index',
+                                        'type' => 'route',
+                                        'class' => 'item'
+                                    ])
                                 </div>
                             </div>
                             <div class="item" href="{{ route('menu.index') }}">
                                 <i class="sitemap icon"></i>
                                 {{ ___('Menus') }}
                                 <div class="menu">
-                                    <a class="item" href="{{ route('menu.create') }}">{{ ___('Create Menu') }}</a>
-                                    <a class="item" href="{{ route('menu.index') }}">{{ ___('Manage Menus') }}</a>
+                                    @link(___('Create Menu'), [
+                                        'location' => 'menu.create',
+                                        'type' => 'route',
+                                        'class' => 'item'
+                                    ])
+                                    @link(___('Manage Menus'), [
+                                        'location' => 'menu.index',
+                                        'type' => 'route',
+                                        'class' => 'item'
+                                    ])
                                 </div>
                             </div>
                             <div class="item" href="{{ route('settings.index') }}">
                                 <i class="settings icon"></i>
                                 {{ ___('Settings') }}
                                 <div class="menu">
-                                    <a class="item" href="{{ route('settings.index') }}">{{ ___('General Settings') }}</a>
+                                    @link(___('General Settings'), [
+                                        'location' => 'settings.index',
+                                        'type' => 'route',
+                                        'class' => 'item'
+                                    ])
                                 </div>
                             </div>
-
                             <div class="item">
                                 <i class="configure icon"></i>
                                 {{ ___('Tools') }}
 
                                 <div class="menu">
                                     @can('create', \Baytek\Laravel\Content\Models\Content::class)
-                                        <a class="item" href="{{ route('content.index') }}">{{ ___('Content Navigator') }}</a>
+                                        @link(___('Content Navigator'), [
+                                            'location' => 'content.index',
+                                            'type' => 'route',
+                                            'class' => 'item'
+                                        ])
                                     @endcan
                                 </div>
                             </div>
                             @if(Auth::user()->hasRole( \Baytek\Laravel\Users\Roles\Root::ROLE ))
-                            <div class="item">
-                                <i class="user icon"></i>
-                                {{ ___('Users') }}
-                                <div class="menu">
-                                    <a class="item" href="{{ route('user.index') }}">{{ ___('Manage Users') }}</a>
-                                    <a class="item" href="{{ route('role.index') }}">{{ ___('System Roles') }}</a>
-                                    <a class="item" href="{{ route('permission.index') }}">{{ ___('System Permissions') }}</a>
-                                    <a class="item" href="{{ route('user.role.index') }}">{{ ___('Permissions Matrix') }}</a>
+                                <div class="item">
+                                    <i class="user icon"></i>
+                                    {{ ___('Users') }}
+                                    <div class="menu">
+                                        @link(___('Manage Users'), [
+                                            'location' => 'user.index',
+                                            'type' => 'route',
+                                            'class' => 'item'
+                                        ])
+                                        @link(___('Roles'), [
+                                            'location' => 'role.index',
+                                            'type' => 'route',
+                                            'class' => 'item'
+                                        ])
+                                        @link(___('Permissions'), [
+                                            'location' => 'permission.index',
+                                            'type' => 'route',
+                                            'class' => 'item'
+                                        ])
+                                        @link(___('Permission Matrix'), [
+                                            'location' => 'user.role.index',
+                                            'type' => 'route',
+                                            'class' => 'item'
+                                        ])
+                                    </div>
                                 </div>
-                            </div>
                             @endif
                         @endif
 
@@ -165,18 +195,57 @@
                 </div>
             </div>
             <div class="thirteen wide column">
+
+
+
                 {{-- <div class="ui container"> --}}
                     <div class="ui grid">
                         <div class="two column row">
                             <div class="left floated column">
-                                @yield('page.head.header')
+                                @yield('page.head.header', '<h1>Default Admin Dashboard</h1>')
                             </div>
-                            <div id="app" class="">
+                            <div class="right floated column" style="text-align: right">
                                 @yield('page.head.menu')
                             </div>
                         </div>
                     </div>
                     <div class="ui hidden divider"></div>
+
+                    <div class="ui compact segment">
+                        <div class="ui breadcrumb">
+                            @php
+                                $folders = explode('/', Route::getCurrentRoute()->uri());
+                                // dd(Route::getCurrentRoute());
+                                // foreach($folders as $folder) {
+                                //     // if($folder == )
+                                // }
+
+                                $path = '/';
+                            @endphp
+
+                            @foreach($folders as $index => $folder)
+                                @php
+                                    $path .= $folder . '/';
+                                @endphp
+
+                                @if(count($folders) != $index + 1)
+                                    @link(___(title_case($folder)), [
+                                        'location' => $path,
+                                        'type' => 'url',
+                                        'class' => 'section'
+                                    ])
+                                    <div class="divider"> / </div>
+                                @else
+                                    <div class="active section">{{___(title_case($folder))}}</div>
+                                @endif
+                            @endforeach
+
+                        </div>
+                    </div>
+                    <div class="ui hidden divider"></div>
+
+
+
                     {{-- <div class="ui hidden divider"></div> --}}
 
                     @if (count($errors) > 0)
@@ -196,7 +265,7 @@
                         </div>
                     @endif
 
-                    <div class=" ui container" @if (!isset($notifications) || $notifications->count() == 0) style="display: none" @endif>
+                    <div class="ui container" @if (!isset($notifications) || $notifications->count() == 0) style="display: none" @endif>
                         <div class="ui hidden divider"></div>
                         <div class="row">
                             <div class="ui icon message">
@@ -214,13 +283,24 @@
                         <div class="ui hidden divider"></div>
                         <div class="ui hidden divider"></div>
                     </div>
-                    @yield('content')
+                    @if(trim($__env->yieldContent('content')))
+                        @yield('content')
+                    @else
+                        <p>Use the menu to the left to navigate to useful administration features.</p>
+                        <p>
+                            <strong>Admin Dashboard Setup</strong>.<br/>
+                            Check the <code>web.php</code> file for a route to <code>/admin</code> and change the view to a more desirable view.
+                        </p>
+                        <p>
+                            <strong>Admin Controller</strong>.<br/>
+                            You can also create an admin controller and create a dashboard method.
+                        </p>
+                    @endif
                     <div class="ui hidden divider"></div>
                 </div>
             {{-- </div> --}}
         </div>
     </div>
-
 
     <div class="ui basic force modal" style="display: none">
         <div class="ui icon header">
@@ -241,6 +321,7 @@
             </div>
         </div>
     </div>
+
 
     <!-- Scripts -->
     {{-- <script src="//{{ Request::getHost() }}:6001/socket.io/socket.io.js"></script> --}}

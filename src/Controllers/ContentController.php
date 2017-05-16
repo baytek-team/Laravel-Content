@@ -249,7 +249,7 @@ class ContentController extends Controller
         }
 
         return View::make($view, $this->params([
-            $this->names['plural'] => $model->with($model::$eager)->paginate(20)
+            $this->names['plural'] => $model->with($model::$eager)->get()->keyBy('id')
         ], $this->viewData['index']));
     }
 
@@ -363,10 +363,13 @@ class ContentController extends Controller
         $model = $this->instance;
 
         return View::make($this->view('edit'), $this->params([
+
             // This needs to be updated as it returns everything in the content table, this should return the list of objects of that type
             $this->names['plural'] => $model::select('id', 'status', 'revision', 'language', 'title')->get(),
+
             // Get the current content model object
             $this->names['singular'] => $content,
+
             // Get the relationship types
             'relationTypes' => Content::ofRelation('content-type', 'relation-type')->get(),
         ], $this->viewData['edit']));
