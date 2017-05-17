@@ -169,19 +169,16 @@ class Content extends Model implements StatusInterface
     {
         foreach($contents as $content) {
             if(!in_array($content->id, $used)) {
-                // echo str_repeat('&mdash;', $depth) . " {$content->title}<br/>";
+                // echo str_repeat('&mdash;', $depth) . " {$content->id} {$content->title}<br/>";
 
                 $related = $relations->where('relation_id', $content->id)->pluck('content_id');
                 $children = $all->only($related->all())->keyBy('id');
-
                 array_push($used, $content->id);
 
-                $all->forget($content->id);
                 $content->depth = $depth;
                 array_push($result, $content);
 
                 static::loopying($children, $relations, $all, $depth + 1, $used, $result);
-
             }
         }
 
