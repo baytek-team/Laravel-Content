@@ -196,8 +196,6 @@
             </div>
             <div class="thirteen wide column">
 
-
-
                 {{-- <div class="ui container"> --}}
                     <div class="ui grid">
                         <div class="two column row">
@@ -213,39 +211,10 @@
 
                     <div class="ui compact segment">
                         <div class="ui breadcrumb">
-                            @php
-                                $folders = explode('/', Route::getCurrentRoute()->uri());
-                                // dd(Route::getCurrentRoute());
-                                // foreach($folders as $folder) {
-                                //     // if($folder == )
-                                // }
-
-                                $path = '/';
-                            @endphp
-
-                            @foreach($folders as $index => $folder)
-                                @php
-                                    $path .= $folder . '/';
-                                @endphp
-
-                                @if(count($folders) != $index + 1)
-                                    @link(___(title_case($folder)), [
-                                        'location' => $path,
-                                        'type' => 'url',
-                                        'class' => 'section'
-                                    ])
-                                    <div class="divider"> / </div>
-                                @else
-                                    <div class="active section">{{___(title_case($folder))}}</div>
-                                @endif
-                            @endforeach
-
+                            @breadcrumbs()
                         </div>
                     </div>
                     <div class="ui hidden divider"></div>
-
-
-
                     {{-- <div class="ui hidden divider"></div> --}}
 
                     @if (count($errors) > 0)
@@ -301,6 +270,7 @@
             {{-- </div> --}}
         </div>
     </div>
+
 
     <div class="ui basic force modal" style="display: none">
         <div class="ui icon header">

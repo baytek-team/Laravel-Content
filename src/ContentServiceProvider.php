@@ -90,7 +90,6 @@ class ContentServiceProvider extends AuthServiceProvider
                 });
             return !$children->pluck('key')->contains(str_slug($value));
         });
-
     }
 
     /**
