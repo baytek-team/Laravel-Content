@@ -158,6 +158,7 @@
                                     @endcan
                                 </div>
                             </div>
+
                             @if(Auth::user()->hasRole( \Baytek\Laravel\Users\Roles\Root::ROLE ))
                                 <div class="item">
                                     <i class="user icon"></i>
