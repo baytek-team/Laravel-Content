@@ -90,6 +90,17 @@ class ContentServiceProvider extends AuthServiceProvider
                 });
             return !$children->pluck('key')->contains(str_slug($value));
         });
+
+        Validator::extend('unique_in_type', function ($attribute, $value, $parameters, $validator) {
+            $data = $validator->getData();
+            $id = isset($data['id']) ? $data['id']: null;
+
+            $children = Content::ofType($parameters[0])->get()
+                ->filter(function ($item, $key) use ($id) {
+                    return $item->id != $id;
+                });
+             return !$children->pluck('key')->contains(str_slug($value));
+        });
     }
 
     /**
