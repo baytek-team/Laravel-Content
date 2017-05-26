@@ -447,4 +447,12 @@ trait RelationScopes
             ->where('types.key', $key);
     }
 
+    public function scopeSearch($query, $search)
+    {
+        $table = (\App::getLocale() !== 'en') ? 'language' : 'contents';
+
+        return $query->where($table.'.title', 'like', [$search])
+            ->orderBy($table.'.title', 'asc');
+    }
+
 }
