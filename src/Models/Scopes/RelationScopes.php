@@ -320,7 +320,7 @@ trait RelationScopes
                 $query->where('contents.key', $key->key);
             }
 
-        return $query;
+        // return $query;
     }
 
     public function scopeChildenOfTypeWhereMetadata($query, $key, $type, $metakey, $metavalue)

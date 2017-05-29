@@ -87,12 +87,18 @@ class ContentServiceProvider extends AuthServiceProvider
                 $id = collect($route->parameters())->first();
             }
 
-            $parent_id = $data[$parameters[1]];
-            $children = Content::childrenOf($parent_id, 'id')->get()
-                ->filter(function ($item, $key) use ($id) {
-                    return $item->id != $id;
-                });
-            return !$children->pluck('key')->contains(str_slug($value));
+            if(array_key_exists($parameters[1], $data)) {
+                $parent_id = $data[$parameters[1]];
+                $children = Content::childrenOf($parent_id, 'id')->get()
+                    ->filter(function ($item, $key) use ($id) {
+                        return $item->id != $id;
+                    });
+                return !$children->pluck('key')->contains(str_slug($value));
+            }
+            else {
+                return true;
+            }
+
         });
 
         Validator::extend('unique_in_type', function ($attribute, $value, $parameters, $validator) {
