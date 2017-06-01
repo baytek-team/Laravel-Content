@@ -342,7 +342,7 @@ trait RelationScopes
                 $query->where('contents.key', $key->key);
             }
 
-        return $query;
+        // return $query;
     }
 
     public function scopeChildenOfTypeWhereMetadata($query, $key, $type, $metakey, $metavalue)
@@ -467,6 +467,14 @@ trait RelationScopes
             ->leftJoin('content_relations AS relations', 'contents.id', '=', 'relations.content_id')
             ->leftJoin('contents AS types', 'types.id', '=', 'relations.relation_id')
             ->where('types.key', $key);
+    }
+
+    public function scopeSearch($query, $search)
+    {
+        $table = (\App::getLocale() !== 'en') ? 'language' : 'contents';
+
+        return $query->where($table.'.title', 'like', [$search])
+            ->orderBy($table.'.title', 'asc');
     }
 
 }
