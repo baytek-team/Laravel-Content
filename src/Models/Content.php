@@ -5,8 +5,13 @@ namespace Baytek\Laravel\Content\Models;
 use Baytek\Laravel\Content\Models\Scopes\TranslationScope;
 use Baytek\LaravelStatusBit\Statusable;
 use Baytek\LaravelStatusBit\StatusInterface;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
+
+use Cache;
 
 class Content extends Model implements StatusInterface
 {
@@ -164,8 +169,31 @@ class Content extends Model implements StatusInterface
     }
 
 
+    public static function hierarchy($content, $paginate = true)
+    {
+        $request = request();
+        $relations = Cache::get('content.cache.relations')->where('relation_type_id', 4);
+        $items = Content::loopying($content, $relations, $content);
 
-    public static function loopying(&$contents, $relations, &$all, $depth = 0, &$used = [], &$result = [])
+        $total = count($items);
+        $perPage = $paginate ? 15 : $total;
+        $currentPage = Paginator::resolveCurrentPage();
+        $pagination = new LengthAwarePaginator(
+            array_slice($items, ($currentPage - 1) * $perPage, $perPage, true),
+            $total,
+            $perPage,
+            $currentPage,
+            [
+                'path' => $request->url(),
+                'query' => $request->query()
+            ]
+        );
+
+        return $pagination;
+    }
+
+
+    public static function loopying(&$contents, $relations, &$all = -1, $depth = 0, &$used = [], &$result = [])
     {
         foreach($contents as $content) {
             if(!in_array($content->id, $used)) {

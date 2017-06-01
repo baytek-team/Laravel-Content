@@ -52,7 +52,9 @@ class ContentManagementController extends ContentController
      */
     public function index()
     {
-        return parent::contentIndex();
+        return parent::contentIndex([
+            'contents' => Content::hierarchy(Content::all(), false)
+        ]);
     }
 
     /**

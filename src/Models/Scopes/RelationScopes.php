@@ -10,17 +10,10 @@ use Cache;
 
 trait RelationScopes
 {
-    /**
-     * [getContent description]
-     * @param  [type] $value [description]
-     * @return [type]        [description]
-     */
-    public function getContent($value)
+    public function abstractSelect($query, $value)
     {
-        $query = parent::withoutGlobalScopes();
-
         if(is_numeric($value)) {
-            $query->find($value);
+            $query->where('contents.id', $value);
         }
         else if(is_string($value)) {
             $query->where('contents.key', $value);
@@ -31,8 +24,20 @@ trait RelationScopes
         else if(is_object($value) && $value instanceof Model) {
             $query->where('contents.key', $value->key);
         }
-
         return $query;
+    }
+
+
+    /**
+     * [getContent description]
+     * @param  [type] $value [description]
+     * @return [type]        [description]
+     */
+    public function getContent($value)
+    {
+        $query = parent::withoutGlobalScopes();
+
+        return $this->abstractSelect($query, $value);
     }
 
     /**
@@ -256,13 +261,28 @@ trait RelationScopes
     {
         $query->selectContext = 'r';
 
-        return $query
+        $query
             ->select('r.id', 'r.created_at', 'r.updated_at', 'r.status', 'r.revision', 'r.language', 'r.title', 'r.key')
             ->distinct()
             ->join('content_relations AS children_of', 'contents.id', '=', 'children_of.relation_id')
             ->join('contents AS r', 'r.id', '=', 'children_of.content_id')
-            ->where('children_of.relation_type_id', $this->getContentIdByKey('parent-id'))
-            ->where('contents.'.$column, $key);
+            ->where('children_of.relation_type_id', $this->getContentIdByKey('parent-id'));
+            // ->where('contents.'.$column, $key);
+
+            $this->abstractSelect($query, $key);
+
+            // if(is_string($key)) {
+            //     $query->where('contents.key', $key);
+            // }
+            // else if(is_integer($key)) {
+            //     $query->where('contents.id', $key);
+            // }
+            // else if(is_object($key) && $key instanceof Collection) {
+            //     $query->whereIn('contents.id', $key->pluck('id'));
+            // }
+            // else if(is_object($key) && $key instanceof Model) {
+            //     $query->where('contents.key', $key->key);
+            // }
     }
 
     public function scopeOfType($query, $type)

@@ -34,6 +34,7 @@
     </script>
 </head>
 <body>
+
     <div class="ui two column padded grid container">
         <div class="row">
 
@@ -100,6 +101,7 @@
                             'type' => 'route',
                             'class' => 'item'
                         ])
+
                         @if(Auth::user()->hasRole( \Baytek\Laravel\Users\Roles\Root::ROLE ))
                             <div class="item" href="{{ route('webpage.index') }}">
                                 <i class="world icon"></i>
@@ -201,7 +203,8 @@
                     <div class="ui grid">
                         <div class="two column row">
                             <div class="left floated column">
-                                @yield('page.head.header', '<h1>Default Admin Dashboard</h1>')
+                                {{-- @yield('title') --}}
+                                @yield('page.head.header')
                             </div>
                             <div class="right floated column" style="text-align: right">
                                 @yield('page.head.menu')
@@ -253,6 +256,8 @@
                         <div class="ui hidden divider"></div>
                         <div class="ui hidden divider"></div>
                     </div>
+                    @yield('content')
+                    {{--
                     @if(trim($__env->yieldContent('content')))
                         @yield('content')
                     @else
@@ -266,6 +271,7 @@
                             You can also create an admin controller and create a dashboard method.
                         </p>
                     @endif
+                    --}}
                     <div class="ui hidden divider"></div>
                 </div>
             {{-- </div> --}}

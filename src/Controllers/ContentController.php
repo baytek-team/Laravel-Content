@@ -237,7 +237,7 @@ class ContentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function contentIndex()
+    public function contentIndex($params = [])
     {
         $this->authorize('view', $this->model);
 
@@ -248,9 +248,13 @@ class ContentController extends Controller
             // return $model->with($model::$eager)->get();
         }
 
-        return View::make($view, $this->params([
-            $this->names['plural'] => $model->with($model::$eager)->get()->keyBy('id')
-        ], $this->viewData['index']));
+        $params = $this->params($params, $this->viewData['index']);
+
+        if(!isset($params['plural'])) {
+            $params['plural'] = $model->with($model::$eager)->get()->keyBy('id');
+        }
+
+        return View::make($view, $params);
     }
 
     /**
