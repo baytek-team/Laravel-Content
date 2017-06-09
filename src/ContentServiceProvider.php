@@ -72,25 +72,50 @@ class ContentServiceProvider extends AuthServiceProvider
             'prefix' => 'admin',
             'middleware' => ['web', 'auth', LocaleMiddleware::class]
         ], function () use ($router) {
-            $router->resource('content', 'ContentController');
+            $router->resource('content', 'ContentManagementController');
             $router->put('translation/{content}/translate', 'ContentController@translate')->name('translation.translate');
             $router->get('translation/create', 'ContentController@contentCreate')->name('translation.create');
             $router->get('translation/{content}/edit', 'ContentController@contentEdit')->name('translation.edit');
-
-            // $router->resource('translation', 'ContentController');
         });
 
         Validator::extend('unique_key', function ($attribute, $value, $parameters, $validator) {
             $data = $validator->getData();
-            $id = isset($data['id']) ? $data['id']: null;
-            $parent_id = $data[$parameters[1]];
-            $children = Content::childrenOf($parent_id, 'id')->get()
+            $route = \Route::getCurrentRoute();
+            $id = null;
+            // Check if the route params are set, if so use it.
+            if(count($route->parameters())) {
+                $id = collect($route->parameters())->first();
+            }
+
+            if(array_key_exists($parameters[1], $data)) {
+                $parent_id = $data[$parameters[1]];
+                $children = Content::childrenOf($parent_id, 'id')->get()
+                    ->filter(function ($item, $key) use ($id) {
+                        return $item->id != $id;
+                    });
+                return !$children->pluck('key')->contains(str_slug($value));
+            }
+            else {
+                return true;
+            }
+
+        });
+
+        Validator::extend('unique_in_type', function ($attribute, $value, $parameters, $validator) {
+            $data = $validator->getData();
+            $route = \Route::getCurrentRoute();
+            $id = null;
+            // Check if the route params are set, if so use it.
+            if(count($route->parameters())) {
+                $id = collect($route->parameters())->first();
+            }
+
+            $children = Content::ofType($parameters[0])->get()
                 ->filter(function ($item, $key) use ($id) {
                     return $item->id != $id;
                 });
             return !$children->pluck('key')->contains(str_slug($value));
         });
-
     }
 
     /**

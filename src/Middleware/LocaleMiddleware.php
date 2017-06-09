@@ -3,6 +3,7 @@
 namespace Baytek\Laravel\Content\Middleware;
 
 use App;
+use Carbon\Carbon;
 use Closure;
 use Session;
 
@@ -40,7 +41,14 @@ class LocaleMiddleware
         }
 
         if(!is_null($language)) {
+            // Set the app locale
             App::setLocale($language);
+
+            // Set the Carbon locale
+            Carbon::setLocale($language); 
+
+            // Set the PHP locale accord to the app locale setting
+            setlocale(LC_ALL, config('language.lc_all.'.$language));
         }
 
         return $next($request);

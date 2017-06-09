@@ -25,7 +25,7 @@ class ContentNotificationSubscriber
     public function cache($event)
     {
         $dates = DB::table('contents')->select('id', 'key', 'updated_at')->get();
-        $relations = DB::table('content_relations')->get();
+        $relations = DB::table('content_relations')->orderBy('relation_id')->get();
         $timestamps = collect([]);
         $keys = collect([]);
 

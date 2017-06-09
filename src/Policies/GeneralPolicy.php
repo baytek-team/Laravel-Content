@@ -11,6 +11,26 @@ class GeneralPolicy
     use HandlesAuthorization;
 
     /**
+     * Check to see of the content has metadata author_id matching current user
+     *
+     * @param  Baytek\Laravel\Users\User  $user
+     * @param  mixed  $content
+     * @return boolean
+     */
+    private function hasAuthorId($user, $content) {
+        try {
+            if(!is_null($content) && $content->load('meta')->metadata('author_id')->id == $user->id) {
+                return true;
+            }
+        }
+        catch (\Exception $e) {
+            return false;
+        }
+
+        return false;
+    }
+
+    /**
      * Determine whether the user is admin or root.
      * If so they can do all the things.
      *
@@ -31,7 +51,7 @@ class GeneralPolicy
      */
     public function view(User $user, $content = null)
     {
-        return (!is_null($content) && $content->load('meta')->metadata('author_id') == $user->id) || $user->can('View '.title_case($this->contentType));
+        return $this->hasAuthorId($user, $content) || $user->can('View '.title_case($this->contentType));
     }
 
     /**
@@ -54,7 +74,7 @@ class GeneralPolicy
      */
     public function update(User $user, $content)
     {
-        return $content->load('meta')->metadata('author_id') == $user->id || $user->can('Update '.title_case($this->contentType));
+        return $this->hasAuthorId($user, $content) || $user->can('Update '.title_case($this->contentType));
     }
 
     /**
@@ -66,6 +86,6 @@ class GeneralPolicy
      */
     public function delete(User $user, $content)
     {
-        return $content->load('meta')->metadata('author_id') == $user->id || $user->can('Delete '.title_case($this->contentType));
+        return $this->hasAuthorId($user, $content) || $user->can('Delete '.title_case($this->contentType));
     }
 }

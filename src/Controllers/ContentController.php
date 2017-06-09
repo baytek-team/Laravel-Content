@@ -49,16 +49,29 @@ class ContentController extends Controller
      */
     protected $historyTable = 'content_history';
 
+    /**
+     * Prefix used to load views
+     * @var string
+     */
     protected $viewPrefix = '';
 
-    // Reference to the current model instance
+    /**
+     * Reference to the current model instance
+     * @var Model
+     */
     protected $instance;
 
-    // Reference to the current model instance
+    /**
+     * Reference to the current model instance
+     * @var boolean
+     */
     protected $isTranslation = false;
 
-    // I have no clue what this is for, This should be removed if not required
-    protected $type;
+    /**
+     * I have no clue what this is for, This should be removed if not required
+     * @var [type]
+     */
+    // protected $type;
 
     /**
      * Flag that defines whether we should redirect after saving
@@ -71,7 +84,7 @@ class ContentController extends Controller
      * List of names that the class needs to use
      * PS, I don't really like this, perhaps add a bit of abstraction here to clean this up
      *
-     * @var [type]
+     * @var Array
      */
     protected $names = [
         'singular' => '',
@@ -116,19 +129,21 @@ class ContentController extends Controller
     public function __construct(/*SettingsProvider $settings*/)
     {
         $current = Route::current();
-        $action = $current->getAction();
+        if(!is_null($current)) {
+            $action = $current->getAction();
 
-        if(!is_null($current) && (collect($current->parameterNames)->first() == 'translation' || (isset($action['as']) && stripos($action['as'], 'translation') === 0))) {
-            $this->isTranslation = true;
+            if(!is_null($current) && (collect($current->parameterNames)->first() == 'translation' || (isset($action['as']) && stripos($action['as'], 'translation') === 0))) {
+                $this->isTranslation = true;
 
-            $this->views = [
-                'index' => 'translate.index',
-                'create' => 'translate.create',
-                'edit' => 'translate.edit',
-                'show' => 'translate.show',
-            ];
+                $this->views = [
+                    'index' => 'translate.index',
+                    'create' => 'translate.create',
+                    'edit' => 'translate.edit',
+                    'show' => 'translate.show',
+                ];
 
-            $this->redirectsKey = 'admin';
+                $this->redirectsKey = 'admin';
+            }
         }
 
         $this->instance = new $this->model;
@@ -222,7 +237,7 @@ class ContentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function contentIndex()
+    public function contentIndex($params = [])
     {
         $this->authorize('view', $this->model);
 
@@ -233,9 +248,13 @@ class ContentController extends Controller
             // return $model->with($model::$eager)->get();
         }
 
-        return View::make($view, $this->params([
-            $this->names['plural'] => $model->with($model::$eager)->paginate(20)
-        ], $this->viewData['index']));
+        $params = $this->params($params, $this->viewData['index']);
+
+        if(!isset($params['plural'])) {
+            $params['plural'] = $model->with($model::$eager)->get()->keyBy('id');
+        }
+
+        return View::make($view, $params);
     }
 
     /**
@@ -348,10 +367,13 @@ class ContentController extends Controller
         $model = $this->instance;
 
         return View::make($this->view('edit'), $this->params([
+
             // This needs to be updated as it returns everything in the content table, this should return the list of objects of that type
             $this->names['plural'] => $model::select('id', 'status', 'revision', 'language', 'title')->get(),
+
             // Get the current content model object
             $this->names['singular'] => $content,
+
             // Get the relationship types
             'relationTypes' => Content::ofRelation('content-type', 'relation-type')->get(),
         ], $this->viewData['edit']));
@@ -430,6 +452,8 @@ class ContentController extends Controller
 
         $content->saveRelation('translations', $orignal->id);
         $orignal->saveRelation('translations', $content->id);
+
+        event(new ContentEvent($content));
 
         if ($this->redirects) {
             return redirect(route(($this->redirectsKey ?: $this->names['singular']).'.index', $content));

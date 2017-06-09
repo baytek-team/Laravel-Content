@@ -5,8 +5,13 @@ namespace Baytek\Laravel\Content\Models;
 use Baytek\Laravel\Content\Models\Scopes\TranslationScope;
 use Baytek\LaravelStatusBit\Statusable;
 use Baytek\LaravelStatusBit\StatusInterface;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
+
+use Cache;
 
 class Content extends Model implements StatusInterface
 {
@@ -17,6 +22,8 @@ class Content extends Model implements StatusInterface
 
     // Defining the table we want to use for all content
     protected $table = 'contents';
+
+    public $depth;
 
     protected $attributes = [
         'language' => 'en',
@@ -155,8 +162,55 @@ class Content extends Model implements StatusInterface
                 'language' => \App::getLocale(),
                 'value' => $value,
             ]));
+
             $meta->save();
             $this->meta()->save($meta);
         }
     }
+
+
+    public static function hierarchy($content, $paginate = true)
+    {
+        $request = request();
+        $relations = Cache::get('content.cache.relations')->where('relation_type_id', 4);
+        $items = Content::loopying($content, $relations, $content);
+
+        $total = count($items);
+        $perPage = $paginate ? 15 : $total;
+        $currentPage = Paginator::resolveCurrentPage();
+        $pagination = new LengthAwarePaginator(
+            array_slice($items, ($currentPage - 1) * $perPage, $perPage, true),
+            $total,
+            $perPage,
+            $currentPage,
+            [
+                'path' => $request->url(),
+                'query' => $request->query()
+            ]
+        );
+
+        return $pagination;
+    }
+
+
+    public static function loopying(&$contents, $relations, &$all = -1, $depth = 0, &$used = [], &$result = [])
+    {
+        foreach($contents as $content) {
+            if(!in_array($content->id, $used)) {
+                // echo str_repeat('&mdash;', $depth) . " {$content->id} {$content->title}<br/>";
+
+                $related = $relations->where('relation_id', $content->id)->pluck('content_id');
+                $children = $all->only($related->all())->keyBy('id');
+                array_push($used, $content->id);
+
+                $content->depth = $depth;
+                array_push($result, $content);
+
+                static::loopying($children, $relations, $all, $depth + 1, $used, $result);
+            }
+        }
+
+        return $result;
+    }
+
 }
