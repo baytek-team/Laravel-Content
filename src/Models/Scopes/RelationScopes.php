@@ -269,6 +269,24 @@ trait RelationScopes
         return $this->scopeOfRelation($query, 'content-type', $type);
     }
 
+    public function scopeInTypes($query, $types)
+    {
+        $query->selectContext = 'contents';
+
+        $typeIds = [];
+        foreach( $types as $type ) {
+            $typeIds[] = $this->getContentIdByKey($type);
+        }
+
+        return $query
+            ->select('contents.id', 'contents.created_at', 'contents.updated_at', 'contents.status', 'contents.revision', 'contents.language', 'contents.title', 'contents.key')
+            ->join('content_relations AS of_relation_type', function ($join) use ($typeIds) {
+                $join->on('contents.id', '=', 'of_relation_type.content_id')
+                    ->where('of_relation_type.relation_type_id', $this->getContentIdByKey('content-type'))
+                    ->whereIn('of_relation_type.relation_id', $typeIds);
+            });
+    }
+
     public function scopeOfRelation($query, $relation, $type)
     {
         $query->selectContext = 'contents';
