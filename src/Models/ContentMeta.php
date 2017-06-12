@@ -24,6 +24,7 @@ class ContentMeta extends Model
 
 	protected $table = 'content_meta';
 	protected $fillable = [
+		'content_id',
 		'status',
 		'key',
 		'language',

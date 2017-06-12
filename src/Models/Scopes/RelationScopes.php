@@ -175,7 +175,6 @@ trait RelationScopes
             ) ids ON FIND_IN_SET(closure2.relation_id, ids.parent_ids);", [$type, $id]);
     }
 
-
     public function getWithPath($path)
     {
         $prefix = env('DB_PREFIX');
@@ -350,17 +349,8 @@ trait RelationScopes
                     ->where('relation_type.relation_id', $this->getContentIdByKey($type));
             });
 
-            if(is_string($key)) {
-                $query->where('contents.key', $key);
-            }
-            else if(is_object($key) && $key instanceof Collection) {
-                $query->whereIn('contents.id', $key->pluck('id'));
-            }
-            else if(is_object($key) && $key instanceof Model) {
-                $query->where('contents.key', $key->key);
-            }
 
-        // return $query;
+        $this->abstractSelect($query, $key);
     }
 
     public function scopeChildenOfTypeWhereMetadata($query, $key, $type, $metakey, $metavalue)
@@ -384,17 +374,7 @@ trait RelationScopes
                     ->where('metadata.value', $metavalue);
             });
 
-            if(is_string($key)) {
-                $query->where('contents.key', $key);
-            }
-            else if(is_object($key) && $key instanceof Collection) {
-                $query->whereIn('contents.id', $key->pluck('id'));
-            }
-            else if(is_object($key) && $key instanceof Model) {
-                $query->where('contents.key', $key->key);
-            }
-
-        return $query;
+        $this->abstractSelect($query, $key);
     }
 
 

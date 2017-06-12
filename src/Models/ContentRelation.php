@@ -12,7 +12,7 @@ class ContentRelation extends Model
      * @var integer
      * @access protected
      */
-    protected $primaryKey = null;
+    protected $primaryKey = 'content_id';
 
     /**
      * Indicates if the IDs are auto-incrementing.

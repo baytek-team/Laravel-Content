@@ -9,7 +9,6 @@ use Illuminate\Auth\Access\HandlesAuthorization;
 class GeneralPolicy
 {
     use HandlesAuthorization;
-
     /**
      * Check to see of the content has metadata author_id matching current user
      *
