@@ -82,8 +82,10 @@ abstract class Seeder extends IlluminateSeeder
         // Loop through the sets of relations, first index is the relation type, the second index is the relation value
         collect($relations)->each(function ($relation) use ($content_id) {
 
-            $relation_type_record = Content::where('key', $relation[0])->first();
-            $relation_record = Content::where('key', $relation[1])->first();
+            $relation_type_record = content($relation[0]);//Content::where('key', $relation[0])->first();
+            $relation_record = content($relation[1]);
+
+            dump($relation_type_record, $relation_record);
 
             if (!$relation_type_record || !$relation_record) {
                 return false;

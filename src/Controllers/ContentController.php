@@ -502,7 +502,7 @@ class ContentController extends Controller
 
             if (!empty($key) && !empty($request->meta_value[$id])) {
 
-                if (in_array($id, $metaIds) && $metaRecord = ContentMeta::where('id', $id)) {
+                if (in_array($id, $metaIds) && $metaRecord = ContentMeta::where(['content_id' => $content->id, 'key' => $key])) {
                     $metaRecord
                         ->update([
                             'language' => \App::getLocale(),
@@ -518,6 +518,7 @@ class ContentController extends Controller
                         'key' => $key,
                         'value' => $request->meta_value[$id]
                     ]));
+
                     $content->meta()->save($metaRecord);
                     $metaRecord->save();
                 }
@@ -540,30 +541,47 @@ class ContentController extends Controller
         }
 
         // Get the ids of the meta that was present on the page when the form was loaded
-        $resourceIds = json_decode($request->relation_ids) ?: [];
+        // $resourceIds = json_decode($request->relation_ids) ?: [];
 
-        foreach ($request->content_id as $id => $content_id) {
+        ContentRelation::destroy(['content_id' => $content->id]);
 
-            if (in_array($id, $resourceIds) && $relationRecord = ContentRelation::where('id', $id)) {
-                $relationRecord
-                    ->update([
-                        'relation_id' => $request->relation_id[$id],
-                        'relation_type_id' => $request->relation_type_id[$id],
-                    ]);
+        foreach($request->content_id as $index => $content_id) {
 
-                unset($resourceIds[array_search($id, $resourceIds)]);
-            }
-            else {
-                if (!empty($content_id) && !empty($request->relation_id[$id]) && !empty($request->relation_type_id[$id])) {
-                    (new ContentRelation([
-                        'content_id'  => $content->id,
-                        'relation_id' => $request->relation_id[$id],
-                        'relation_type_id' => $request->relation_type_id[$id],
-                    ]))->save();
-                }
-            }
+            // $contentRelation = ContentRelation::where([
+            //     'content_id' => $content->id,
+            //     'relation_id' => $request->relation_id[$index],
+            //     'relation_type_id' => $request->relation_type_id[$index],
+            // ]);
+
+            // if(!$contentRelation->exists()) {
+                (new ContentRelation([
+                    'content_id'  => $content->id,
+                    'relation_id' => $request->relation_id[$index],
+                    'relation_type_id' => $request->relation_type_id[$index],
+                ]))->save();
+            // }
+
+
+            // if (in_array($index, $resourceIds) && $relationRecord = ContentRelation::where(['content_id' => $content->id, 'relation_type_id' => $request->relation_type_id[$index]])) {
+            //     $relationRecord
+            //         ->update([
+            //             'relation_id' => $request->relation_id[$index],
+            //             'relation_type_id' => $request->relation_type_id[$index],
+            //         ]);
+
+            //     unset($resourceIds[array_search($index, $resourceIds)]);
+            // }
+            // else {
+            //     if (!empty($content_id) && !empty($request->relation_id[$index]) && !empty($request->relation_type_id[$index])) {
+            //         (new ContentRelation([
+            //             'content_id'  => $content->id,
+            //             'relation_id' => $request->relation_id[$index],
+            //             'relation_type_id' => $request->relation_type_id[$index],
+            //         ]))->save();
+            //     }
+            // }
         }
 
-        ContentRelation::destroy($resourceIds);
+
     }
 }

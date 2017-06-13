@@ -78,6 +78,8 @@ class ContentServiceProvider extends AuthServiceProvider
             $router->get('translation/{content}/edit', 'ContentController@contentEdit')->name('translation.edit');
         });
 
+
+        // 'title' => 'required|unique_key:contents,parent_id',
         Validator::extend('unique_key', function ($attribute, $value, $parameters, $validator) {
             $data = $validator->getData();
             $route = \Route::getCurrentRoute();
@@ -118,6 +120,13 @@ class ContentServiceProvider extends AuthServiceProvider
         });
     }
 
+    // public function provides()
+    // {
+    //     return [
+    //         Content::class,
+    //     ];
+    // }
+
     /**
      * Register the application services.
      *
@@ -125,6 +134,10 @@ class ContentServiceProvider extends AuthServiceProvider
      */
     public function register()
     {
+        // $this->app->singleton(Content::class, function ($app) {
+        //     return new Content();
+        // });
+
         // Register commands
         $this->commands($this->commands);
 

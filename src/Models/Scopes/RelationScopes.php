@@ -2,11 +2,14 @@
 
 namespace Baytek\Laravel\Content\Models\Scopes;
 
+use Baytek\Laravel\Content\Exception\ContentNotFoundException;
+
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 use DB;
 use Cache;
+use Exception;
 
 trait RelationScopes
 {
@@ -17,6 +20,19 @@ trait RelationScopes
         }
         else if(is_string($value)) {
             $query->where('contents.key', $value);
+        }
+        else if(is_array($value)) {
+            $first = array_first($value);
+
+            if(is_numeric($first)) {
+                $query->whereIn('contents.id', $value);
+            }
+            else if(is_string($first)) {
+                $query->whereIn('contents.key', $value);
+            }
+            else {
+                throw new Exception('Passed array but value type is not supported');
+            }
         }
         else if(is_object($value) && $value instanceof Collection) {
             $query->whereIn('contents.id', $value->pluck('id'));
@@ -90,7 +106,13 @@ trait RelationScopes
 
     public function getContentByKey($type)
     {
-        return parent::withoutGlobalScopes()->where('key', $type)->firstOrFail();
+        $result = parent::withoutGlobalScopes()->where('key', $type)->get();
+
+        if($result->isEmpty()) {
+            throw new ContentNotFoundException($type);
+        }
+
+        return $result->first();
     }
 
     public function getContentIdByKey($type)
@@ -195,7 +217,13 @@ trait RelationScopes
         -- concat the parent key with the content key to set a unique pair to check against the path provided
         WHERE CONCAT(parent.key, '/', content.`key`) = SUBSTRING_INDEX(?, '/', -2);", [$path]);
 
-        return static::hydrate($result);
+        $collection = static::hydrate($result);
+
+        if($collection->isEmpty()) {
+            throw new ContentNotFoundException($path);
+        }
+
+        return $collection;
     }
 
 

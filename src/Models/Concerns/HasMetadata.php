@@ -123,8 +123,8 @@ trait HasMetadata
                     }
                     else {
                         if (!is_array($attributes['relationships'][$newKey])) {
-                            // $attributes['relationships'][$newKey] = [$attributes['relationships'][$newKey]];
-                            throw new \Exception('Content relationship is not plural, but has many relations.');
+                            $attributes['relationships'][$newKey] = [$attributes['relationships'][$newKey]];
+                            // throw new \Exception('Content relationship is not plural, but has many relations.');
                         }
 
                         $attributes['relationships'][$newKey] = $relation->relations['relation']->key;
