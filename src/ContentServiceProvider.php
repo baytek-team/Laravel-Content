@@ -9,6 +9,7 @@ use Baytek\Laravel\Content\Middleware\LocaleMiddleware;
 
 use Faker\Generator;
 use Illuminate\Database\Eloquent\Factory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider;
 use Illuminate\Support\Facades\Gate;
 
@@ -84,6 +85,7 @@ class ContentServiceProvider extends AuthServiceProvider
             $data = $validator->getData();
             $route = \Route::getCurrentRoute();
             $id = null;
+
             // Check if the route params are set, if so use it.
             if(count($route->parameters())) {
                 $id = collect($route->parameters())->first();
@@ -95,6 +97,7 @@ class ContentServiceProvider extends AuthServiceProvider
                     ->filter(function ($item, $key) use ($id) {
                         return $item->id != $id;
                     });
+                dd(!$children->pluck('key')->contains(str_slug($value)));
                 return !$children->pluck('key')->contains(str_slug($value));
             }
             else {
@@ -109,23 +112,22 @@ class ContentServiceProvider extends AuthServiceProvider
             $id = null;
             // Check if the route params are set, if so use it.
             if(count($route->parameters())) {
-                $id = collect($route->parameters())->first();
+                $id = collect($route->parameters())->last();
+
+                if(is_object($id) && $id instanceof Model) {
+                    // Sorry, I need just the id.
+                    $id = $id->id;
+                }
             }
 
             $children = Content::ofType($parameters[0])->get()
                 ->filter(function ($item, $key) use ($id) {
                     return $item->id != $id;
                 });
+
             return !$children->pluck('key')->contains(str_slug($value));
         });
     }
-
-    // public function provides()
-    // {
-    //     return [
-    //         Content::class,
-    //     ];
-    // }
 
     /**
      * Register the application services.
@@ -134,10 +136,6 @@ class ContentServiceProvider extends AuthServiceProvider
      */
     public function register()
     {
-        // $this->app->singleton(Content::class, function ($app) {
-        //     return new Content();
-        // });
-
         // Register commands
         $this->commands($this->commands);
 

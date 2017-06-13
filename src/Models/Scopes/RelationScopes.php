@@ -115,6 +115,15 @@ trait RelationScopes
         return $result->first();
     }
 
+    public function getContentIdByKeys($types)
+    {
+        $result = [];
+        foreach($types as $type) {
+            array_push($result, $this->getContentIdByKey($type));
+        }
+        return $result;
+    }
+
     public function getContentIdByKey($type)
     {
         if($cache = Cache::get('content.cache.keys')) {
@@ -373,8 +382,13 @@ trait RelationScopes
             ->join('contents AS r', 'r.id', '=', 'children_of_type.content_id')
             ->join('content_relations AS relation_type', function ($join) use ($type) {
                 $join->on('relation_type.content_id', '=', 'children_of_type.content_id')
-                    ->where('relation_type.relation_type_id', $this->getContentIdByKey('content-type'))
-                    ->where('relation_type.relation_id', $this->getContentIdByKey($type));
+                    ->where('relation_type.relation_type_id', $this->getContentIdByKey('content-type'));
+                    if(is_array($type)) {
+                        $join->whereIn('relation_type.relation_id', $this->getContentIdByKeys($type));
+                    }
+                    else {
+                        $join->where('relation_type.relation_id', $this->getContentIdByKey($type));
+                    }
             });
 
 
