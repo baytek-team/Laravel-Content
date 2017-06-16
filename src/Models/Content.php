@@ -81,6 +81,23 @@ class Content extends Model implements StatusInterface
         return $this->hasMany(ContentRelation::class, 'content_id');
     }
 
+    public function scopeWithMeta($query)
+    {
+        return $query->with('meta');
+    }
+
+    public function scopeWithRelationships()
+    {
+        return $query>with(['relations', 'relations.relation', 'relations.relationType']);
+    }
+
+    public function scopeWithAll($query)
+    {
+        $query
+            ->withContents()
+            ->with(['relations', 'relations.relation', 'relations.relationType', 'meta']);
+    }
+
     public function getMetaRecord($key)
     {
         $meta = $this->meta->where('key', $key);
