@@ -86,9 +86,9 @@ class Content extends Model implements StatusInterface
         return $query->with('meta');
     }
 
-    public function scopeWithRelationships()
+    public function scopeWithRelationships($query)
     {
-        return $query>with(['relations', 'relations.relation', 'relations.relationType']);
+        return $query->with(['relations', 'relations.relation', 'relations.relationType']);
     }
 
     public function scopeWithAll($query)
