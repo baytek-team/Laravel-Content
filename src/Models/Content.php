@@ -186,14 +186,14 @@ class Content extends Model implements StatusInterface
     }
 
 
-    public static function hierarchy($content, $paginate = true)
+    public static function hierarchy($content, $paginate = true, $perPage = 15)
     {
         $request = request();
         $relations = Cache::get('content.cache.relations')->where('relation_type_id', 4);
         $items = Content::loopying($content, $relations, $content);
 
         $total = count($items);
-        $perPage = $paginate ? 15 : $total;
+        $perPage = $paginate ? $perPage : $total;
         $currentPage = Paginator::resolveCurrentPage();
         $pagination = new LengthAwarePaginator(
             array_slice($items, ($currentPage - 1) * $perPage, $perPage, true),
