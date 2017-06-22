@@ -89,15 +89,19 @@ class ContentServiceProvider extends AuthServiceProvider
             // Check if the route params are set, if so use it.
             if(count($route->parameters())) {
                 $id = collect($route->parameters())->first();
+                if (is_object($id)) {
+                    $id = $id->id;
+                }
             }
 
             if(array_key_exists($parameters[1], $data)) {
                 $parent_id = $data[$parameters[1]];
+
                 $children = Content::childrenOf($parent_id, 'id')->get()
                     ->filter(function ($item, $key) use ($id) {
                         return $item->id != $id;
                     });
-                dd(!$children->pluck('key')->contains(str_slug($value)));
+                //dd(!$children->pluck('key')->contains(str_slug($value)));
                 return !$children->pluck('key')->contains(str_slug($value));
             }
             else {
