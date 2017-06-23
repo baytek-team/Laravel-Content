@@ -88,7 +88,7 @@ class ContentServiceProvider extends AuthServiceProvider
 
             // Check if the route params are set, if so use it.
             if(count($route->parameters())) {
-                $id = collect($route->parameters())->first();
+                $id = collect($route->parameters())->last();
                 if (is_object($id)) {
                     $id = $id->id;
                 }
