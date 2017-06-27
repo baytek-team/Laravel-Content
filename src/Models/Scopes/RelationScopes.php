@@ -395,7 +395,7 @@ trait RelationScopes
         $this->abstractSelect($query, $key);
     }
 
-    public function scopeChildenOfTypeWhereMetadata($query, $key, $type, $metakey, $metavalue)
+    public function scopeChildenOfTypeWhereMetadata($query, $key, $type, $metakey, $metavalue, $comparison = '=')
     {
         $query->selectContext = 'r';
         $query
@@ -410,10 +410,10 @@ trait RelationScopes
                     ->where('relation_type.relation_type_id', $this->getContentIdByKey('content-type'))
                     ->where('relation_type.relation_id', $this->getContentIdByKey($type));
             })
-            ->join('content_meta AS metadata', function($join) use ($metakey, $metavalue) {
+            ->join('content_meta AS metadata', function($join) use ($metakey, $metavalue, $comparison) {
                 $join->on('r.id', '=', 'metadata.content_id')
                     ->where('metadata.key', $metakey)
-                    ->where('metadata.value', $metavalue);
+                    ->where('metadata.value', $comparison, $metavalue);
             });
 
         $this->abstractSelect($query, $key);
