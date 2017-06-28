@@ -303,13 +303,13 @@ trait RelationScopes
         return $result;
     }
 
-    public function scopeWhereMetadata($query, $key, $value)
+    public function scopeWhereMetadata($query, $key, $value, $comparison = '=')
     {
         return $query
-            ->join('content_meta AS metadata', function($join) use ($key, $value) {
+            ->join('content_meta AS metadata', function($join) use ($key, $value, $comparison) {
                 $join->on('contents.id', '=', 'metadata.content_id')
                     ->where('metadata.key', $key)
-                    ->where('metadata.value', $value);
+                    ->where('metadata.value', $comparison, $value);
             });
     }
 
