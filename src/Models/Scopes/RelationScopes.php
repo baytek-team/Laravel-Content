@@ -266,7 +266,7 @@ trait RelationScopes
                     (
                         SELECT @r := closure.relation_id
                         FROM ${prefix}content_relations closure, ${prefix}contents relation
-                        WHERE relation.id = closure.relation_type_id AND relation.key = 'parent-id' AND closure.content_id = _id
+                        WHERE relation.id = closure.relation_type_id AND relation.key = 'parent-id' AND relation.language = 'en' AND closure.content_id = _id
                      ) AS parent,
                     @l := @l + 1 AS lvl
                 FROM
