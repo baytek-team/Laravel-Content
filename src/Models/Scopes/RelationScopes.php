@@ -157,7 +157,6 @@ trait RelationScopes
         return false;
     }
 
-
     public function countChildrenOfTypeById($id, $type)
     {
         $prefix = env('DB_PREFIX');
@@ -326,19 +325,6 @@ trait RelationScopes
             // ->where('contents.'.$column, $key);
 
             $this->abstractSelect($query, $key);
-
-            // if(is_string($key)) {
-            //     $query->where('contents.key', $key);
-            // }
-            // else if(is_integer($key)) {
-            //     $query->where('contents.id', $key);
-            // }
-            // else if(is_object($key) && $key instanceof Collection) {
-            //     $query->whereIn('contents.id', $key->pluck('id'));
-            // }
-            // else if(is_object($key) && $key instanceof Model) {
-            //     $query->where('contents.key', $key->key);
-            // }
     }
 
     public function scopeOfType($query, $type)
@@ -411,7 +397,6 @@ trait RelationScopes
                     }
             });
 
-
         $this->abstractSelect($query, $key);
     }
 
@@ -438,7 +423,6 @@ trait RelationScopes
 
         $this->abstractSelect($query, $key);
     }
-
 
     // select content.* from pretzel_contents c
 
@@ -536,5 +520,4 @@ trait RelationScopes
         return $query->where($table.'.title', 'like', [$search])
             ->orderBy($table.'.title', 'asc');
     }
-
 }

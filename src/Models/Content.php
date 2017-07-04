@@ -15,7 +15,8 @@ use Cache;
 
 class Content extends Model implements StatusInterface
 {
-    use Concerns\HasMetadata,
+    use Concerns\HasAssociations,
+        Concerns\HasMetadata,
         Scopes\RelationScopes,
         SoftDeletes,
         Statusable;
