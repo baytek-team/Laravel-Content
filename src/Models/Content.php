@@ -6,6 +6,7 @@ use Baytek\Laravel\Content\Models\Scopes\TranslationScope;
 use Baytek\LaravelStatusBit\Statusable;
 use Baytek\LaravelStatusBit\StatusInterface;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -66,6 +67,11 @@ class Content extends Model implements StatusInterface
     {
         parent::boot();
 
+        static::addGlobalScope('not_restricted', function (Builder $builder) {
+            $context = property_exists($builder, 'selectContext') ? $builder->selectContext : $builder->getModel()->table;
+            $builder->withStatus($context, ['exclude' => [self::RESTRICTED]]);
+        });
+
         if(\App::getLocale() != 'en') {
             static::addGlobalScope(new TranslationScope);
         }
@@ -76,14 +82,29 @@ class Content extends Model implements StatusInterface
         return $this->hasMany(ContentMeta::class, 'content_id');
     }
 
+    public function restrictedMeta()
+    {
+        return $this->hasMany(ContentMeta::class, 'content_id')->withoutGlobalScope('not_restricted');
+    }
+
     public function relations()
     {
         return $this->hasMany(ContentRelation::class, 'content_id');
     }
 
-    public function scopeWithMeta($query)
+    public function scopeWithRestricted($query)
     {
-        return $query->with('meta');
+        return $query->withoutGlobalScope('not_restricted');
+    }
+
+    public function scopeWithRestrictedMeta($query)
+    {
+        return $query->withoutGlobalScope('not_restricted_content_meta');
+    }
+
+    public function scopeWithMeta($query, $restricted = false)
+    {
+        return $query->with($restricted ? 'restrictedMeta' : 'meta');
     }
 
     public function scopeWithRelationships($query)
