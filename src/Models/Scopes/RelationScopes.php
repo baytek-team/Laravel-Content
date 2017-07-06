@@ -205,6 +205,8 @@ trait RelationScopes
             ) ids ON FIND_IN_SET(closure2.relation_id, ids.parent_ids);", [$type, $id]);
     }
 
+
+    // This is bad and should be fixed to ensure the full path
     public function getWithPath($path)
     {
         $prefix = env('DB_PREFIX');

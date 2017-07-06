@@ -40,7 +40,6 @@ class HasSome extends HasOneOrMany
      */
     public function initRelation(array $models, $relation)
     {
-        dd('asdf');
         foreach ($models as $model) {
             $model->setRelation($relation, $this->related->newCollection());
         }

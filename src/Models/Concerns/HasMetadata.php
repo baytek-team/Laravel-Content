@@ -16,7 +16,7 @@ trait HasMetadata
      */
     public function toArray()
     {
-        return array_merge($this->attributesToArray(), $this->relationsToArray(), $this->metaDataToArray());
+        return array_merge($this->attributesToArray(), $this->metaDataToArray(), $this->relationsToArray());
     }
 
     /**
@@ -70,13 +70,15 @@ trait HasMetadata
         $attributes = [];
 
         foreach ($this->getArrayableRelations() as $key => $value) {
-            if ($key == 'meta') {
+            if ($key == 'meta' || $key == 'restrictedMeta') {
                 if (!isset($attributes['metadata'])) {
                     $attributes['metadata'] = [];
                 }
 
                 $value->each(function ($metadata) use (&$attributes) {
-                    $attributes['metadata'][str_replace('-', '_', $metadata->key)] = $metadata->value;
+                    if(!array_key_exists(str_replace('-', '_', $metadata->key), $attributes['metadata'])) {
+                        $attributes['metadata'][str_replace('-', '_', $metadata->key)] = $metadata->value;
+                    }
                 });
             }
         }
@@ -88,6 +90,8 @@ trait HasMetadata
                 );
             }
         }
+
+        unset($this->relations['restrictedMeta']);
 
         return $attributes;
     }
@@ -135,6 +139,7 @@ trait HasMetadata
 
         return $attributes;
     }
+
 
     /**
      * Get the model's relationships in array form.
