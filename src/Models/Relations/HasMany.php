@@ -129,11 +129,6 @@ class HasMany extends Relation
 
         $key = $baseTable.'.'.$this->related->getKeyName();
 
-        // $query->join($this->table . ' as children_of_type', function ($join) use ($key) {
-        //     $join->on($key, '=', $this->getQualifiedRelatedKeyName())
-        //         ->where('children_of_type.relation_type_id', '=', content_id('parent-id'));
-        // })
-
         $query->join('content_relations AS '.$childrenHash = $this->getRelationCountHash(), function ($join) use ($childrenHash) {
             $join->on('contents.id', '=', $childrenHash.'.relation_id')
                 ->where($childrenHash.'.relation_type_id', content_id('parent-id'));

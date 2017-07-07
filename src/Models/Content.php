@@ -67,6 +67,7 @@ class Content extends Model implements StatusInterface
      * @return void
      */
     protected static function boot()
+    {
         parent::boot();
 
         static::addGlobalScope('not_restricted', function (Builder $builder) {
