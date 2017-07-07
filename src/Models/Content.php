@@ -17,9 +17,11 @@ use Cache;
 class Content extends Model implements StatusInterface
 {
     use Concerns\HasMetadata,
+        Concerns\HasAssociations,
         Scopes\RelationScopes,
         SoftDeletes,
         Statusable;
+
 
     // Defining the table we want to use for all content
     protected $table = 'contents';

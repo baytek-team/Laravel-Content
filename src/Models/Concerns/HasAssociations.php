@@ -7,7 +7,16 @@ use Illuminate\Support\Str;
 
 trait HasAssociations
 {
-    function asscociated($related, $relationKey = null, $relation = null)
+
+    /**
+     * [association description]
+     *
+     * @param  [type] $related     [description]
+     * @param  [type] $relationKey [description]
+     * @param  [type] $relation    [description]
+     * @return Baytek\Laravel\Content\Models\Relations\HasMany              [description]
+     */
+    public function association($related, $relationKey = null, $relation = null)
     {
         // If no relation name was given, we will use this debug backtrace to extract
         // the calling method's name and use that as the relationship name as most
@@ -35,5 +44,15 @@ trait HasAssociations
         return new HasMany(
             $instance->newQuery(), $this, $ownerKey, $relationKey, $relation
         );
+    }
+
+    /**
+     * Alias for association
+     *
+     * @return Baytek\Laravel\Content\Models\Concerns\HasAssociations [description]
+     */
+    public function kin()
+    {
+        return call_user_func_array([$this, 'association'], func_get_args());
     }
 }
