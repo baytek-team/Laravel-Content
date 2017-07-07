@@ -142,12 +142,12 @@ class HasMany extends Relation
         ->join('content_relations AS '.$typeHash = $this->getRelationCountHash(), function ($join) use ($childrenHash, $typeHash) {
             $join->on($typeHash.'.content_id', '=', $childrenHash.'.content_id')
                 ->where($typeHash.'.relation_type_id', content_id('content-type'));
-                // if(is_array($type)) {
-                //     $join->whereIn($typeHash.'.relation_id', content_ids($type));
-                // }
-                // else {
+                if(is_array($this->relationKey)) {
+                    $join->whereIn($typeHash.'.relation_id', content_ids($this->relationKey));
+                }
+                else {
                     $join->where($typeHash.'.relation_id', content_id($this->relationKey));
-                // }
+                }
         });
 
         return $this;

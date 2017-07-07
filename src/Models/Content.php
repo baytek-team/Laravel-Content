@@ -13,6 +13,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 
 use Cache;
+use DB;
 
 class Content extends Model implements StatusInterface
 {
@@ -66,12 +67,18 @@ class Content extends Model implements StatusInterface
      * @return void
      */
     protected static function boot()
-    {
         parent::boot();
 
         static::addGlobalScope('not_restricted', function (Builder $builder) {
             $context = property_exists($builder, 'selectContext') ? $builder->selectContext : $builder->getModel()->table;
             $builder->withStatus($context, ['exclude' => [self::RESTRICTED]]);
+        });
+
+        static::addGlobalScope('ordered', function (Builder $builder) {
+            $prefix = DB::getTablePrefix();
+            $context = property_exists($builder, 'selectContext') ? $builder->selectContext : $builder->getModel()->table;
+
+            $builder->orderBy(DB::raw("IFNULL(`$prefix$context`.`order`, 4294967295 + 1), id"));
         });
 
         if(\App::getLocale() != 'en') {
