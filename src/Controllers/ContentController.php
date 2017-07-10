@@ -213,7 +213,7 @@ class ContentController extends Controller
      */
     protected function bound($contentID)
     {
-        if (!is_string($contentID) && get_class($contentID) == $this->model) {
+        if (!is_string($contentID) && !is_int($contentID) && get_class($contentID) == $this->model) {
             return $contentID;
         }
 
