@@ -4,7 +4,7 @@ namespace Baytek\Laravel\Content\Models;
 
 use Baytek\Laravel\Content\Models\Scopes\TranslationScope;
 use Baytek\LaravelStatusBit\Statusable;
-use Baytek\LaravelStatusBit\StatusInterface;
+use Baytek\LaravelStatusBit\Interfaces\StatusInterface;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
