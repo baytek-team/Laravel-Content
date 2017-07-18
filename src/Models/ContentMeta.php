@@ -3,7 +3,7 @@
 namespace Baytek\Laravel\Content\Models;
 
 use Baytek\LaravelStatusBit\Statusable;
-use Baytek\LaravelStatusBit\StatusInterface;
+use Baytek\LaravelStatusBit\Interfaces\StatusInterface;
 use Baytek\Laravel\Content\Models\Content;
 use Baytek\Laravel\Content\Traits\HasCompositePrimaryKey;
 
