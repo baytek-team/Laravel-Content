@@ -75,12 +75,14 @@ class Content extends Model implements StatusInterface
             $builder->withStatus($context, ['exclude' => [self::RESTRICTED]]);
         });
 
-        static::addGlobalScope('ordered', function (Builder $builder) {
-            $prefix = DB::getTablePrefix();
-            $context = property_exists($builder, 'selectContext') ? $builder->selectContext : $builder->getModel()->table;
+        if(config('content.ordering', false)) {
+            static::addGlobalScope('ordered', function (Builder $builder) {
+                $prefix = DB::getTablePrefix();
+                $context = property_exists($builder, 'selectContext') ? $builder->selectContext : $builder->getModel()->table;
 
-            $builder->orderBy(DB::raw("IFNULL(`$prefix$context`.`order`, 4294967295 + 1), id"));
-        });
+                $builder->orderBy(DB::raw("IFNULL(`$prefix$context`.`order`, 4294967295 + 1), id"));
+            });
+        }
 
         if(\App::getLocale() != 'en') {
             static::addGlobalScope(new TranslationScope);
