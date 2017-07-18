@@ -307,6 +307,7 @@ class ContentController extends Controller
             $content->saveRelation($contentType, $typeID);
         }
 
+        flash('Content Created');
         event(new ContentEvent($content));
 
         if($this->redirects) {
@@ -412,6 +413,7 @@ class ContentController extends Controller
         $this->saveMetaData($content, $request);
         $this->saveRelationships($content, $request);
 
+        flash('Content Updated');
         event(new ContentEvent($content));
 
         if ($this->redirects) {
