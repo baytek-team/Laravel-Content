@@ -399,7 +399,7 @@ class ContentController extends Controller
         ]);
 
         $request->merge([
-            'language' => App::getLocale(),
+            //'language' => App::getLocale(),
             'revision' => (int)$content->revision + 1
         ]);
 
