@@ -10,10 +10,13 @@
         }
     ],
     "autoload": {
-        "files": ["src/localization.php"],
         "psr-4": {
             "Baytek\\Laravel\\Content\\": "src/"
-        }
+        },
+        "files": [
+            "src/localization.php",
+            "src/Support/helpers.php"
+        ]
     },
     "require": {
         "php": ">=5.6.4",

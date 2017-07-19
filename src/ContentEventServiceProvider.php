@@ -21,6 +21,7 @@ class ContentEventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $subscribe = [
-        \Baytek\Laravel\Content\Listeners\ContentNotificationSubscriber::class,
+        Listeners\ContentNotificationSubscriber::class,
+        Listeners\ContentNursurySubscriber::class,
     ];
 }
