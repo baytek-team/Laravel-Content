@@ -170,6 +170,15 @@ class Content extends Model implements StatusInterface
         ])->delete();
     }
 
+    //Remove a specific relation by relation_id
+    public function removeRelationById($id)
+    {
+        $relation = ContentRelation::where([
+            'content_id' => $this->id,
+            'relation_id' => $id,
+        ])->delete();
+    }
+
     // This method saves the content relation
     public function saveRelation($type, $relation_id)
     {
