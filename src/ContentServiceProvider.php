@@ -80,6 +80,20 @@ class ContentServiceProvider extends AuthServiceProvider
         });
 
 
+        if(!$router->has('admin.index')) {
+            $router->group([
+                'as' => 'admin.',
+                'namespace' => '\Baytek\Laravel\Content\Controllers',
+                'middleware' => ['web', 'auth']
+            ], function () use ($router) {
+
+                $router->get('admin', function(){
+                    return 'this is the index of the page';
+                })->name('index');
+            });
+        }
+
+
         // 'title' => 'required|unique_key:contents,parent_id',
         Validator::extend('unique_key', function ($attribute, $value, $parameters, $validator) {
             $data = $validator->getData();
