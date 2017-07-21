@@ -7,6 +7,7 @@ interface InstallerContract
     public function publish();
     public function migrate();
     public function seed();
+    public function seedFake();
     public function protect();
     public function shouldPublish();
     public function shouldMigrate();

@@ -85,7 +85,8 @@ abstract class Installer extends Command implements InstallerContract
 
         if($this->argument('fake')) {
             $this->line('');
-            $this->line('SEED SOME FAKE DATA');
+            $this->line('Checking if there is fake data to seed:');
+            $this->info($installer->seedFake() ? 'Yes! Fake data seeded.' : 'No! Skipping.');
         }
 
         // Stop asking if we want to publish, this should be up to the developer.
@@ -152,6 +153,17 @@ abstract class Installer extends Command implements InstallerContract
     {
         if($this->shouldSeed()) {
             (new $this->seeder)->run();
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public function seedFake()
+    {
+        if($this->fakeSeeder) {
+            (new $this->fakeSeeder)->run();
 
             return true;
         }

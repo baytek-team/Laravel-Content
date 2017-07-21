@@ -15,6 +15,7 @@ class ContentInstaller extends Installer
     protected $provider = ContentServiceProvider::class;
     protected $model = Content::class;
     protected $seeder = ContentSeeder::class;
+    protected $fakeSeeder = false;
     protected $migrationPath = __DIR__.'/../database/Migrations';
 
     public function beforeInstallation()
