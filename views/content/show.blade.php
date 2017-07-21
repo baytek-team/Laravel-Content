@@ -1,4 +1,4 @@
-@extends('Content::admin')
+@extends('content::admin')
 
 @section('page.head.header')
     <h1 class="ui header">

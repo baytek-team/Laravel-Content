@@ -22,6 +22,6 @@ class ContentEventServiceProvider extends ServiceProvider
      */
     protected $subscribe = [
         Listeners\ContentNotificationSubscriber::class,
-        Listeners\ContentNursurySubscriber::class,
+        // Listeners\ContentNursurySubscriber::class,
     ];
 }

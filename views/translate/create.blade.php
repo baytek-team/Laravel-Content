@@ -1,4 +1,4 @@
-@extends('Content::admin')
+@extends('content::admin')
 @section('content')
 
 <div class="ui two column stackable grid">

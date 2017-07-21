@@ -11,12 +11,13 @@ use Faker\Generator;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider;
+use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
-
-use Artisan;
-use DB;
-use Event;
-use Validator;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Validator;
 
 class ContentServiceProvider extends AuthServiceProvider
 {
@@ -44,24 +45,20 @@ class ContentServiceProvider extends AuthServiceProvider
      *
      * @return void
      */
-    public function boot(\Illuminate\Routing\Router $router)
+    public function boot(Router $router)
     {
         // AliasLoader::getInstance()->alias('Form', 'Collective\Html\FormFacade');
         $this->registerPolicies();
-        $this->loadViewsFrom(__DIR__.'/../views', 'Content');
+        $this->loadViewsFrom(__DIR__.'/../views', 'content');
 
         $this->publishes([
             __DIR__.'/../views' => resource_path('views/vendor/content'),
         ], 'views');
 
-        $this->loadMigrationsFrom(__DIR__.'/../database/Migrations');
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         $this->publishes([
-            __DIR__.'/../database/Migrations/' => database_path('migrations')
+            __DIR__.'/../database/migrations/' => database_path('migrations')
         ], 'migrations');
-
-        // $this->publishes([
-        //     __DIR__.'/../database/Seeds/' => database_path('seeds')
-        // ], 'seeds');
 
         $this->publishes([
             __DIR__.'/../config/content.php' => config_path('content.php'),
@@ -126,8 +123,9 @@ class ContentServiceProvider extends AuthServiceProvider
 
         Validator::extend('unique_in_type', function ($attribute, $value, $parameters, $validator) {
             $data = $validator->getData();
-            $route = \Route::getCurrentRoute();
+            $route = Route::getCurrentRoute();
             $id = null;
+
             // Check if the route params are set, if so use it.
             if(count($route->parameters())) {
                 $id = collect($route->parameters())->last();

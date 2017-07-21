@@ -12,9 +12,37 @@
 </div>
 
 
-<!-- <button type="button" class="ui left floated basic positive button add-row">
-	Add Metadata
-</button> -->
+<h4 class="ui horizontal divider header">
+	<i class="tags icon"></i>
+	{{ ___('Statuses') }}
+</h4>
+
+<div class="ui equal width form">
+	<div class="fields">
+		@php
+			$sep = count($content::$statuses) / 2;
+			$index = 1;
+		@endphp
+		@foreach($content::$statuses as $key => $status)
+
+			<div class="field">
+				<div class="ui checkbox">
+					<input type="checkbox" name="status" value="{{$key}}" @if(($content->status & $key) != 0) checked @endif>
+					<label>{{ $status }}</label>
+				</div>
+			</div>
+
+			@if($index % $sep == 0)
+			</div>
+			<div class="fields">
+			@endif
+			@php
+				$index++;
+			@endphp
+		@endforeach
+	</div>
+</div>
+
 <h4 class="ui horizontal divider header">
 	<i class="tags icon"></i>
 	{{ ___('Metadata') }}
@@ -60,9 +88,6 @@
 	</button>
 </div>
 
-<!-- <button type="button" class="ui left floated basic positive button add-row">
-	Add Relationship
-</button> -->
 <h4 class="ui horizontal divider header">
 	<i class="users icon"></i>
 	{{ ___('Relationships') }}

@@ -12,16 +12,8 @@
 
     <!-- Styles -->
     {{-- <link href="/css/all.css" rel="stylesheet"> --}}
-    <link href="/css/app.css" rel="stylesheet">
-    <link href="/semantic.min.css" rel="stylesheet">
-
-    <!-- Main Quill library -->
-    <script src="//cdn.quilljs.com/1.2.4/quill.min.js"></script>
-
-    <!-- Theme included stylesheets -->
-    <link href="//cdn.quilljs.com/1.2.4/quill.snow.css" rel="stylesheet">
-    <link href="//cdn.quilljs.com/1.2.4/quill.bubble.css" rel="stylesheet">
-
+    {{-- <link href="/css/app.css" rel="stylesheet"> --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.11/semantic.min.css"/>
 
     @yield('head')
 
@@ -34,7 +26,6 @@
     </script>
 </head>
 <body>
-
     <div class="ui two column padded grid container">
         <div class="row">
 
@@ -101,6 +92,17 @@
                             'type' => 'route',
                             'class' => 'item'
                         ])
+
+                        @can('View Discussion')
+                            <a class="item" href="{{ route('discussion.index') }}">
+                                 <i class="comments icon"></i>
+                                {{ ___('Discussions') }}
+                            </a>
+                            <div class="menu">
+                                <a class="item" href="{{ route('discussion.topic.index') }}">{{ ___('Topics') }}</a>
+                            </div>
+                            <div class="ui hidden divider"></div>
+                        @endcan
 
                         @if(Auth::user()->hasRole( \Baytek\Laravel\Users\Roles\Root::ROLE ))
                             <div class="item" href="{{ route('webpage.index') }}">
@@ -221,7 +223,7 @@
                     <div class="ui hidden divider"></div>
                     {{-- <div class="ui hidden divider"></div> --}}
 
-                    @if (count($errors) > 0)
+                    @if(isset($errors) && count($errors) > 0)
                         <div class="ui container">
                             <div class="ui hidden divider"></div>
                             <div class="row">
@@ -303,6 +305,7 @@
     <!-- Scripts -->
     {{-- <script src="//{{ Request::getHost() }}:6001/socket.io/socket.io.js"></script> --}}
     <script src="/js/app.js"></script>
+
     @if(env('APP_ENV') == 'local')
         <script src="http://192.168.2.25:1337/pretzel.js"></script>
     @endif
