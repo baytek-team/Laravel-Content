@@ -148,25 +148,10 @@
                                     ])
                                 </div>
                             </div>
-                            <div class="item">
-                                <i class="configure icon"></i>
-                                {{ ___('Tools') }}
-
-                                <div class="menu">
-                                    @can('create', \Baytek\Laravel\Content\Models\Content::class)
-                                        @link(___('Content Navigator'), [
-                                            'location' => 'content.index',
-                                            'type' => 'route',
-                                            'class' => 'item'
-                                        ])
-                                    @endcan
-                                </div>
-                            </div>
-
                             @if(Auth::user()->hasRole( \Baytek\Laravel\Users\Roles\Root::ROLE ))
                                 <div class="item">
-                                    <i class="user icon"></i>
-                                    {{ ___('Users') }}
+                                    <i class="configure icon"></i>
+                                    {{ ___('Administrative Tools') }}
                                     <div class="menu">
                                         @link(___('Manage Users'), [
                                             'location' => 'user.index',
@@ -188,6 +173,14 @@
                                             'type' => 'route',
                                             'class' => 'item'
                                         ])
+
+                                        @can('create', \Baytek\Laravel\Content\Models\Content::class)
+                                            @link(___('Content Navigator'), [
+                                                'location' => 'content.index',
+                                                'type' => 'route',
+                                                'class' => 'item'
+                                            ])
+                                        @endcan
                                     </div>
                                 </div>
                             @endif

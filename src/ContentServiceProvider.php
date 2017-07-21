@@ -85,7 +85,7 @@ class ContentServiceProvider extends AuthServiceProvider
             ], function () use ($router) {
 
                 $router->get('admin', function(){
-                    return 'this is the index of the page';
+                    return view('content::admin');
                 })->name('index');
             });
         }
