@@ -83,7 +83,7 @@ abstract class Installer extends Command implements InstallerContract
         $this->line('Checking if permission seeding is required: ');
         $this->info($installer->protect() ? 'Yes! Generating Permissions.' : 'No! Skipping.');
 
-        if($this->argument('fake')) {
+        if($this->option('fake')) {
             $this->line('');
             $this->line('Checking if there is fake data to seed:');
             $this->info($installer->seedFake() ? 'Yes! Fake data seeded.' : 'No! Skipping.');
