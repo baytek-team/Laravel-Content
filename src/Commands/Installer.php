@@ -40,7 +40,7 @@ abstract class Installer extends Command implements InstallerContract
         $this->package = $this->name;
 
         if(empty($this->signature)) {
-            $this->signature = 'install:'.strtolower($this->name);
+            $this->signature = 'install:'.strtolower($this->name).' {--fake}';
         }
 
         if(empty($this->description)) {
@@ -82,6 +82,11 @@ abstract class Installer extends Command implements InstallerContract
         $this->line('');
         $this->line('Checking if permission seeding is required: ');
         $this->info($installer->protect() ? 'Yes! Generating Permissions.' : 'No! Skipping.');
+
+        if($this->argument('fake')) {
+            $this->line('');
+            $this->line('SEED SOME FAKE DATA');
+        }
 
         // Stop asking if we want to publish, this should be up to the developer.
         // if($installer->shouldPublish()) {
