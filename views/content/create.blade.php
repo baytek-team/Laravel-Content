@@ -15,7 +15,7 @@
         <form action="{{ route('content.store')}}" method="POST" class="ui form">
             {{ csrf_field() }}
 
-            @include('Content::content.form')
+            @include('content::content.form')
 
             <div class="field actions">
 	            <a class="ui button" href="{{  route('content.index') }}">{{ ___('Cancel') }}</a>

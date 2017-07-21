@@ -11,9 +11,13 @@
 @endsection
 
 @section('page.head.menu')
-    <a class="ui primary button" href="{{ route('content.create') }}">
-        <i class="add icon"></i> {{ ___('Add content') }}
-    </a>
+    <div class="ui secondary menu">
+        <div class="right item">
+            <a class="ui labeled item" href="{{ route('content.create') }}">
+                <i class="add icon"></i> {{ ___('Add content') }}
+            </a>
+        </div>
+    </div>
 @endsection
 
 @section('content')
@@ -33,30 +37,18 @@
     <table class="ui selectable compact table">
         <thead>
             <tr>
-                {{-- <th class="center aligned collapsing">{{ ___('ID') }}</th> --}}
-                <!-- <th class="center aligned collapsing">{{ ___('Key') }}</th> -->
                 <th>{{ ___('Title') }}</th>
                 <th class="center aligned collapsing">{{ ___('Actions') }}</th>
             </tr>
         </thead>
         <tbody>
-            @php
-                $relations = \Cache::get('content.cache.relations')->where('relation_type_id', 4);
-                $loopies = \Baytek\Laravel\Content\Models\Content::loopying($contents, $relations, $contents);
-            @endphp
-            @foreach($loopies as $content)
+            @foreach($contents as $content)
                 <tr>
-                    {{-- <td class="collapsing">{{ $content->id }}</td> --}}
-                    <!-- <td class="collapsing">{{ $content->key }}</td> -->
                     <td>
-                        {{-- <a href="{{ route('content.show', $content->id) }}"> --}}
-                            {!! str_repeat('<i class="minus icon"></i>', $content->depth) !!} {{ $content->title }}
-
-                        {{-- </a> --}}
+                        {!! str_repeat('<i class="minus icon"></i>', $content->depth) !!} {{ $content->title }}
                     </td>
                     <td class="right aligned collapsing">
                         <div class="ui text compact menu">
-                            {{-- <a href="{{ url($content->getUrl()) }}" class="item"><i class="world icon"></i>Visit</a> --}}
                             <a href="{{ route('content.edit', $content->id) }}" class="item">
                                 <i class="pencil icon"></i> {{ ___('Edit') }}
                             </a>
