@@ -13,7 +13,7 @@
 
 
 <h4 class="ui horizontal divider header">
-	<i class="tags icon"></i>
+	<i class="flag icon"></i>
 	{{ ___('Statuses') }}
 </h4>
 
