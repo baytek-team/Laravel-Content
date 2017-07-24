@@ -45,7 +45,19 @@ class ContentSeeder extends Seeder
                 ['parent-id', 'relation-type'],
                 ['content-type', 'relation-type'],
             ]
-        ]
+        ],
+        /**
+         * Category relationship type
+         */
+        [
+            'key' => 'category',
+            'title' => 'Category',
+            'content' => 'Relationship type for categories',
+            'relations' => [
+                ['parent-id', 'relation-type'],
+                ['content-type', 'relation-type'],
+            ]
+        ],
     ];
 
     /**
