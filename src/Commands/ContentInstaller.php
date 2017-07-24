@@ -12,7 +12,6 @@ use DB;
 class ContentInstaller extends Installer
 {
     public $name = 'Content';
-    protected $protected = ['Content'];
     protected $provider = ContentServiceProvider::class;
     protected $model = Content::class;
     protected $seeder = ContentSeeder::class;
@@ -34,13 +33,11 @@ class ContentInstaller extends Installer
 
     public function shouldProtect()
     {
-        foreach ($protected as $model) {
-            foreach(['view', 'create', 'update', 'delete'] as $permission) {
+        foreach(['view', 'create', 'update', 'delete'] as $permission) {
 
-                // If the permission exists in any form do not reseed.
-                if(Permission::where('name', title_case($permission.' '.$model)->exists()) {
-                    return false;
-                }
+            // If the permission exists in any form do not reseed.
+            if(Permission::where('name', title_case($permission.' '.$this->name))->exists()) {
+                return false;
             }
         }
 

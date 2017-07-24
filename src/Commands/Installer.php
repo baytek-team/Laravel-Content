@@ -125,14 +125,12 @@ abstract class Installer extends Command implements InstallerContract
     public function protect()
     {
         if($this->shouldProtect()) {
-            foreach($this->protected as $model) {
-                $view = Permission::create(['name' => ucwords('view '   . $model)]);
-                $create = Permission::create(['name' => ucwords('create ' . $model)]);
-                $update = Permission::create(['name' => ucwords('update ' . $model)]);
-                $delete = Permission::create(['name' => ucwords('delete ' . $model)]);
+            $view = Permission::create(['name' => ucwords('view '   . $this->package)]);
+            $create = Permission::create(['name' => ucwords('create ' . $this->package)]);
+            $update = Permission::create(['name' => ucwords('update ' . $this->package)]);
+            $delete = Permission::create(['name' => ucwords('delete ' . $this->package)]);
 
-                Role::findByName('Root')->permissions()->saveMany([$view, $create, $update, $delete]);
-            }
+            Role::findByName('Root')->permissions()->saveMany([$view, $create, $update, $delete]);
 
             return true;
         }
