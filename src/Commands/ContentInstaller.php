@@ -34,11 +34,11 @@ class ContentInstaller extends Installer
 
     public function shouldProtect()
     {
-        foreach ($protected as $model) {
+        foreach ($this->protected as $model) {
             foreach(['view', 'create', 'update', 'delete'] as $permission) {
 
                 // If the permission exists in any form do not reseed.
-                if(Permission::where('name', title_case($permission.' '.$model)->exists()) {
+                if(Permission::where('name', title_case($permission.' '.$model))->exists()) {
                     return false;
                 }
             }
