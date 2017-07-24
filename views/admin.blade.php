@@ -104,6 +104,34 @@
                             <div class="ui hidden divider"></div>
                         @endcan
 
+                        @can('View Event')
+                            <div class="item">
+                                <i class="calendar icon"></i>
+                                <span class="collapseable-text">{{ ___('Events') }}</span>
+                                <div class="menu">
+                                    @can('Create Event')
+                                        @link(___('Create Event'), [
+                                            'location' => 'event.create',
+                                            'type' => 'route',
+                                            'class' => 'item'
+                                        ])
+                                    @endcan
+                                    @link(___('Manage Events'), [
+                                        'location' => 'event.index',
+                                        'type' => 'route',
+                                        'class' => 'item'
+                                    ])
+                                    @can('View Event Category')
+                                    @link(___('Categories'), [
+                                        'location' => 'events.category.index',
+                                        'type' => 'route',
+                                        'class' => 'item'
+                                    ])
+                                    @endcan
+                                </div>
+                            </div>
+                        @endcan
+
                         @if(Auth::user()->hasRole( \Baytek\Laravel\Users\Roles\Root::ROLE ))
                             <div class="item" href="{{ route('webpage.index') }}">
                                 <i class="world icon"></i>
