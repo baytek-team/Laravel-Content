@@ -1,4 +1,4 @@
-@extends('content::admin')
+@extends('contents::admin')
 @section('content')
 
 <div class="ui two column stackable grid">
@@ -33,7 +33,7 @@
         {{ csrf_field() }}
         {{ method_field('PUT') }}
 
-        @include('Content::translate.form')
+        @include('contents::translate.form')
         <div class="ui hidden divider"></div>
         <div class="ui hidden divider"></div>
 

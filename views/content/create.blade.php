@@ -1,4 +1,4 @@
-@extends('content::admin')
+@extends('contents::admin')
 
 @section('page.head.header')
     <h1 class="ui header">
@@ -15,7 +15,7 @@
         <form action="{{ route('content.store')}}" method="POST" class="ui form">
             {{ csrf_field() }}
 
-            @include('content::content.form')
+            @include('contents::content.form')
 
             <div class="field actions">
 	            <a class="ui button" href="{{  route('content.index') }}">{{ ___('Cancel') }}</a>

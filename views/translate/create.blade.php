@@ -1,4 +1,4 @@
-@extends('content::admin')
+@extends('contents::admin')
 @section('content')
 
 <div class="ui two column stackable grid">
@@ -20,7 +20,7 @@
         <form action="{{action('\Baytek\Laravel\Content\Controllers\ContentController@contentStore')}}" method="POST" class="ui form">
             {{ csrf_field() }}
 
-            @include('Content::translate.form')
+            @include('contents::translate.form')
 
             <div class="field actions">
 	            {{-- <a class="ui button" href="{{ action('\Baytek\Laravel\Content\Controllers\ContentController@contentIndex') }}">{{ ___('Cancel') }}</a> --}}

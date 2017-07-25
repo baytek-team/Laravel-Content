@@ -49,10 +49,10 @@ class ContentServiceProvider extends AuthServiceProvider
     {
         // AliasLoader::getInstance()->alias('Form', 'Collective\Html\FormFacade');
         $this->registerPolicies();
-        $this->loadViewsFrom(__DIR__.'/../views', 'content');
+        $this->loadViewsFrom(__DIR__.'/../views', 'contents');
 
         $this->publishes([
-            __DIR__.'/../views' => resource_path('views/vendor/content'),
+            __DIR__.'/../views' => resource_path('views/vendor/contents'),
         ], 'views');
 
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');

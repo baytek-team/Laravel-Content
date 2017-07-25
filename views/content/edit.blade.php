@@ -1,4 +1,4 @@
-@extends('content::admin')
+@extends('contents::admin')
 
 @section('page.head.header')
     <h1 class="ui header">
@@ -18,7 +18,7 @@
         {{ csrf_field() }}
         {{ method_field('PUT') }}
 
-        @include('content::content.form')
+        @include('contents::content.form')
         <div class="ui hidden divider"></div>
         <div class="ui hidden divider"></div>
 
