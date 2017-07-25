@@ -56,6 +56,12 @@ class ContentController extends Controller
     protected $viewPrefix = '';
 
     /**
+     * Namespace from which to load the view
+     * @var string
+     */
+    protected $viewNamespace = '';
+
+    /**
      * Reference to the current model instance
      * @var Model
      */
@@ -193,7 +199,8 @@ class ContentController extends Controller
     {
         $view = false;
 
-        if(View::exists($view = implode('::', [$this->names['plural'], $this->views[$name]]))) {}
+        if($this->viewNamespace && View::exists($view = implode('::', [$this->viewNamespace, $this->views[$name]]))) {}
+        else if(View::exists($view = implode('::', [$this->names['plural'], $this->views[$name]]))) {}
         else if(View::exists($view = implode('.', array_filter([$this->viewPrefix, $this->names['plural'], $this->views[$name]]))))  {}
         else if(View::exists($view = implode('.', array_filter([$this->viewPrefix, $this->names['singular'], $this->views[$name]]))))  {}
         else if(View::exists($view = implode('.', [$this->names['plural'], $this->views[$name]]))) {}
