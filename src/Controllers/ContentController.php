@@ -344,6 +344,7 @@ class ContentController extends Controller
         $this->authorize('view', $content);
 
         if (!View::exists($view)) {
+            dd($content);
             return $content;
         }
 

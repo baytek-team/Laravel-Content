@@ -66,9 +66,9 @@ class ContentServiceProvider extends AuthServiceProvider
         ], 'config');
 
         $router->group([
-            'namespace' => '\Baytek\Laravel\Content\Controllers',
+            'namespace' => Controllers::class,
             'prefix' => 'admin',
-            'middleware' => ['web', 'auth', LocaleMiddleware::class]
+            'middleware' => ['web', 'auth'] // LocaleMiddleware
         ], function () use ($router) {
             $router->resource('content', 'ContentManagementController');
             $router->put('translation/{content}/translate', 'ContentController@translate')->name('translation.translate');
@@ -76,20 +76,18 @@ class ContentServiceProvider extends AuthServiceProvider
             $router->get('translation/{content}/edit', 'ContentController@contentEdit')->name('translation.edit');
         });
 
-
         if(!$router->has('admin.index')) {
             $router->group([
                 'as' => 'admin.',
-                'namespace' => '\Baytek\Laravel\Content\Controllers',
+                'namespace' => Controllers::class,
                 'middleware' => ['web', 'auth']
             ], function () use ($router) {
 
-                $router->get('admin', function(){
+                $router->get('admin/index', function(){
                     return view('content::admin');
                 })->name('index');
             });
         }
-
 
         // 'title' => 'required|unique_key:contents,parent_id',
         Validator::extend('unique_key', function ($attribute, $value, $parameters, $validator) {
