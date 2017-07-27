@@ -60,34 +60,16 @@ class ContentServiceProvider extends AuthServiceProvider
             __DIR__.'/../database/migrations/' => database_path('migrations')
         ], 'migrations');
 
+        // Publish routes to the App
+        $this->publishes([
+            __DIR__.'/../src/Routes' => base_path('routes'),
+        ], 'routes');
+
         $this->publishes([
             __DIR__.'/../config/content.php' => config_path('content.php'),
             __DIR__.'/../config/language.php' => config_path('language.php'),
         ], 'config');
 
-        $router->group([
-            'namespace' => Controllers::class,
-            'prefix' => 'admin',
-            'middleware' => ['web', 'auth'] // LocaleMiddleware
-        ], function () use ($router) {
-            $router->resource('content', 'ContentManagementController');
-            $router->put('translation/{content}/translate', 'ContentController@translate')->name('translation.translate');
-            $router->get('translation/create', 'ContentController@contentCreate')->name('translation.create');
-            $router->get('translation/{content}/edit', 'ContentController@contentEdit')->name('translation.edit');
-        });
-
-        if(!$router->has('admin.index')) {
-            $router->group([
-                'as' => 'admin.',
-                'namespace' => Controllers::class,
-                'middleware' => ['web', 'auth']
-            ], function () use ($router) {
-
-                $router->get('admin/index', function(){
-                    return view('content::admin');
-                })->name('index');
-            });
-        }
 
         // 'title' => 'required|unique_key:contents,parent_id',
         Validator::extend('unique_key', function ($attribute, $value, $parameters, $validator) {
@@ -157,6 +139,7 @@ class ContentServiceProvider extends AuthServiceProvider
             $this->app->register(\Clockwork\Support\Laravel\ClockworkServiceProvider::class);
         }
 
+        $this->app->register(RouteServiceProvider::class);
         $this->app->register(\Laracasts\Flash\FlashServiceProvider::class);
         $this->app->register(\Baytek\Laravel\Settings\SettingsServiceProvider::class);
         $this->app->register(\Baytek\LaravelStatusBit\StatusBitServiceProvider::class);
