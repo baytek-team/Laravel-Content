@@ -370,7 +370,7 @@
     {{-- <script src="//{{ Request::getHost() }}:6001/socket.io/socket.io.js"></script> --}}
     <script src="/js/app.js"></script>
     @if(env('APP_ENV') == 'local')
-        <script src="http://192.168.2.25:1337/pretzel.js"></script>
+        {{-- <script src="http://192.168.2.25:1337/pretzel.js"></script> --}}
     @endif
 
     @yield('scripts')

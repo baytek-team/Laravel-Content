@@ -1,6 +1,6 @@
 <?php
 
-namespace Baytek\Laravel\Content\Traits; // *** Adjust this to match your model namespace! ***
+namespace Baytek\Laravel\Content\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
 

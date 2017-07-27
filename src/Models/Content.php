@@ -179,6 +179,13 @@ class Content extends Model implements StatusInterface
         ])->delete();
     }
 
+    public function saveRelations($relations)
+    {
+        foreach($relations as $key => $value) {
+            $this->saveRelation($key, $value);
+        }
+    }
+
     // This method saves the content relation
     public function saveRelation($type, $relation_id)
     {
@@ -199,6 +206,13 @@ class Content extends Model implements StatusInterface
                 'relation_id' => $relation_id,
                 'relation_type_id' => $this->getContentIdByKey($type),
             ]))->save();
+        }
+    }
+
+    public function saveMetadatas($metadata)
+    {
+        foreach($metadata as $key => $value) {
+            $this->saveMetadata($key, $value);
         }
     }
 
