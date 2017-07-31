@@ -200,11 +200,11 @@
                                             'type' => 'route',
                                             'class' => 'item'
                                         ])
-                                        @link(___('Member Import'), [
+{{--                                         @link(___('Member Import'), [
                                             'location' => 'members.import',
                                             'type' => 'route',
                                             'class' => 'item'
-                                        ])
+                                        ]) --}}
                                     @endif
                                 </div>
                             </div>
