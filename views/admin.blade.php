@@ -11,11 +11,9 @@
     <title>{{ config('app.name', 'Pretzel CAS :: Content Authoring System') }}</title>
 
     <!-- Styles -->
-    {{-- <link href="/css/all.css" rel="stylesheet"> --}}
     <link href="/css/app.css" rel="stylesheet">
-    {{-- <link href="/semantic.admin.min.css" rel="stylesheet"> --}}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.11/semantic.min.css"/>
-    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/css/daterangepicker.min.css">
+    <link rel="stylesheet" href="/admin/semantic.css"/>
 
     @yield('head')
 
@@ -27,86 +25,86 @@
         window.backend = true;
     </script>
     <style>
-    body {
-        background-color: #f4f4f4;
-        font-family: 'Lato', sans-serif !important;
-    }
-    #header-page {
-        padding: 20px 0 50px;
-    }
-    #header-page h1 {
-        font-weight: 300 !important;
-    }
-    .main.padded {
-        padding: 30px;
-    }
-    .not.padded {
-        padding: 0 !important;
-        margin: 0 !important;
-    }
-    #primary-navigation {
-        background-color: white;
-        margin: 0 1px;
-        /*padding: 12px 0;*/
-    }
-    #secondary-navigation {
-        background-color: #2d3139;
-        padding: 0px;
-        margin: 0px;
-    }
-    #secondary-navigation .menu {
-        background: none;
-        padding: 0px;
-    }
-    #secondary-navigation .logo {
-        margin: 20px 40px;
-        padding: 20px 0 20px 0;
-    }
-    .ui.grid > .stretched.row > .column > .header.bar.row {
-        flex-grow: 0;
-    }
-    .container:after {
-        clear: both;
-        content: ".";
-        display: block;
-        height: 0;
-        visibility: hidden;
-    }
-    #secondary-navigation.minimized {
-        position: fixed;
-        left: 10px;
-    }
-    .main-content {
-        margin: 0;
-    }
-    .main-content.minimized {
-        margin-left: 60px;
-    }
-    .admin .ui.vertical.menu .menu {
-        display: none;
-    }
+        body {
+            background-color: #f4f4f4;
+            font-family: 'Lato', sans-serif !important;
+        }
+        #header-page {
+            padding: 20px 0 50px;
+        }
+        #header-page h1 {
+            font-weight: 300 !important;
+        }
+        .main.padded {
+            padding: 30px;
+        }
+        .not.padded {
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        #primary-navigation {
+            background-color: white;
+            margin: 0 1px;
+            /*padding: 12px 0;*/
+        }
+        #secondary-navigation {
+            background-color: #2d3139;
+            padding: 0px;
+            margin: 0px;
+        }
+        #secondary-navigation .menu {
+            background: none;
+            padding: 0px;
+        }
+        #secondary-navigation .logo {
+            margin: 20px 40px;
+            padding: 20px 0 20px 0;
+        }
+        .ui.grid > .stretched.row > .column > .header.bar.row {
+            flex-grow: 0;
+        }
+        .container:after {
+            clear: both;
+            content: ".";
+            display: block;
+            height: 0;
+            visibility: hidden;
+        }
+        #secondary-navigation.minimized {
+            position: fixed;
+            left: 10px;
+        }
+        .main-content {
+            margin: 0;
+        }
+        .main-content.minimized {
+            margin-left: 60px;
+        }
+        .admin .ui.vertical.menu .menu {
+            display: none;
+        }
 
-    .admin .ui.vertical.menu > .item {
-        cursor: pointer;
-        border-left: 3px solid transparent;
-        -webkit-transition: background .1s ease,box-shadow .1s ease,color .1s ease, border-color .1s ease !important;
-        transition: background .1s ease,box-shadow .1s ease,color .1s ease, border .1s ease !important;
-        padding: 20px;
-    }
-    .ui.vertical.menu .item>i.icon.left {
-        float: left;
-        padding: 0 1px;
-    }
-    .admin .ui.vertical.menu > .active.item {
-        color: black !important;
-        background-color: #fbb034;
-    }
-    .admin .ui.vertical.menu > .item:hover {
-        border-left: 3px solid #fbb034;
-    }
-    .ui.vertical.menu span {
-        margin-left: 17px;
-    }
+        .admin .ui.vertical.menu > .item {
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            -webkit-transition: background .1s ease,box-shadow .1s ease,color .1s ease, border-color .1s ease !important;
+            transition: background .1s ease,box-shadow .1s ease,color .1s ease, border .1s ease !important;
+            padding: 20px;
+        }
+        .ui.vertical.menu .item>i.icon.left {
+            float: left;
+            padding: 0 1px;
+        }
+        .admin .ui.vertical.menu > .active.item {
+            color: black !important;
+            background-color: #fbb034;
+        }
+        .admin .ui.vertical.menu > .item:hover {
+            border-left: 3px solid #fbb034;
+        }
+        .ui.vertical.menu span {
+            margin-left: 17px;
+        }
     </style>
 </head>
 <body class="admin ui equal width padded grid">
@@ -204,7 +202,7 @@
             </div>
         </div>
 
-        <div class="thirteen wide column">
+        <div class="thirteen wide column not padded">
             <div class="header bar row">
                 <div id="primary-navigation" class="ui secondary menu borderless">
                     <a id="menu-toggle" class="item">
@@ -255,8 +253,18 @@
 
             <div class="main padded">
 
-                @yield('page.head.header')
-                @yield('page.head.menu')
+                <div class="ui bottom aligned stackable grid">
+                    <div class="row">
+                        <div class="left floated column">
+                            @yield('page.head.header')
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="right floated column">
+                            @yield('page.head.menu')
+                        </div>
+                    </div>
+                </div>
                 <div class="clear"></div>
 
                 @include('flash::message')
