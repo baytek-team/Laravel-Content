@@ -21,48 +21,33 @@
 @endsection
 
 @section('content')
-
-@section('page.head.header')
-    <h1 class="ui header">
-        <i class="world icon"></i>
-        <div class="content">
-            Content Management
-            <div class="sub header">Manage the Content content type.</div>
-        </div>
-    </h1>
-@endsection
-
-<div class="content">
-
-    <table class="ui selectable very basic table">
-        <thead>
+<table class="ui selectable very basic table">
+    <thead>
+        <tr>
+            <th>{{ ___('Title') }}</th>
+            <th class="center aligned collapsing">{{ ___('Actions') }}</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach($contents as $content)
             <tr>
-                <th>{{ ___('Title') }}</th>
-                <th class="center aligned collapsing">{{ ___('Actions') }}</th>
+                <td>
+                    {!! str_repeat('<i class="minus icon"></i>', $content->depth) !!} {{ $content->title }}
+                </td>
+                <td class="right aligned collapsing">
+                    <div class="ui text compact menu">
+                        <a href="{{ route('content.edit', $content->id) }}" class="item">
+                            <i class="pencil icon"></i>
+                        </a>
+                        <a href="{{ route('content.destroy', $content->id) }}" class="item">
+                            <i class="delete icon"></i>
+                        </a>
+                    </div>
+                </td>
             </tr>
-        </thead>
-        <tbody>
-            @foreach($contents as $content)
-                <tr>
-                    <td>
-                        {!! str_repeat('<i class="minus icon"></i>', $content->depth) !!} {{ $content->title }}
-                    </td>
-                    <td class="right aligned collapsing">
-                        <div class="ui text compact menu">
-                            <a href="{{ route('content.edit', $content->id) }}" class="item">
-                                <i class="pencil icon"></i>
-                            </a>
-                            <a href="{{ route('content.destroy', $content->id) }}" class="item">
-                                <i class="delete icon"></i>
-                            </a>
-                        </div>
-                    </td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
-</div>
-<div class="ui hidden divider"></div>
+        @endforeach
+    </tbody>
+</table>
 
 {{-- {{ $contents->links('pagination.default') }} --}}
 

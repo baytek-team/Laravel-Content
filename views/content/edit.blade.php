@@ -12,8 +12,6 @@
 
 @section('content')
 
-<div class="ui container">
-    <div class="ui hidden divider"></div>
     <form action="{{ route('content.update', $content) }}" method="POST" class="ui form">
         {{ csrf_field() }}
         {{ method_field('PUT') }}
@@ -30,6 +28,5 @@
             </button>
         </div>
     </form>
-</div>
 
 @endsection

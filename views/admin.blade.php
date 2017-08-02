@@ -24,7 +24,6 @@
         ]); ?>;
         window.backend = true;
     </script>
-
 </head>
 <body class="admin ui equal width padded grid">
     <div class="stretched row not padded">
@@ -173,15 +172,11 @@
             <div class="main padded">
 
                 <div class="ui bottom aligned stackable grid">
-                    <div class="row">
-                        <div class="left floated column">
-                            @yield('page.head.header')
-                        </div>
+                    <div class="six wide column">
+                        @yield('page.head.header')
                     </div>
-                    <div class="row">
-                        <div class="right floated column">
-                            @yield('page.head.menu')
-                        </div>
+                    <div class="six wide column">
+                        @yield('page.head.menu')
                     </div>
                 </div>
                 <div class="clear"></div>
@@ -223,10 +218,11 @@
                 </div>
                 @yield('outer-content')
 
-                <div class="ui padded segment main-content">
-                    <div class="ui hidden divider"></div>
-                    @yield('content')
-                </div>
+                @hasSection('content')
+                    <div class="ui segment main-content">
+                        @yield('content')
+                    </div>
+                @endif
                 <div class="ui hidden divider"></div>
             </div>
         </div>
