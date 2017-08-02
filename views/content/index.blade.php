@@ -34,7 +34,7 @@
 
 <div class="content">
 
-    <table class="ui selectable compact table">
+    <table class="ui selectable very basic table">
         <thead>
             <tr>
                 <th>{{ ___('Title') }}</th>
@@ -50,10 +50,10 @@
                     <td class="right aligned collapsing">
                         <div class="ui text compact menu">
                             <a href="{{ route('content.edit', $content->id) }}" class="item">
-                                <i class="pencil icon"></i> {{ ___('Edit') }}
+                                <i class="pencil icon"></i>
                             </a>
                             <a href="{{ route('content.destroy', $content->id) }}" class="item">
-                                <i class="delete icon"></i> {{ ___('Delete') }}
+                                <i class="delete icon"></i>
                             </a>
                         </div>
                     </td>

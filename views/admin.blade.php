@@ -15,6 +15,7 @@
     <link href="/css/app.css" rel="stylesheet">
     {{-- <link href="/semantic.admin.min.css" rel="stylesheet"> --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.11/semantic.min.css"/>
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700" rel="stylesheet">
 
     @yield('head')
 
@@ -25,36 +26,204 @@
         ]); ?>;
         window.backend = true;
     </script>
-</head>
-<body class="admin" style="margin-top: 20px">
-    <div class="ui container">
+    <style>
+    body {
+        background-color: #f4f4f4;
+        font-family: 'Lato', sans-serif !important;
+    }
+    #header-page {
+        padding: 20px 0 50px;
+    }
+    #header-page h1 {
+        font-weight: 300 !important;
+    }
+    .main.padded {
+        padding: 30px;
+    }
+    .not.padded {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    #primary-navigation {
+        background-color: white;
+        margin: 0 1px;
+        /*padding: 12px 0;*/
+    }
+    #secondary-navigation {
+        background-color: #2d3139;
+        padding: 0px;
+        margin: 0px;
+    }
+    #secondary-navigation .menu {
+        background: none;
+        padding: 0px;
+    }
+    #secondary-navigation .logo {
+        margin: 20px 40px;
+        padding: 20px 0 20px 0;
+    }
+    .ui.grid > .stretched.row > .column > .header.bar.row {
+        flex-grow: 0;
+    }
+    .container:after {
+        clear: both;
+        content: ".";
+        display: block;
+        height: 0;
+        visibility: hidden;
+    }
+    #secondary-navigation.minimized {
+        position: fixed;
+        left: 10px;
+    }
+    .main-content {
+        margin: 0;
+    }
+    .main-content.minimized {
+        margin-left: 60px;
+    }
+    .admin .ui.vertical.menu .menu {
+        display: none;
+    }
 
-        <div class="ui grid">
-            <div class="ui sixteen wide column">
-                <div id="primary-navigation" class="ui menu">
+    .admin .ui.vertical.menu > .item {
+        cursor: pointer;
+        border-left: 3px solid transparent;
+        -webkit-transition: background .1s ease,box-shadow .1s ease,color .1s ease, border-color .1s ease !important;
+        transition: background .1s ease,box-shadow .1s ease,color .1s ease, border .1s ease !important;
+        padding: 20px;
+    }
+    .ui.vertical.menu .item>i.icon.left {
+        float: left;
+        padding: 0 1px;
+    }
+    .admin .ui.vertical.menu > .active.item {
+        color: black !important;
+        background-color: #fbb034;
+    }
+    .admin .ui.vertical.menu > .item:hover {
+        border-left: 3px solid #fbb034;
+    }
+    .ui.vertical.menu span {
+        margin-left: 17px;
+    }
+    </style>
+</head>
+<body class="admin ui equal width padded grid">
+    <div class="stretched row not padded">
+        <div id="secondary-navigation" class="three wide column">
+            <div class="ui vertical fluid inverted compact menu">
+                <img src="/images/btk_logo2017_white.svg" alt="" class="logo">
+
+                @if( Auth::user() )
+                    @link(___('Dashboard'), [
+                        'location' => 'admin.index',
+                        'append' => '</span>',
+                        'prepend' => '<i class="dashboard left icon"></i><span class="collapseable-text">',
+                        'type' => 'route',
+                        'class' => 'item'
+                    ])
+
+                    @foreach($menu as $menuGroup)
+                        @foreach($menuGroup->items as $item)
+                        {{-- @can('View News') --}}
+                            @link($item->title, [
+                                'location' => $item->content,
+                                'append' => $item->metadata('append'),
+                                'prepend' => $item->metadata('prepend'),
+                                'type' => $item->metadata('type'),
+                                'class' => $item->metadata('class')
+                            ])
+                        {{-- @endcan --}}
+                        @endforeach
+                    @endforeach
+
+                    @if(Auth::user()->hasRole( \Baytek\Laravel\Users\Roles\Root::ROLE ))
+                        @link(___('Settings'), [
+                            'location' => 'settings.index',
+                            'append' => '</span>',
+                            'prepend' => '<i class="settings left icon"></i><span class="collapseable-text">',
+                            'type' => 'route',
+                            'class' => 'item'
+                        ])
+
+                        @link(___('Root Navigator'), [
+                            'location' => 'content.index',
+                            'append' => '</span>',
+                            'prepend' => '<i class="wizard left icon"></i><span class="collapseable-text">',
+                            'type' => 'route',
+                            'class' => 'item'
+                        ])
+
+                        {{-- <div class="item">
+                            <i class="configure left icon"></i>
+                            <span class="collapseable-text">{{ ___('Tools') }}</span>
+
+                            <div class="menu">
+                                @can('create', \Baytek\Laravel\Content\Models\Content::class)
+                                    @link(___('Content Navigator'), [
+                                        'location' => 'content.index',
+                                        'type' => 'route',
+                                        'class' => 'item'
+                                    ])
+                                @endcan
+                            </div>
+                        </div> --}}
+                        <div class="item">
+                            <i class="user left icon"></i>
+                            <span class="collapseable-text">{{ ___('Users') }}</span>
+                            <div class="menu">
+                                @link(___('Manage Users'), [
+                                    'location' => 'user.index',
+                                    'type' => 'route',
+                                    'class' => 'item'
+                                ])
+                                @link(___('Roles'), [
+                                    'location' => 'role.index',
+                                    'type' => 'route',
+                                    'class' => 'item'
+                                ])
+                                @link(___('Permissions'), [
+                                    'location' => 'permission.index',
+                                    'type' => 'route',
+                                    'class' => 'item'
+                                ])
+                                @link(___('Permission Matrix'), [
+                                    'location' => 'user.role.index',
+                                    'type' => 'route',
+                                    'class' => 'item'
+                                ])
+                            </div>
+                        </div>
+                    @endif
+
+                @else
+                    <a class="item" href="{{ route('login') }}">{{ ___('Login') }}</a>
+                    <a class="item" href="{{ route('register') }}">{{ ___('Register') }}</a>
+                @endif
+            </div>
+        </div>
+
+        <div class="thirteen wide column">
+            <div class="header bar row">
+                <div id="primary-navigation" class="ui secondary menu borderless">
                     <a id="menu-toggle" class="item">
                         <i class="content icon"></i>
                     </a>
-
-                    @link(___('Site Index') , [
-                        'class' => 'item collapsable',
-                        'prepend' => '<i class="globe icon"></i>',
-                        'location' => '/app'
-                    ])
 
                     <div class="ui item breadcrumb">
                         @breadcrumbs()
                     </div>
 
-                    <div class="right menu collapsable">
+                    <div class="right menu">
                         <a class="item" href="/{{ strtolower( ___('Fr') ) }}">
-                            <i class="random icon"></i>
-                            {{ ___('Switch Language') }}
+                            <i class="globe icon"></i>
+                            {{ ___('Lang') }}
                         </a>
                         @if(\Auth::user())
                             <div class="ui dropdown item">
                                 <i class="user icon"></i>
-                                {{ ___('My Profile') }}
+                                {{ ___('Profile') }}
                                 <i class="dropdown icon"></i>
                                 <div class="menu">
                                     @link(___('Edit Profile'), [
@@ -74,216 +243,21 @@
                                 </div>
                             </div>
                         @endif
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div id="main-content" class="ui two column grid">
 
-
-            <div id="secondary-navigation" class="three wide column">
-                <div class="ui vertical fluid menu">
-                    @if( Auth::user() )
-                        @link(___('Dashboard'), [
-                            'location' => 'admin.index',
-                            'append' => '</span><i class="dashboard icon"></i>',
-                            'prepend' => '<span class="collapseable-text">',
-                            'type' => 'route',
-                            'class' => 'item'
+                        @link('' , [
+                            'class' => 'ui huge yellow icon button',
+                            'prepend' => '<i class="globe icon"></i>',
+                            'location' => '/app'
                         ])
-
-                        @can('View News')
-                            <div class="item">
-                                <i class="newspaper icon"></i>
-                                <span class="collapseable-text">{{ ___('News') }}</span>
-
-                                <div class="menu">
-                                    @link(___('Create News'), [
-                                        'location' => 'news.create',
-                                        'type' => 'route',
-                                        'class' => 'item'
-                                    ])
-                                    @link(___('Manage News'), [
-                                        'location' => 'news.index',
-                                        'type' => 'route',
-                                        'class' => 'item'
-                                    ])
-                                    @can('View News Category')
-                                    @link(___('Categories'), [
-                                        'location' => 'news.category.index',
-                                        'type' => 'route',
-                                        'class' => 'item'
-                                    ])
-                                    @endcan
-                                </div>
-                            </div>
-                        @endcan
-
-
-                        {{-- @can('View Resource')
-                            <div class="item">
-                                <i class="file text icon"></i>
-                                <span class="collapseable-text">{{ ___('Resources') }}</span>
-
-                                <div class="menu">
-                                    @can('View Category')
-                                        @link(___('Browser'), [
-                                            'location' => 'resource.folder.index',
-                                            'type' => 'route',
-                                            'class' => 'item'
-                                        ])
-                                    @endcan
-                                </div>
-                            </div>
-                        @endcan --}}
-
-                        @can('View Webpage')
-                            <div class="item">
-                                <i class="world icon"></i>
-                                <span class="collapseable-text">{{ ___('Webpages') }}</span>
-                                <div class="menu">
-                                    @can('Create Webpage')
-                                        @link(___('Create Webpage'), [
-                                            'location' => 'webpage.create',
-                                            'type' => 'route',
-                                            'class' => 'item'
-                                        ])
-                                    @endcan
-                                    @link(___('Manage Webpages'), [
-                                        'location' => 'webpage.index',
-                                        'type' => 'route',
-                                        'class' => 'item'
-                                    ])
-                                </div>
-                            </div>
-                        @endcan
-
-                        @can('View Menu')
-                            <div class="item" href="{{ route('menu.index') }}">
-                                <i class="sitemap icon"></i>
-                                <span class="collapseable-text">{{ ___('Menus') }}</span>
-                                <div class="menu">
-                                    @link(___('Create Menu'), [
-                                        'location' => 'menu.create',
-                                        'type' => 'route',
-                                        'class' => 'item'
-                                    ])
-                                    @link(___('Manage Menus'), [
-                                        'location' => 'menu.index',
-                                        'type' => 'route',
-                                        'class' => 'item'
-                                    ])
-                                </div>
-                            </div>
-                        @endcan
-
-                        @can('View Member')
-                            <div class="item">
-                                <i class="user group icon"></i>
-                                <span class="collapseable-text">{{ ___('Members') }}</span>
-                                <div class="menu">
-{{--                                     @can('Create Member')
-                                        @link(___('Create Member'), [
-                                            'location' => 'members.create',
-                                            'type' => 'route',
-                                            'class' => 'item'
-                                        ])
-                                    @endcan --}}
-                                    @link(___('Manage Members'), [
-                                        'location' => 'members.index',
-                                        'type' => 'route',
-                                        'class' => 'item'
-                                    ])
-                                    @if(Auth::user()->hasRole([\Baytek\Laravel\Users\Roles\Root::ROLE, \Baytek\Laravel\Users\Roles\Administrator::ROLE]))
-                                        @link(___('Administrators'), [
-                                            'location' => 'members.adminindex',
-                                            'type' => 'route',
-                                            'class' => 'item'
-                                        ])
-                                        @link(___('Member Import'), [
-                                            'location' => 'members.import',
-                                            'type' => 'route',
-                                            'class' => 'item'
-                                        ])
-                                    @endif
-                                </div>
-                            </div>
-                        @endcan
-
-                        @if(Auth::user()->hasRole( \Baytek\Laravel\Users\Roles\Root::ROLE ))
-                            <div class="item" href="{{ route('settings.index') }}">
-                                <i class="settings icon"></i>
-                                <span class="collapseable-text">{{ ___('Settings') }}</span>
-                                <div class="menu">
-                                    @link(___('General Settings'), [
-                                        'location' => 'settings.index',
-                                        'type' => 'route',
-                                        'class' => 'item'
-                                    ])
-                                </div>
-                            </div>
-                            <div class="item">
-                                <i class="configure icon"></i>
-                                <span class="collapseable-text">{{ ___('Tools') }}</span>
-
-                                <div class="menu">
-                                    @can('create', \Baytek\Laravel\Content\Models\Content::class)
-                                        @link(___('Content Navigator'), [
-                                            'location' => 'content.index',
-                                            'type' => 'route',
-                                            'class' => 'item'
-                                        ])
-                                    @endcan
-                                </div>
-                            </div>
-                            <div class="item">
-                                <i class="user icon"></i>
-                                <span class="collapseable-text">{{ ___('Users') }}</span>
-                                <div class="menu">
-                                    @link(___('Manage Users'), [
-                                        'location' => 'user.index',
-                                        'type' => 'route',
-                                        'class' => 'item'
-                                    ])
-                                    @link(___('Roles'), [
-                                        'location' => 'role.index',
-                                        'type' => 'route',
-                                        'class' => 'item'
-                                    ])
-                                    @link(___('Permissions'), [
-                                        'location' => 'permission.index',
-                                        'type' => 'route',
-                                        'class' => 'item'
-                                    ])
-                                    @link(___('Permission Matrix'), [
-                                        'location' => 'user.role.index',
-                                        'type' => 'route',
-                                        'class' => 'item'
-                                    ])
-                                </div>
-                            </div>
-                        @endif
-
-                    @else
-                        <a class="item" href="{{ route('login') }}">{{ ___('Login') }}</a>
-                        <a class="item" href="{{ route('register') }}">{{ ___('Register') }}</a>
-                    @endif
+                    </div>
                 </div>
             </div>
 
-            <div class="thirteen wide column">
-                <div class="ui container">
-                    <div class="one column row">
-                        <div class="left floated column">
-                            <span style="float: right">
-                                @yield('page.head.menu')
-                            </span>
-                            <span style="float: left">
-                                @yield('page.head.header')
-                            </span>
-                        </div>
-                    </div>
-                </div>
+            <div class="main padded">
+
+                @yield('page.head.header')
+                @yield('page.head.menu')
+                <div class="clear"></div>
 
                 @include('flash::message')
 
@@ -321,7 +295,7 @@
                     </div>
 
                 </div>
-                <div id="main-content">
+                <div class="ui padded segment main-content">
                     <div class="ui hidden divider"></div>
                     @yield('content')
                 </div>
@@ -349,28 +323,15 @@
             </div>
         </div>
     </div>
-    <style>
-        #secondary-navigation.minimized {
-            position: fixed;
-            left: 10px;
-        }
-        #main-content.minimized {
-            margin-left: 60px;
-        }
-        .admin .ui.vertical.menu .menu {
-            display: none;
-        }
-
-        .admin .ui.vertical.menu > .item {
-            cursor: pointer;
-        }
-    </style>
 
     <!-- Scripts -->
     {{-- <script src="//{{ Request::getHost() }}:6001/socket.io/socket.io.js"></script> --}}
     <script src="/js/app.js"></script>
     @if(env('APP_ENV') == 'local')
-        {{-- <script src="http://192.168.2.25:1337/pretzel.js"></script> --}}
+        <script
+            data-enabled
+            data-host="//vault.baytek.ca/"
+            src="//vault.baytek.ca/analytics.js"></script>
     @endif
 
     @yield('scripts')
