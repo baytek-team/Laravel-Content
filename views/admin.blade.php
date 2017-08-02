@@ -301,8 +301,9 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
+                @yield('outer-content')
+
                 <div class="ui padded segment main-content">
                     <div class="ui hidden divider"></div>
                     @yield('content')
