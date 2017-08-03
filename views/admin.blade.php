@@ -48,7 +48,7 @@
                                 'append' => $item->metadata('append'),
                                 'prepend' => $item->metadata('prepend'),
                                 'type' => $item->metadata('type'),
-                                'class' => $item->metadata('class')
+                                'class' => $item->metadata('class') . (explode('.', Route::getCurrentRoute()->getAction()['as'])[0] == explode('.', $item->content)[0] ? ' active': '')
                             ])
                         {{-- @endcan --}}
                         @endforeach
