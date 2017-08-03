@@ -123,19 +123,19 @@
         <div class="thirteen wide column not padded">
             <div class="header bar row">
                 <div id="primary-navigation" class="ui secondary menu borderless">
-                    <a id="menu-toggle" class="item">
+                    {{-- <a id="menu-toggle" class="item">
                         <i class="content icon"></i>
-                    </a>
+                    </a> --}}
 
                     <div class="ui item breadcrumb">
                         @breadcrumbs()
                     </div>
 
                     <div class="right menu">
-                        <a class="item" href="/{{ strtolower( ___('Fr') ) }}">
-                            <i class="globe icon"></i>
+                        {{-- <a class="item" href="/{{ strtolower( ___('Fr') ) }}">
+                            <i class="flag icon"></i>
                             {{ ___('Lang') }}
-                        </a>
+                        </a> --}}
                         @if(\Auth::user())
                             <div class="ui dropdown item">
                                 <i class="user icon"></i>
@@ -175,7 +175,7 @@
                     <div class="six wide column">
                         @yield('page.head.header')
                     </div>
-                    <div class="six wide column">
+                    <div class="right floated right aligned ten wide column">
                         @yield('page.head.menu')
                     </div>
                 </div>
