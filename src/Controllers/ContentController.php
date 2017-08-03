@@ -206,6 +206,7 @@ class ContentController extends Controller
         else if(View::exists($view = implode('.', array_filter([$this->viewPrefix, $this->names['singular'], $this->views[$name]])))) {}
         else if(View::exists($view = implode('.', [$this->names['plural'], $this->views[$name]]))) {}
         else if(View::exists($view = implode('.', [$this->names['singular'], $this->views[$name]]))) {}
+        else {throw new \Exception('View doesnt exist');}
 
         return $view;
     }

@@ -13,7 +13,7 @@
     <!-- Styles -->
     <link href="/css/app.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/css/daterangepicker.min.css">
-    <link rel="stylesheet" href="/admin/semantic.css"/>
+    <link rel="stylesheet" href="/admin-ui/semantic.css"/>
 
     @yield('head')
 
