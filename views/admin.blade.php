@@ -170,38 +170,25 @@
             </div>
 
             <div class="main padded">
-
-                <div class="ui bottom aligned stackable grid">
-                    <div class="six wide column">
-                        @yield('page.head.header')
-                    </div>
-                    <div class="right floated right aligned ten wide column">
-                        @yield('page.head.menu')
-                    </div>
-                </div>
-                <div class="clear"></div>
-
                 @include('flash::message')
 
                 @if (count($errors) > 0)
-                    <div class="ui container">
-                        <div class="ui hidden divider"></div>
-                        <div class="row">
-                            <div class="ui icon message error">
-                                <i class="exclamation circle icon"></i>
-                                <div class="content">
-                                    <div class="header">{{ ___('Application Level Error') }}</div>
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </div>
+                    <div class="row">
+                        <div class="ui icon message error">
+                            <i class="exclamation circle icon"></i>
+                            <div class="content">
+                                <div class="header">{{ ___('Application Level Error') }}</div>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
                             </div>
                         </div>
                     </div>
+                    <div class="ui hidden divider"></div>
                 @endif
 
                 <div class="ui container" @if (!isset($notifications) || $notifications->count() == 0) style="display: none" @endif>
-                    <div class="ui hidden divider"></div>
+
                     <div class="row">
                         <div class="ui icon message">
                             <i class="exclamation circle icon"></i>
@@ -215,7 +202,24 @@
                             </div>
                         </div>
                     </div>
+                    <div class="ui hidden divider"></div>
                 </div>
+
+                <div class="ui hidden divider"></div>
+
+                <div class="ui bottom aligned stackable grid">
+                    <div class="six wide column">
+                        @yield('page.head.header')
+                    </div>
+                    <div class="right floated right aligned ten wide column">
+                        @yield('page.head.menu')
+                    </div>
+                </div>
+                <div class="clear"></div>
+
+                <div class="ui hidden divider"></div>
+                <div class="ui hidden divider"></div>
+
                 @yield('outer-content')
 
                 @hasSection('content')

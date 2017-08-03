@@ -11,9 +11,9 @@
 @endsection
 
 @section('page.head.menu')
-    <div class="ui secondary menu">
-        <div class="right item">
-            <a class="ui labeled item" href="{{ route('content.create') }}">
+    <div class="ui secondary contextual menu">
+        <div class="item">
+            <a class="ui primary button" href="{{ route('content.create') }}">
                 <i class="add icon"></i> {{ ___('Add content') }}
             </a>
         </div>
