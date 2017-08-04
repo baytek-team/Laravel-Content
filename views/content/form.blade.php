@@ -70,7 +70,7 @@
 		<div class="field{{ $errors->has('meta_value') ? ' error' : '' }}">
 			<input type="text" name="meta_value[{{$meta->id}}]" placeholder="{{ ___('Meta Value') }}" value="{{ $meta->value }}">
 		</div>
-		<button type="button" class="ui right floated negative icon button basic remove-row">
+		<button type="button" class="ui right floated negative icon tiny button basic remove-row">
 			<i class="remove icon"></i>
 		</button>
 	</div>
@@ -83,7 +83,7 @@
 	<div class="field{{ $errors->has('meta_value') ? ' error' : '' }}">
 		<input type="text" name="meta_value[]" placeholder="{{ ___('Meta Value') }}" value="">
 	</div>
-	<button type="button" class="ui right floated positive icon button basic add-row">
+	<button type="button" class="ui right floated positive icon tiny button basic add-row">
 		<i class="add icon"></i>
 	</button>
 </div>
@@ -133,7 +133,7 @@
 				@endforeach
 			</select>
 		</div>
-		<button type="button" class="ui right floated negative icon button basic remove-row">
+		<button type="button" class="ui right floated negative icon tiny button basic remove-row">
 			<i class="remove icon"></i>
 		</button>
 	</div>
@@ -164,7 +164,7 @@
 			@endforeach
 		</select>
 	</div>
-	<button type="button" class="ui right floated positive icon button basic add-row">
+	<button type="button" class="ui right floated positive icon tiny button basic add-row">
 		<i class="add icon"></i>
 	</button>
 </div>

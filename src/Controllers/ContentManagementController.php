@@ -95,7 +95,41 @@ class ContentManagementController extends ContentController
      */
     public function show($id)
     {
+        $content = Content::find($id);
+
+        $this->viewData['show'] = [
+            'actualRevisions' => $content->revision,
+            'revision' => $content->revision,
+        ];
+
         return parent::contentShow($id);
+    }
+
+    /**
+     * Show the webpage
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function revision($id, $revision = 0)
+    {
+        $content = Content::find($id);
+
+        $this->viewData['show'] = [
+            'actualRevisions' => $content->revision,
+            'revision' => $revision,
+        ];
+
+        if($content->revision === $revision) {
+            // This is an exception, but content is already set where we want it
+        }
+        else if($content->revision - 1 < $revision) {
+            throw new \Exception('Content revision does not exist');
+        }
+        else if($content->revision - 1 <= $revision) {
+            $content = unserialize($content->revisions->get($revision)->content);
+        }
+
+        return parent::contentShow($content);
     }
 
     /**

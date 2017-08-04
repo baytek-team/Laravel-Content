@@ -1,6 +1,7 @@
 <?php
 
 Route::resource('content', 'ContentManagementController');
+Route::get('content/{id}/revision/{revision?}', 'ContentManagementController@revision')->name('content.revision');
 Route::put('translation/{content}/translate', 'ContentController@translate')->name('translation.translate');
 Route::get('translation/create', 'ContentController@contentCreate')->name('translation.create');
 Route::get('translation/{content}/edit', 'ContentController@contentEdit')->name('translation.edit');

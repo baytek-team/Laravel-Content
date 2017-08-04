@@ -19,14 +19,21 @@
 @section('content')
 <div class="webpage" style="background: {{ config('cms.content.webpage.background') }}">
 
-	<table class="ui celled table">
+	<table class="ui very basic table">
 		<tbody>
 			<tr>
 				<td><a style="min-width: 100px;text-align: right" class="ui ribbon label">Key</a> {{ $content->key }}</td>
 				<td><a style="min-width: 100px;text-align: right" class="ui ribbon label">Status</a> {{ $content->statuses()->toFormatted() }}</td>
 			</tr>
 			<tr>
-				<td><a style="min-width: 100px;text-align: right" class="ui ribbon label">Title</a> {{ $content->title }}</td>
+				<td>
+					<a style="min-width: 100px;text-align: right" class="ui ribbon label">Revision</a>
+					<select name="revision" id="revision">
+						@foreach(range($actualRevisions, 0) as $rev)
+							<option value="{{$rev}}" @if($revision == $rev) selected @endif>Revision {{$rev}}</option>
+						@endforeach
+					</select>
+				</td>
 				<td><a style="min-width: 100px;text-align: right" class="ui ribbon label">Created</a> {{ $content->created_at->toDayDateTimeString() }}</td>
 			</tr>
 			<tr>
@@ -60,7 +67,7 @@
 			{{ ___('Metadata') }}
 		</h4>
 
-		<table class="ui celled table">
+		<table class="ui very basic table">
 			<thead>
 				<tr>
 					<th>{{ ___('Meta Key') }}</th>
@@ -84,7 +91,7 @@
 			{{ ___('Relationships') }}
 		</h4>
 
-		<table class="ui celled table">
+		<table class="ui very basic table">
 			<thead>
 				<tr>
 					<th>{{ ___('Relation Type') }}</th>
@@ -93,10 +100,12 @@
 			</thead>
 			<tbody>
 				@foreach($content->relations as $relation)
+					@if($relation->relation_type_id && $relation->relation_id)
 					<tr>
 						<td>{{ $content->find($relation->relation_type_id)->title }}</td>
 						<td>{{ $content->find($relation->relation_id)->title }}</td>
 					</tr>
+					@endif
 				@endforeach
 			</tbody>
 		</table>
@@ -117,23 +126,15 @@
 		<div class="ui hidden divider"></div>
 
 	@endif
-
-	@if($content->revision)
-		<h4 class="ui horizontal divider header">
-			<i class="settings icon"></i>
-			{{ ___('Revisions') }}
-		</h4>
-		<div class="ui segment">
-			@php
-    			dump(config('cms.content.content'));
-    		@endphp
-		</div>
-
-		<div class="ui hidden divider"></div>
-		<div class="ui hidden divider"></div>
-
-	@endif
-
 </div>
 
+@endsection
+
+@section('scripts')
+	<script>
+		$('#revision').on('change', function(){
+			console.log($(this).val())
+			window.location = '{{ route('content.revision', $content->id) }}/' + $(this).val()
+		})
+	</script>
 @endsection

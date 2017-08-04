@@ -104,6 +104,11 @@ class Content extends Model implements StatusInterface
         return $this->hasMany(ContentRelation::class, 'content_id');
     }
 
+    public function revisions()
+    {
+        return $this->hasMany(ContentHistory::class, 'content_id');
+    }
+
     public function scopeWithRestricted($query)
     {
         return $query->withoutGlobalScope('not_restricted');
