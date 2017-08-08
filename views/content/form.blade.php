@@ -33,8 +33,8 @@
 			</div>
 
 			@if($index % $sep == 0)
-			</div>
-			<div class="fields">
+				</div>
+				<div class="fields">
 			@endif
 			@php
 				$index++;
@@ -115,21 +115,21 @@
 		<div class="field{{ $errors->has('key') ? ' error' : '' }}">
 			<select name="content_id[{{$relation->id}}]" class="ui dropdown disabled">
 				@foreach($contents as $item)
-				<option value="{{ $item->id }}"@if($content->id == $item->id) selected="selected"@endif>{{ $item->title }}</option>
+					<option value="{{ $item->id }}"@if($content->id == $item->id) selected="selected"@endif>{{ $item->title }}</option>
 				@endforeach
 			</select>
 		</div>
 		<div class="field{{ $errors->has('content') ? ' error' : '' }}">
 			<select name="relation_type_id[{{$relation->id}}]" class="ui dropdown relation-type">
 				@foreach($relationTypes as $item)
-				<option value="{{ $item->id }}"@if($relation->relation_type_id == $item->id) selected="selected"@endif>{{ $item->title }}</option>
+					<option value="{{ $item->id }}"@if($relation->relation_type_id == $item->id) selected="selected"@endif>{{ $item->title }}</option>
 				@endforeach
 			</select>
 		</div>
 		<div class="field{{ $errors->has('content') ? ' error' : '' }}">
 			<select name="relation_id[{{$relation->id}}]" class="ui dropdown relation">
 				@foreach($contents as $item)
-				<option value="{{ $item->id }}"@if($relation->relation_id == $item->id) selected="selected"@endif>{{ $item->title }}</option>
+					<option value="{{ $item->id }}"@if($relation->relation_id == $item->id) selected="selected"@endif>{{ $item->title }}</option>
 				@endforeach
 			</select>
 		</div>
@@ -144,7 +144,7 @@
 		<select name="content_id[]" class="ui fluid dropdown disabled">
 			<option value="">{{ ___('Select Content') }}</option>
 			@foreach($contents as $item)
-			<option value="{{ $item->id }}"@if($content->id == $item->id) selected="selected"@endif>{{ $item->title }}</option>
+				<option value="{{ $item->id }}"@if($content->id == $item->id) selected="selected"@endif>{{ $item->title }}</option>
 			@endforeach
 		</select>
 	</div>
@@ -152,7 +152,7 @@
 		<select name="relation_type_id[]" class="ui fluid dropdown relation-type">
 			<option value="">{{ ___('Select Relationship Type') }}</option>
 			@foreach($relationTypes as $item)
-			<option value="{{ $item->id }}">{{ $item->title }}</option>
+				<option value="{{ $item->id }}">{{ $item->title }}</option>
 			@endforeach
 		</select>
 	</div>
@@ -160,7 +160,7 @@
 		<select name="relation_id[]" class="ui fluid dropdown relation">
 			<option value="">{{ ___('Select Related Content') }}</option>
 			@foreach($contents as $item)
-			<option value="{{ $item->id }}">{{ $item->title }}</option>
+				<option value="{{ $item->id }}">{{ $item->title }}</option>
 			@endforeach
 		</select>
 	</div>
@@ -171,7 +171,7 @@
 
 @section('scripts')
 @php
-$items = [];
+	$items = [];
 @endphp
 @foreach($relationTypes as $item)
 	@php

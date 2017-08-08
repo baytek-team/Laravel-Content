@@ -53,7 +53,8 @@ class ContentManagementController extends ContentController
     public function index()
     {
         return parent::contentIndex([
-            'contents' => Content::hierarchy(Content::all(), false)
+            'content' => Content::withAll()->first(),
+            // 'contents' => Content::first()
         ]);
     }
 
@@ -100,6 +101,7 @@ class ContentManagementController extends ContentController
         $this->viewData['show'] = [
             'actualRevisions' => $content->revision,
             'revision' => $content->revision,
+            'diff' => false,
         ];
 
         return parent::contentShow($id);
@@ -112,11 +114,22 @@ class ContentManagementController extends ContentController
      */
     public function revision($id, $revision = 0)
     {
+        require_once dirname(__FILE__).'/../../lib/php-diff/lib/Diff.php';
+        require_once dirname(__FILE__).'/../../lib/php-diff/lib/Diff/Renderer/Html/Inline.php';
+        $renderer = new \Diff_Renderer_Html_Inline;
+
+        // Options for generating the diff
+        $options = array(
+            //'ignoreWhitespace' => true,
+            //'ignoreCase' => true,
+        );
+        // Initialize the diff class
         $content = Content::find($id);
 
         $this->viewData['show'] = [
             'actualRevisions' => $content->revision,
             'revision' => $revision,
+            'diff' => false
         ];
 
         if($content->revision === $revision) {
@@ -125,8 +138,17 @@ class ContentManagementController extends ContentController
         else if($content->revision - 1 < $revision) {
             throw new \Exception('Content revision does not exist');
         }
-        else if($content->revision - 1 <= $revision) {
+        else if($content->revision - 1 >= $revision) {
             $content = unserialize($content->revisions->get($revision)->content);
+        }
+
+        if($revision -1 >= 0) {
+            $previous = unserialize($content->revisions->get($revision-1)->content)->content;
+            $a = explode("\n", $previous);
+            $b = explode("\n", $content->content);
+            $diff = new \Diff($a, $b, $options);
+            // $diff = \Baytek\Laravel\Libraries\Diff::toHTML(\Baytek\Laravel\Libraries\Diff::compare($previous, $content->content));
+            $this->viewData['show']['diff'] = $diff->render($renderer);
         }
 
         return parent::contentShow($content);

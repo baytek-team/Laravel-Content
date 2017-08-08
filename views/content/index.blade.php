@@ -21,6 +21,7 @@
 @endsection
 
 @section('content')
+
 <table class="ui selectable very basic table">
     <thead>
         <tr>
@@ -29,11 +30,26 @@
         </tr>
     </thead>
     <tbody>
-        @foreach($contents as $content)
+        <tr>
+            <td>
+                {{-- {!! str_repeat('<i class="minus icon"></i>', $content->depth) !!}--}}
+                {{ $content->title }}
+            </td>
+            <td class="right aligned collapsing">
+                <div class="ui text compact menu">
+                    <a href="{{ route('content.edit', $content->id) }}" class="item">
+                        <i class="pencil icon"></i>
+                    </a>
+                    <a href="{{ route('content.destroy', $content->id) }}" class="item">
+                        <i class="delete icon"></i>
+                    </a>
+                </div>
+            </td>
+        </tr>
+
+        {{-- @foreach($contents as $content)
             <tr>
-                <td>
-                    {!! str_repeat('<i class="minus icon"></i>', $content->depth) !!} {{ $content->title }}
-                </td>
+
                 <td class="right aligned collapsing">
                     <div class="ui text compact menu">
                         <a href="{{ route('content.edit', $content->id) }}" class="item">
@@ -45,7 +61,7 @@
                     </div>
                 </td>
             </tr>
-        @endforeach
+        @endforeach --}}
     </tbody>
 </table>
 
