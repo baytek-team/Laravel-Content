@@ -207,26 +207,35 @@ trait RelationScopes
     }
 
 
-    // This is bad and should be fixed to ensure the full path
     public function getWithPath($path)
     {
+        $parts = array_reverse(explode('/', $path));
+
         $prefix = env('DB_PREFIX');
-        $result = DB::select("SELECT content.id, content.created_at, content.updated_at, content.status, content.revision, content.language, content.key, content.title
+        $query = "SELECT level0c.id, level0c.created_at, level0c.updated_at, level0c.status, level0c.revision, level0c.language, level0c.key, level0c.title
 
         -- get all content
-        FROM ${prefix}contents content
+        FROM ${prefix}contents level0c
+        ";
 
-        -- get all related closures
-        INNER JOIN ${prefix}content_relations closure ON closure.content_id = content.id
+        for($x = 0; $x < count($parts); $x++) {
+            $level = $x + 1;
+            $query .= "
+            inner join
+                ${prefix}content_relations as level${level} on
+                    level${level}.content_id = level${x}c.id AND
+                    level${level}.relation_type_id = 4
+            inner join ${prefix}contents as level${level}c on level${level}c.id = level${level}.relation_id
+            ";
+        }
 
-        -- filter to keep the parent relations
-        INNER JOIN ${prefix}contents relation_type ON relation_type.id = closure.relation_type_id AND (relation_type.key = 'parent-id')
+        $query .= " WHERE 0=0 ";
 
-        -- get parent from parent closures
-        INNER JOIN ${prefix}contents parent ON parent.id = closure.relation_id
+        for($x = 0; $x < count($parts); $x++) {
+            $query .= "AND level${x}c.`key` = '$parts[$x]' ";
+        }
 
-        -- concat the parent key with the content key to set a unique pair to check against the path provided
-        WHERE CONCAT(parent.key, '/', content.`key`) = SUBSTRING_INDEX(?, '/', -2);", [$path]);
+        $result = DB::select($query, [$path]);
 
         $collection = static::hydrate($result);
 
@@ -236,26 +245,6 @@ trait RelationScopes
 
         return $collection;
     }
-
-
-    // SELECT T2.id, T2.status, T2.revision, T2.language, T2.key, T2.title
-    // FROM (
-    //     SELECT
-    //         @r AS _id,
-    //         (
-    //             SELECT @r := closure.relation_id
-    //             FROM pretzel_content_relations closure, pretzel_contents relation
-    //             WHERE relation.id = closure.relation_type_id AND relation.key = 'parent-id' AND relation.language = 'en' AND closure.content_id = _id
-    //          ) AS parent,
-    //         @l := @l + 1 AS lvl
-    //     FROM
-    //         (SELECT @r := 41, @l := 0) initialize,
-    //         pretzel_contents m
-    //     GROUP BY _id
-    //     ) T1
-    // JOIN pretzel_contents T2
-    // ON T1._id = T2.id
-    // ORDER BY T1.lvl DESC;
 
     public function getParentsOf($id)
     {
