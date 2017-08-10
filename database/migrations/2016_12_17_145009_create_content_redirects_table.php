@@ -15,8 +15,8 @@ class CreateContentRedirectsTable extends Migration
     {
         Schema::create('content_redirect', function (Blueprint $table) {
             $table->increments('id');
-            $table->timestamp('created_at');
-            $table->timestamp('deleted_at');
+            // $table->timestamp('created_at');
+            // $table->timestamp('deleted_at');
             $table->integer('status_code')->unsigned()->nullable();
             $table->string('type')->nullable();
             $table->text('location')->nullable();

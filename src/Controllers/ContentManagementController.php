@@ -58,6 +58,11 @@ class ContentManagementController extends ContentController
         ]);
     }
 
+    public function children($id)
+    {
+        return Content::childrenOf($id)->get();
+    }
+
     /**
      * Show the form for creating a new webpage.
      *
