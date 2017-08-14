@@ -17,6 +17,13 @@
 
     @yield('head')
 
+    <style>
+        .segment.simple.padded
+        {
+            padding: 1em 2em 1em 1em !important;
+        }
+    </style>
+
     <!-- Scripts -->
     <script>
         window.Laravel = <?php echo json_encode([
@@ -63,7 +70,7 @@
                             'class' => 'item'
                         ])
 
-                        @link(___('Root Navigator'), [
+                        @link(___('Rootinator'), [
                             'location' => 'content.index',
                             'append' => '</span>',
                             'prepend' => '<i class="wizard left icon"></i><span class="collapseable-text">',

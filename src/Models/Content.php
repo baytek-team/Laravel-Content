@@ -109,6 +109,14 @@ class Content extends Model implements StatusInterface
         return $this->hasMany(ContentHistory::class, 'content_id');
     }
 
+    public function children()
+    {
+        return $this->association(Content::class);
+    }
+
+
+
+
     public function scopeWithRestricted($query)
     {
         return $query->withoutGlobalScope('not_restricted');
@@ -214,36 +222,41 @@ class Content extends Model implements StatusInterface
         }
     }
 
-    public function saveMetadatas($metadata)
+    public function saveMetadata($key, $value = null)
     {
-        foreach($metadata as $key => $value) {
-            $this->saveMetadata($key, $value);
+        if(is_string($key)) {
+            $set = collect([$key => $value]);
         }
-    }
-
-    public function saveMetadata($key, $value)
-    {
-        $metadata = ContentMeta::where([
-            'content_id' => $this->id,
-            'language' => \App::getLocale(),
-            'key' => $key
-        ])->get();
-
-        if($metadata->count()) {
-            $metadata->first()->value = $value;
-            $metadata->first()->save();
+        else if(is_array($key)) {
+            $set = collect($key);
         }
-        else {
-            $meta = (new ContentMeta([
+        else if(is_object($key) && $key instanceof Collection) {
+            $set = $key;
+        }
+
+        $set->each(function ($value, $key) {
+            $metadata = ContentMeta::where([
                 'content_id' => $this->id,
-                'key' => $key,
                 'language' => \App::getLocale(),
-                'value' => $value,
-            ]));
+                'key' => $key
+            ])->get();
 
-            $meta->save();
-            $this->meta()->save($meta);
-        }
+            if($metadata->count()) {
+                $metadata->first()->value = $value;
+                $metadata->first()->save();
+            }
+            else {
+                $meta = (new ContentMeta([
+                    'content_id' => $this->id,
+                    'key' => $key,
+                    'language' => \App::getLocale(),
+                    'value' => $value,
+                ]));
+
+                $meta->save();
+                $this->meta()->save($meta);
+            }
+        });
     }
 
 

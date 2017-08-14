@@ -53,14 +53,14 @@ class ContentManagementController extends ContentController
     public function index()
     {
         return parent::contentIndex([
-            'content' => Content::withAll()->first(),
+            'content' => content(1,true)
             // 'contents' => Content::first()
         ]);
     }
 
     public function children($id)
     {
-        return Content::childrenOf($id)->get();
+        return content($id)->children;
     }
 
     /**
@@ -101,6 +101,10 @@ class ContentManagementController extends ContentController
      */
     public function show($id)
     {
+        require_once dirname(__FILE__).'/../../lib/php-diff/lib/Diff.php';
+        require_once dirname(__FILE__).'/../../lib/php-diff/lib/Diff/Renderer/Html/Inline.php';
+        $renderer = new \Diff_Renderer_Html_Inline;
+
         $content = Content::find($id);
 
         $this->viewData['show'] = [
@@ -108,6 +112,13 @@ class ContentManagementController extends ContentController
             'revision' => $content->revision,
             'diff' => false,
         ];
+
+        $previous = unserialize($content->revisions->last()->content)->content;
+        $a = explode("\n", $previous);
+        $b = explode("\n", $content->content);
+        $diff = new \Diff($a, $b, []);
+        // $diff = \Baytek\Laravel\Libraries\Diff::toHTML(\Baytek\Laravel\Libraries\Diff::compare($previous, $content->content));
+        $this->viewData['show']['diff'] = $diff->render($renderer);
 
         return parent::contentShow($id);
     }
@@ -131,6 +142,8 @@ class ContentManagementController extends ContentController
         // Initialize the diff class
         $content = Content::find($id);
 
+        $latestRevision = $content->revision;
+
         $this->viewData['show'] = [
             'actualRevisions' => $content->revision,
             'revision' => $revision,
@@ -147,7 +160,7 @@ class ContentManagementController extends ContentController
             $content = unserialize($content->revisions->get($revision)->content);
         }
 
-        if($revision -1 >= 0) {
+        if($revision -1 >= 0 || $latestRevision === $revision) {
             $previous = unserialize($content->revisions->get($revision-1)->content)->content;
             $a = explode("\n", $previous);
             $b = explode("\n", $content->content);

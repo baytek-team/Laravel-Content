@@ -3,9 +3,12 @@
 namespace Baytek\Laravel\Content\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Baytek\Laravel\Content\Traits\HasCompositePrimaryKey;
 
 class ContentRelation extends Model
 {
+    use HasCompositePrimaryKey;
+
     /**
      * primaryKey
      *
