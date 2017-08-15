@@ -50,11 +50,10 @@ class ContentManagementController extends ContentController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($id = 1)
     {
         return parent::contentIndex([
-            'content' => content(1,true)
-            // 'contents' => Content::first()
+            'contents' => content($id)->children
         ]);
     }
 
@@ -113,12 +112,14 @@ class ContentManagementController extends ContentController
             'diff' => false,
         ];
 
-        $previous = unserialize($content->revisions->last()->content)->content;
-        $a = explode("\n", $previous);
-        $b = explode("\n", $content->content);
-        $diff = new \Diff($a, $b, []);
-        // $diff = \Baytek\Laravel\Libraries\Diff::toHTML(\Baytek\Laravel\Libraries\Diff::compare($previous, $content->content));
-        $this->viewData['show']['diff'] = $diff->render($renderer);
+        if($content->revisions->count()){
+            $previous = unserialize($content->revisions->last()->content)->content;
+            $a = explode("\n", $previous);
+            $b = explode("\n", $content->content);
+            $diff = new \Diff($a, $b, []);
+            // $diff = \Baytek\Laravel\Libraries\Diff::toHTML(\Baytek\Laravel\Libraries\Diff::compare($previous, $content->content));
+            $this->viewData['show']['diff'] = $diff->render($renderer);
+        }
 
         return parent::contentShow($id);
     }

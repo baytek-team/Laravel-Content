@@ -21,8 +21,14 @@
 @endsection
 
 @section('content')
+<style>
+    .table .nested.table
+    {
+        padding: 0;
+    }
 
-<table class="ui selectable very basic content table">
+</style>
+<table class="ui very basic content table">
     <thead>
         <tr>
             <th>{{ ___('Title') }}</th>
@@ -30,39 +36,20 @@
         </tr>
     </thead>
     <tbody>
-        <tr class="row-template" data-depth="0">
-            <td>
-                {{-- {!! str_repeat('<i class="minus icon"></i>', $content->depth) !!}--}}
-                {{-- <div class="ui checkbox">
-                    <input type="checkbox" class="hidden" name="content[{{$content->id}}]">
-                    <label>{{ $content->title }}</label>
-                </div> --}}
-                <a href="{{ route('content.children', $content->id) }}" class="dynamic-load item">
-                    <i class="plus icon"></i>
-                </a>
-                <span class="title">{{ $content->title }}</span>
-            </td>
-            <td class="right aligned collapsing">
-                <div class="ui text compact menu">
-                    <a href="{{ route('content.edit', $content->id) }}" class="item">
-                        <i class="pencil icon"></i>
-                    </a>
-                    <a href="{{ route('content.destroy', $content->id) }}" class="item">
-                        <i class="delete icon"></i>
-                    </a>
-                </div>
-            </td>
-        </tr>
         @if(isset($contents))
             @foreach($contents as $content)
-                <tr>
+                <tr @if($contents->first() == $content) class="row-template" data-original-id="{{ $content->id }}" @endif data-depth="0" data-expanded="" >
                     <td>
-                        {{-- {!! str_repeat('<i class="minus icon"></i>', $content->depth) !!}--}}
-                        <input type="checkbox" class="ui checkbox" name="content[{{$content->id}}]">
-                        {{ $content->title }}
+                        <a href="{{ route('content.children', $content->id) }}" class="dynamic-load item">
+                            <i class="plus small icon"></i>
+                        </a>
+                        <a href="{{ route('content.list', $content->id) }}" class="title">{{ $content->title }}</a>
                     </td>
                     <td class="right aligned collapsing">
                         <div class="ui text compact menu">
+                            <a href="{{ route('content.show', $content->id) }}" class="item">
+                                <i class="eye icon"></i>
+                            </a>
                             <a href="{{ route('content.edit', $content->id) }}" class="item">
                                 <i class="pencil icon"></i>
                             </a>
@@ -84,27 +71,46 @@
 <script>
     $('.dynamic-load').on('click', function(e){
         e.preventDefault();
-        var row = $(this).parents('tr');
+        var row = $(this).parent().parent();
         row.find('td:first i.icon').removeClass('plus').addClass('minus');
 
-        $.get($(this).attr('href')).done(function(data){
-            $.each(data, function(index, item){
-                var $template = $('.row-template').clone(true).removeClass('row-template');
-                $template.find('a').each(function() {
-                    $(this).attr('href', $(this).attr('href').replace('1', item.id));
+        if($(row)[0].dataset.expanded === 'true') {
+            $(row).next().hide();
+            $(row)[0].dataset.expanded = false;
+            $(row).find('td:first i.icon').removeClass('minus').addClass('plus');
+        }
+        else if($(row)[0].dataset.expanded === 'false'){
+            $(row).next().show();
+            $(row)[0].dataset.expanded = true;
+            $(row).find('td:first i.icon').removeClass('plus').addClass('minus');
+        }
+        else {
+            $(row)[0].dataset.expanded = true;
+
+            $.get($(this).attr('href')).done(function(data){
+                var nest = $('<tr><td colspan="2" class="nested table"><table class="ui very basic content table"></table></td></tr>');
+
+                $.each(data, function(index, item){
+                    var $template = $('.row-template').clone(true).removeClass('row-template');
+                    $template.find('a').each(function() {
+                        $(this).attr('href', $(this).attr('href').replace($(this)[0].dataset.originalId, item.id));
+                    });
+
+                    $template.find('.title').text(item.title);
+                    var depth = $($template)[0].dataset.depth = parseInt($(row)[0].dataset.depth) + 1;
+                    $template.find('td:first').css({
+                        paddingLeft: (depth * 30) + 'px'
+                    });
+                    $template.find('td:first i.icon').removeClass('minus').addClass('plus');
+                    delete($($template)[0].dataset.expanded);
+                    $(nest).find('table').append($template);
                 });
 
-                $template.find('.title').text(item.title);
-                var depth = $($template)[0].dataset.depth = parseInt($(row)[0].dataset.depth) + 1;
-                $template.find('td:first').css({
-                    paddingLeft: (depth * 20) + 'px'
-                });
-                $template.find('td:first i.icon').removeClass('minus').addClass('plus');
-                $(row).after($template);
+                $(row).after(nest);
             });
-        });
+        }
 
-        return false;
+        return;
     });
 </script>
 @endsection

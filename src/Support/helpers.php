@@ -29,7 +29,7 @@ if (! function_exists('content')) {
             }
             else {
                 if($hydrate) {
-                    return (new $model)->getWithPath($value)->first();
+                    return Content::withPath($value)->first();
                 }
                 else {
                     return content_id($value);
@@ -58,7 +58,6 @@ if (! function_exists('content')) {
         else {
             $id = null;
         }
-
 
         return ($hydrate) ? Content::find($id) : $id;
     }

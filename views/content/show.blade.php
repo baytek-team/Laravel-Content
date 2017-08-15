@@ -18,122 +18,25 @@
 
 
 @section('content')
-<style>
-	.Differences {
-		width: 100%;
-		border-collapse: collapse;
-		border-spacing: 0;
-		empty-cells: show;
-	}
+<div class="content show">
 
-	.Differences thead th {
-		text-align: left;
-		border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-		/*background: #aaa;*/
-		color: #000;
-		padding: 4px;
-	}
-	.Differences tbody th {
-		text-align: right;
-		/*background: #ccc;*/
-		width: 4em;
-		padding: 1px 2px;
-		border-right: 1px solid rgba(0, 0, 0, 0.1);
-		vertical-align: top;
-		font-size: 13px;
-	}
+	<div class="ui grid head">
+		<div class="five wide computer sixteen wide mobile column"><div class="ui small ribbon label">Key</div> {{ $content->key }}</div>
+		<div class="five wide computer sixteen wide mobile column"><div class="ui small ribbon label">Status</div> {{ $content->statuses()->toFormatted() }}</div>
 
-	.Differences td {
-		padding: 1px 2px;
-		font-family: Consolas, monospace;
-		font-size: 13px;
-	}
+		<div class="five wide computer sixteen wide mobile column">
+			<div class="ui small ribbon label">Revision</div>
+			<select class="ui dropdown" name="revision" id="revision">
+				@foreach(range($actualRevisions, 0) as $rev)
+					<option value="{{$rev}}" @if($revision == $rev) selected @endif>Revision {{$rev}}</option>
+				@endforeach
+			</select>
+		</div>
 
-	.DifferencesSideBySide .ChangeInsert td.Left {
-		background: #dfd;
-	}
-
-	.DifferencesSideBySide .ChangeInsert td.Right {
-		background: #cfc;
-	}
-
-	.DifferencesSideBySide .ChangeDelete td.Left {
-		background: #f88;
-	}
-
-	.DifferencesSideBySide .ChangeDelete td.Right {
-		background: #faa;
-	}
-
-	.DifferencesSideBySide .ChangeReplace .Left {
-		background: #fe9;
-	}
-
-	.DifferencesSideBySide .ChangeReplace .Right {
-		background: #fd8;
-	}
-
-	.Differences ins, .Differences del {
-		text-decoration: none;
-	}
-
-	.DifferencesSideBySide .ChangeReplace ins, .DifferencesSideBySide .ChangeReplace del {
-		background: #fc0;
-	}
-
-	.Differences .Skipped {
-		background: #f7f7f7;
-	}
-
-	.DifferencesInline .ChangeReplace .Left,
-	.DifferencesInline .ChangeDelete .Left {
-		background: #fdd;
-	}
-
-	.DifferencesInline .ChangeReplace .Right,
-	.DifferencesInline .ChangeInsert .Right {
-		background: #dfd;
-	}
-
-	.DifferencesInline .ChangeReplace ins {
-		background: #9e9;
-	}
-
-	.DifferencesInline .ChangeReplace del {
-		background: #e99;
-	}
-
-	pre {
-		width: 100%;
-		overflow: auto;
-	}
-</style>
-
-<div class="webpage" style="background: {{ config('cms.content.webpage.background') }}">
-
-	<table class="ui very basic table">
-		<tbody>
-			<tr>
-				<td><a style="min-width: 100px;text-align: right" class="ui ribbon label">Key</a> {{ $content->key }}</td>
-				<td><a style="min-width: 100px;text-align: right" class="ui ribbon label">Status</a> {{ $content->statuses()->toFormatted() }}</td>
-			</tr>
-			<tr>
-				<td>
-					<a style="min-width: 100px;text-align: right" class="ui ribbon label">Revision</a>
-					<select class="ui dropdown" name="revision" id="revision">
-						@foreach(range($actualRevisions, 0) as $rev)
-							<option value="{{$rev}}" @if($revision == $rev) selected @endif>Revision {{$rev}}</option>
-						@endforeach
-					</select>
-				</td>
-				<td><a style="min-width: 100px;text-align: right" class="ui ribbon label">Created</a> {{ $content->created_at->toDayDateTimeString() }}</td>
-			</tr>
-			<tr>
-				<td><a style="min-width: 100px;text-align: right" class="ui ribbon label">Language</a> {{ $content->language }}</td>
-				<td><a style="min-width: 100px;text-align: right" class="ui ribbon label">Updated</a> {{ $content->updated_at->toDayDateTimeString() }}</td>
-			</tr>
-		</tbody>
-	</table>
+		<div class="five wide computer sixteen wide mobile column"><div class="ui small ribbon label">Language</div> {{ $content->language }}</div>
+		<div class="five wide computer sixteen wide mobile column"><div class="ui small ribbon label">Created</div> {{ $content->created_at->toDayDateTimeString() }}</div>
+		<div class="five wide computer sixteen wide mobile column"><div class="ui small ribbon label">Updated</div> {{ $content->updated_at->toDayDateTimeString() }}</div>
+	</div>
 
 	<div class="ui hidden divider"></div>
 	<div class="ui hidden divider"></div>

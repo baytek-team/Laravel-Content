@@ -13,34 +13,61 @@ use Exception;
 
 trait RelationScopes
 {
-    public function abstractSelect($query, $value)
+    public function abstractSelect($builder, $value)
     {
         if(is_numeric($value)) {
-            $query->where('contents.id', $value);
+            $builder->where('contents.id', $value);
         }
         else if(is_string($value)) {
-            $query->where('contents.key', $value);
+            $builder->where('contents.key', $value);
         }
         else if(is_array($value)) {
             $first = array_first($value);
 
             if(is_numeric($first)) {
-                $query->whereIn('contents.id', $value);
+                $builder->whereIn('contents.id', $value);
             }
             else if(is_string($first)) {
-                $query->whereIn('contents.key', $value);
+                $builder->whereIn('contents.key', $value);
             }
             else {
                 throw new Exception('Passed array but value type is not supported');
             }
         }
         else if(is_object($value) && $value instanceof Collection) {
-            $query->whereIn('contents.id', $value->pluck('id'));
+            $builder->whereIn('contents.id', $value->pluck('id'));
         }
         else if(is_object($value) && $value instanceof Model) {
-            $query->where('contents.key', $value->key);
+            $builder->where('contents.key', $value->key);
         }
-        return $query;
+        return $builder;
+    }
+
+    public function scopeWithRestricted($builder)
+    {
+        return $builder->withoutGlobalScope('not_restricted');
+    }
+
+    public function scopeWithRestrictedMeta($builder)
+    {
+        return $builder->withoutGlobalScope('not_restricted_content_meta');
+    }
+
+    public function scopeWithMeta($builder, $restricted = false)
+    {
+        return $builder->with($restricted ? 'restrictedMeta' : 'meta');
+    }
+
+    public function scopeWithRelationships($builder)
+    {
+        return $builder->with(['relations', 'relations.relation', 'relations.relationType']);
+    }
+
+    public function scopeWithAll($builder)
+    {
+        $builder
+            ->withContents()
+            ->with(['relations', 'relations.relation', 'relations.relationType', 'meta']);
     }
 
 
@@ -51,9 +78,9 @@ trait RelationScopes
      */
     public function getContent($value)
     {
-        $query = parent::withoutGlobalScopes();
+        $builder = parent::withoutGlobalScopes();
 
-        return $this->abstractSelect($query, $value);
+        return $this->abstractSelect($builder, $value);
     }
 
     /**
@@ -210,10 +237,11 @@ trait RelationScopes
     // This is bad and should be fixed to ensure the full path
     public function getWithPath($path)
     {
+        dd('This method has been deprecated. Please discontinue use. Use `content()` or `Content::withPath()` instead');
         $parts = array_reverse(explode('/', $path));
 
         $prefix = env('DB_PREFIX');
-        $query = "SELECT level0c.id, level0c.created_at, level0c.updated_at, level0c.status, level0c.revision, level0c.language, level0c.key, level0c.title
+        $builder = "SELECT level0c.id, level0c.created_at, level0c.updated_at, level0c.status, level0c.revision, level0c.language, level0c.key, level0c.title
 
         -- get all content
         FROM ${prefix}contents level0c
@@ -221,7 +249,7 @@ trait RelationScopes
 
         for($x = 0; $x < count($parts); $x++) {
             $level = $x + 1;
-            $query .= "
+            $builder .= "
             inner join
                 ${prefix}content_relations as level${level} on
                     level${level}.content_id = level${x}c.id AND
@@ -230,13 +258,17 @@ trait RelationScopes
             ";
         }
 
-        $query .= " WHERE 0=0 ";
+        $builder .= " WHERE 0=0 ";
 
         for($x = 0; $x < count($parts); $x++) {
-            $query .= "AND level${x}c.`key` = '$parts[$x]' ";
+            $builder .= "AND level${x}c.`key` = '$parts[$x]' ";
         }
 
-        $result = DB::select($query, [$path]);
+        $result = DB::select($builder, [$path]);
+
+        if(isset($result->content_type)) {
+            return (new $result->content_type)->newFromBuilder($result);
+        }
 
         $collection = static::hydrate($result);
 
@@ -245,6 +277,33 @@ trait RelationScopes
         }
 
         return $collection;
+    }
+
+    // This is bad and should be fixed to ensure the full path
+    public function scopeWithPath($builder, $path)
+    {
+        $parts = array_reverse(explode('/', $path));
+        $prefix = $builder->getQuery()->grammar->getTablePrefix();
+
+        $builder->getModel()->setAlias('level0c');
+
+        for($x = 0; $x < count($parts); $x++) {
+            $level = $x + 1;
+
+            $builder
+                ->join("content_relations as level${level}", function ($join) use ($level, $x) {
+                    $join->on("level${level}.content_id", '=', "level${x}c.id")
+                        ->where("level${level}.relation_type_id", '=', 4);
+                })
+                ->join("contents as level${level}c", "level${level}c.id", '=', "level${level}.relation_id");
+
+        }
+
+        for($x = 0; $x < count($parts); $x++) {
+            $builder->where("level${x}c.key", '=', $parts[$x]);
+        }
+
+        return $builder;
     }
 
 
@@ -315,9 +374,9 @@ trait RelationScopes
         return $result;
     }
 
-    public function scopeWhereMetadata($query, $key, $value, $comparison = '=')
+    public function scopeWhereMetadata($builder, $key, $value, $comparison = '=')
     {
-        return $query
+        return $builder
             ->join('content_meta AS metadata', function($join) use ($key, $value, $comparison) {
                 $join->on('contents.id', '=', 'metadata.content_id')
                     ->where('metadata.key', $key)
@@ -325,11 +384,11 @@ trait RelationScopes
             });
     }
 
-    public function scopeChildrenOf($query, $key, $column = 'key', $depth = 1)
+    public function scopeChildrenOf($builder, $key, $column = 'key', $depth = 1)
     {
-        $query->selectContext = 'r';
+        $builder->getModel()->setAlias('r');
 
-        $query
+        $builder
             ->select('r.id', 'r.created_at', 'r.updated_at', 'r.status', 'r.revision', 'r.language', 'r.title', 'r.key')
             ->distinct()
             ->join('content_relations AS children_of', 'contents.id', '=', 'children_of.relation_id')
@@ -337,37 +396,24 @@ trait RelationScopes
             ->where('children_of.relation_type_id', $this->getContentIdByKey('parent-id'));
             // ->where('contents.'.$column, $key);
 
-            $this->abstractSelect($query, $key);
-
-            // if(is_string($key)) {
-            //     $query->where('contents.key', $key);
-            // }
-            // else if(is_integer($key)) {
-            //     $query->where('contents.id', $key);
-            // }
-            // else if(is_object($key) && $key instanceof Collection) {
-            //     $query->whereIn('contents.id', $key->pluck('id'));
-            // }
-            // else if(is_object($key) && $key instanceof Model) {
-            //     $query->where('contents.key', $key->key);
-            // }
+            $this->abstractSelect($builder, $key);
     }
 
-    public function scopeOfType($query, $type)
+    public function scopeOfType($builder, $type)
     {
-        return $this->scopeOfRelation($query, 'content-type', $type);
+        return $this->scopeOfRelation($builder, 'content-type', $type);
     }
 
-    public function scopeInTypes($query, $types)
+    public function scopeInTypes($builder, $types)
     {
-        $query->selectContext = 'contents';
+        $builder->getModel()->setAlias('contents');
 
         $typeIds = [];
         foreach( $types as $type ) {
             $typeIds[] = $this->getContentIdByKey($type);
         }
 
-        return $query
+        return $builder
             ->select('contents.id', 'contents.created_at', 'contents.updated_at', 'contents.status', 'contents.revision', 'contents.language', 'contents.title', 'contents.key')
             ->join('content_relations AS of_relation_type', function ($join) use ($typeIds) {
                 $join->on('contents.id', '=', 'of_relation_type.content_id')
@@ -376,11 +422,11 @@ trait RelationScopes
             });
     }
 
-    public function scopeOfRelation($query, $relation, $type)
+    public function scopeOfRelation($builder, $relation, $type)
     {
-        $query->selectContext = 'contents';
+        $builder->getModel()->setAlias('contents');
 
-        return $query
+        return $builder
             ->select('contents.id', 'contents.created_at', 'contents.updated_at', 'contents.status', 'contents.revision', 'contents.language', 'contents.title', 'contents.key')
             ->join('content_relations AS of_relation_type', function ($join) use ($type, $relation) {
                 $join->on('contents.id', '=', 'of_relation_type.content_id')
@@ -396,13 +442,13 @@ trait RelationScopes
     // inner join pretzel_contents c2 on c2.id = r.content_id
     // inner join pretzel_content_relations t on t.relation_type_id = 3  and t.relation_id = 9 and r.content_id = t.content_id
     // where c.key = 'Animals';
-    // public function scopeDescendentsOfType($query, $key, $type, $depth = 1, $deep = 0)
+    // public function scopeDescendentsOfType($builder, $key, $type, $depth = 1, $deep = 0)
     // {
-    //     return $query;
+    //     return $builder;
     // }
 
     //Must use ID since we don't have unique keys
-    public function scopeDescendentsOfType($query, $id, $type)
+    public function scopeDescendentsOfType($builder, $id, $type)
     {
         $prefix = env('DB_PREFIX');
         $language = \App::getLocale();
@@ -452,10 +498,10 @@ trait RelationScopes
         return static::hydrate($result);
     }
 
-    public function scopeChildrenOfType($query, $key, $type)
+    public function scopeChildrenOfType($builder, $key, $type)
     {
-        $query->selectContext = 'r';
-        $query
+        $builder->getModel()->setAlias('r');
+        $builder
             ->select('r.id', 'r.created_at', 'r.updated_at', 'r.status', 'r.revision', 'r.language', 'r.title', 'r.key')
             ->distinct()
             ->join('content_relations AS children_of_type', function ($join) {
@@ -475,13 +521,13 @@ trait RelationScopes
             });
 
 
-        $this->abstractSelect($query, $key);
+        $this->abstractSelect($builder, $key);
     }
 
-    public function scopeChildenOfTypeWhereMetadata($query, $key, $type, $metakey, $metavalue, $comparison = '=')
+    public function scopeChildenOfTypeWhereMetadata($builder, $key, $type, $metakey, $metavalue, $comparison = '=')
     {
-        $query->selectContext = 'r';
-        $query
+        $builder->getModel()->setAlias('r');
+        $builder
             ->select('r.id', 'r.created_at', 'r.updated_at', 'r.status', 'r.revision', 'r.language', 'r.title', 'r.key')
             ->join('content_relations AS children_of_type', function ($join) {
                 $join->on('contents.id', '=', 'children_of_type.relation_id')
@@ -499,7 +545,7 @@ trait RelationScopes
                     ->where('metadata.value', $comparison, $metavalue);
             });
 
-        $this->abstractSelect($query, $key);
+        $this->abstractSelect($builder, $key);
     }
 
 
@@ -510,11 +556,11 @@ trait RelationScopes
 
     // where c.key = 'ten-reasons-why-chocolate-is-better-than-vanilla'
 
-    public function scopeChildrenOfRelation($query, $key, $relation)
+    public function scopeChildrenOfRelation($builder, $key, $relation)
     {
-        $query->selectContext = 'r';
+        $builder->getModel()->setAlias('r');
 
-        return $query
+        return $builder
             ->select('r.id', 'r.created_at', 'r.updated_at', 'r.status', 'r.revision', 'r.language', 'r.title', 'r.key')
             ->join('content_relations AS children_of_relation', function ($join) use ($relation) {
                 $join->on('children_of_relation.content_id', '=', 'contents.id')
@@ -524,11 +570,11 @@ trait RelationScopes
             ->where('contents.key', $key);
     }
 
-    public function scopeChildOfType($query, $parent, $type, $key)
+    public function scopeChildOfType($builder, $parent, $type, $key)
     {
-        $query->selectContext = 'r';
+        $builder->getModel()->setAlias('r');
 
-        return $query
+        return $builder
             ->select('r.id', 'r.created_at', 'r.updated_at', 'r.status', 'r.revision', 'r.language', 'r.title', 'r.key')
             ->join('content_relations AS child_of_type', function ($join) {
                 $join->on('contents.id', '=', 'child_of_type.relation_id')
@@ -544,36 +590,36 @@ trait RelationScopes
             ->whereIn('contents.id', $parent->pluck('id'));
     }
 
-    public function scopeSortAlphabetical($query)
+    public function scopeSortAlphabetical($builder)
     {
-        $prefix = explode('.', $query->getQuery()->columns[0])[0] ?: 'contents';
+        $prefix = explode('.', $builder->getQuery()->columns[0])[0] ?: 'contents';
 
-        return $query->orderBy($prefix.'.title', 'asc');
+        return $builder->orderBy($prefix.'.title', 'asc');
     }
 
-    public function scopeSortNewest($query)
+    public function scopeSortNewest($builder)
     {
-        $prefix = explode('.', $query->getQuery()->columns[0])[0] ?: 'contents';
+        $prefix = explode('.', $builder->getQuery()->columns[0])[0] ?: 'contents';
 
-        return $query->orderBy($prefix.'.created_at', 'desc');
+        return $builder->orderBy($prefix.'.created_at', 'desc');
     }
 
-    public function scopeSortPopular($query)
+    public function scopeSortPopular($builder)
     {
-        return $query;
+        return $builder;
     }
 
-    public function scopeWithContents($query)
+    public function scopeWithContents($builder)
     {
-        return $query->select( (explode('.', $query->getQuery()->columns[0])[0] ?: 'contents')  .'.*');
+        return $builder->select( (explode('.', $builder->getQuery()->columns[0])[0] ?: 'contents')  .'.*');
     }
 
     /**
      * Orders the query by the specified meta key value.
      */
-    public function scopeOrderByMeta($query, $key, $direction = 'asc')
+    public function scopeOrderByMeta($builder, $key, $direction = 'asc')
     {
-        return $query
+        return $builder
             ->join('content_meta AS metadata_order', function($join) use ($key) {
                 $join->on('contents.id', '=', 'metadata_order.content_id')
                     ->where('metadata_order.key', $key);
@@ -581,22 +627,22 @@ trait RelationScopes
             ->orderBy('metadata_order.value', $direction);
     }
 
-    public function scopeOfContentType($query, $key)
+    public function scopeOfContentType($builder, $key)
     {
-        $query->selectContext = 'contents';
+        $builder->getModel()->setAlias('contents');
 
-        return $query
+        return $builder
             ->select('contents.id', 'contents.created_at', 'contents.updated_at', 'contents.status', 'contents.revision', 'contents.language', 'contents.title', 'contents.key', 'contents.content')
             ->leftJoin('content_relations AS relations', 'contents.id', '=', 'relations.content_id')
             ->leftJoin('contents AS types', 'types.id', '=', 'relations.relation_id')
             ->where('types.key', $key);
     }
 
-    public function scopeSearch($query, $search)
+    public function scopeSearch($builder, $search)
     {
         $table = (\App::getLocale() !== 'en') ? 'language' : 'contents';
 
-        return $query->where($table.'.title', 'like', [$search])
+        return $builder->where($table.'.title', 'like', [$search])
             ->orderBy($table.'.title', 'asc');
     }
 

@@ -3,6 +3,8 @@
 namespace Baytek\Laravel\Content\Models;
 
 use Baytek\Laravel\Content\Models\Scopes\TranslationScope;
+use Baytek\Laravel\Content\Models\Scopes\ContentTypeScope;
+
 use Baytek\LaravelStatusBit\Statusable;
 use Baytek\LaravelStatusBit\Interfaces\StatusInterface;
 
@@ -84,6 +86,8 @@ class Content extends Model implements StatusInterface
             });
         }
 
+        static::addGlobalScope(new ContentTypeScope);
+
         if(\App::getLocale() != 'en') {
             static::addGlobalScope(new TranslationScope);
         }
@@ -117,32 +121,7 @@ class Content extends Model implements StatusInterface
 
 
 
-    public function scopeWithRestricted($query)
-    {
-        return $query->withoutGlobalScope('not_restricted');
-    }
 
-    public function scopeWithRestrictedMeta($query)
-    {
-        return $query->withoutGlobalScope('not_restricted_content_meta');
-    }
-
-    public function scopeWithMeta($query, $restricted = false)
-    {
-        return $query->with($restricted ? 'restrictedMeta' : 'meta');
-    }
-
-    public function scopeWithRelationships($query)
-    {
-        return $query->with(['relations', 'relations.relation', 'relations.relationType']);
-    }
-
-    public function scopeWithAll($query)
-    {
-        $query
-            ->withContents()
-            ->with(['relations', 'relations.relation', 'relations.relationType', 'meta']);
-    }
 
     public function getMetaRecord($key)
     {
@@ -259,49 +238,60 @@ class Content extends Model implements StatusInterface
         });
     }
 
-
-    public static function hierarchy($content, $paginate = true, $perPage = 15)
+    public function setAlias($alias)
     {
-        $request = request();
-        $relations = Cache::get('content.cache.relations')->where('relation_type_id', 4);
-        $items = Content::loopying($content, $relations, $content);
+        $this->alias = $alias;
+    }
 
-        $total = count($items);
-        $perPage = $paginate ? $perPage : $total;
-        $currentPage = Paginator::resolveCurrentPage();
-        $pagination = new LengthAwarePaginator(
-            array_slice($items, ($currentPage - 1) * $perPage, $perPage, true),
-            $total,
-            $perPage,
-            $currentPage,
-            [
-                'path' => $request->url(),
-                'query' => $request->query()
-            ]
-        );
-
-        return $pagination;
+    public function getTable()
+    {
+        return ($this->alias ?: parent::getTable());
     }
 
 
-    public static function loopying(&$contents, $relations, &$all = -1, $depth = 0, &$used = [], &$result = [])
-    {
-        foreach($contents as $content) {
-            if(!in_array($content->id, $used)) {
-                // echo str_repeat('&mdash;', $depth) . " {$content->id} {$content->title}<br/>";
 
-                $related = $relations->where('relation_id', $content->id)->pluck('content_id');
-                $children = $all->only($related->all())->keyBy('id');
-                array_push($used, $content->id);
+    // public static function hierarchy($content, $paginate = true, $perPage = 15)
+    // {
+    //     $request = request();
+    //     $relations = Cache::get('content.cache.relations')->where('relation_type_id', 4);
+    //     $items = Content::loopying($content, $relations, $content);
 
-                $content->depth = $depth;
-                array_push($result, $content);
+    //     $total = count($items);
+    //     $perPage = $paginate ? $perPage : $total;
+    //     $currentPage = Paginator::resolveCurrentPage();
+    //     $pagination = new LengthAwarePaginator(
+    //         array_slice($items, ($currentPage - 1) * $perPage, $perPage, true),
+    //         $total,
+    //         $perPage,
+    //         $currentPage,
+    //         [
+    //             'path' => $request->url(),
+    //             'query' => $request->query()
+    //         ]
+    //     );
 
-                static::loopying($children, $relations, $all, $depth + 1, $used, $result);
-            }
-        }
+    //     return $pagination;
+    // }
 
-        return $result;
-    }
+
+    // public static function loopying(&$contents, $relations, &$all = -1, $depth = 0, &$used = [], &$result = [])
+    // {
+    //     foreach($contents as $content) {
+    //         if(!in_array($content->id, $used)) {
+    //             // echo str_repeat('&mdash;', $depth) . " {$content->id} {$content->title}<br/>";
+
+    //             $related = $relations->where('relation_id', $content->id)->pluck('content_id');
+    //             $children = $all->only($related->all())->keyBy('id');
+    //             array_push($used, $content->id);
+
+    //             $content->depth = $depth;
+    //             array_push($result, $content);
+
+    //             static::loopying($children, $relations, $all, $depth + 1, $used, $result);
+    //         }
+    //     }
+
+    //     return $result;
+    // }
 
 }

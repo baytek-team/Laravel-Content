@@ -95,22 +95,20 @@
 
 <input type="hidden" name="relation_ids" value="{{ json_encode($content->relations->pluck('id')) }}">
 
-@foreach($content->relations as $relation)
-
-	@if($relation == $content->relations->first())
-		<div class="three fields">
-			<div class="field">
-				<label>{{ ___('Content') }}</label>
-			</div>
-			<div class="field">
-				<label>{{ ___('Relation Type') }}</label>
-			</div>
-			<div class="field">
-				<label>{{ ___('Relation') }}</label>
-			</div>
+@if($content->relations->count())
+	<div class="three fields">
+		<div class="field">
+			<label>{{ ___('Content') }}</label>
 		</div>
-	@endif
-
+		<div class="field">
+			<label>{{ ___('Relation Type') }}</label>
+		</div>
+		<div class="field">
+			<label>{{ ___('Relation') }}</label>
+		</div>
+	</div>
+@endif
+@foreach($content->relations as $relation)
 	<div class="three fields relationship-row">
 		<div class="field{{ $errors->has('key') ? ' error' : '' }}">
 			<select name="content_id[{{$relation->id}}]" class="ui dropdown disabled">

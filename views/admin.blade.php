@@ -18,10 +18,7 @@
     @yield('head')
 
     <style>
-        .segment.simple.padded
-        {
-            padding: 1em 2em 1em 1em !important;
-        }
+
     </style>
 
     <!-- Scripts -->
@@ -179,7 +176,7 @@
             <div class="main padded">
                 @include('flash::message')
 
-                @if (count($errors) > 0)
+                @if(count($errors) > 0)
                     <div class="row">
                         <div class="ui icon message error">
                             <i class="exclamation circle icon"></i>
