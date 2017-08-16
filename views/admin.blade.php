@@ -73,10 +73,35 @@
                     <div class="right menu">
                         @if(Auth::user()->hasRole( \Baytek\Laravel\Users\Roles\Root::ROLE ))
                             <div class="ui dropdown item">
-                                <i class="tree icon"></i>
+                                {{-- <i class="tree icon"></i> --}}
                                 /root
                                 <i class="dropdown icon"></i>
                                 <div class="menu">
+                                    @link(___('Contentinator'), [
+                                        'location' => 'content.index',
+                                        'append' => '</span>',
+                                        'prepend' => '<i class="heartbeat icon"></i><span class="collapseable-text">',
+                                        'type' => 'route',
+                                        'class' => 'item'
+                                    ])
+                                    @link(___('Matrix'), [
+                                        'location' => 'user.role.index',
+                                        'type' => 'route',
+                                        'class' => 'item',
+                                        'prepend' => '<i class="table icon"></i>'
+                                    ])
+                                    @link(___('Permissions'), [
+                                        'location' => 'permission.index',
+                                        'type' => 'route',
+                                        'class' => 'item',
+                                        'prepend' => '<i class="privacy icon"></i>'
+                                    ])
+                                    @link(___('Roles'), [
+                                        'location' => 'role.index',
+                                        'type' => 'route',
+                                        'class' => 'item',
+                                        'prepend' => '<i class="protect icon"></i>'
+                                    ])
                                     @link(___('Settings'), [
                                         'location' => 'settings.index',
                                         'append' => '</span>',
@@ -89,31 +114,6 @@
                                         'type' => 'route',
                                         'class' => 'item',
                                         'prepend' => '<i class="user icon"></i>'
-                                    ])
-                                    @link(___('Roles'), [
-                                        'location' => 'role.index',
-                                        'type' => 'route',
-                                        'class' => 'item',
-                                        'prepend' => '<i class="protect icon"></i>'
-                                    ])
-                                    @link(___('Permissions'), [
-                                        'location' => 'permission.index',
-                                        'type' => 'route',
-                                        'class' => 'item',
-                                        'prepend' => '<i class="privacy icon"></i>'
-                                    ])
-                                    @link(___('Permission Matrix'), [
-                                        'location' => 'user.role.index',
-                                        'type' => 'route',
-                                        'class' => 'item',
-                                        'prepend' => '<i class="table icon"></i>'
-                                    ])
-                                    @link(___('Contentinator'), [
-                                        'location' => 'content.index',
-                                        'append' => '</span>',
-                                        'prepend' => '<i class="heartbeat icon"></i><span class="collapseable-text">',
-                                        'type' => 'route',
-                                        'class' => 'item'
                                     ])
                                 </div>
                             </div>

@@ -5,7 +5,7 @@
         <i class="heartbeat icon"></i>
         <div class="content">
             Contentinator
-            <div class="sub header">Are you ready to be contentinated?</div>
+            <div class="sub header">Are you contentinated?<br/> Contentination level: @php echo rand(0,100);@endphp%</div>
         </div>
     </h1>
 @endsection

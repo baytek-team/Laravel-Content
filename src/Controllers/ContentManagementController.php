@@ -25,27 +25,6 @@ class ContentManagementController extends ContentController
     protected $model = Content::class;
 
     /**
-     * List of views this content type uses
-     * @var [type]
-     */
-    // protected $views = [
-    //     'index' => 'index',
-    //     'create' => 'create',
-    //     'edit' => 'edit',
-    //     'show' => 'show',
-    // ];
-
-
-    /**
-     * [__construct description]
-     * @param \Baytek\Laravel\Settings\SettingsProvider $config Create the config instance
-     */
-    // public function __construct(\Baytek\Laravel\Settings\SettingsProvider $config)
-    // {
-    //     parent::__construct();
-    // }
-
-    /**
      * Show the index of all content with content type 'webpage'
      *
      * @return \Illuminate\Http\Response
@@ -100,6 +79,12 @@ class ContentManagementController extends ContentController
      */
     public function show($id)
     {
+        // overriding the view if we have an inline view namespace
+        // FIXME: This needs to use setters, fancier as well.
+        if(isset(\Route::getCurrentRoute()->action['as']) && \Route::getCurrentRoute()->action['as'] == 'content.inline') {
+            $this->views['show'] = 'content.inline';
+        }
+
         $renderer = new \Diff_Renderer_Html_Inline;
 
         $content = Content::find($id);

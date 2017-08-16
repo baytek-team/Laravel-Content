@@ -125,7 +125,7 @@ class Content extends Model implements StatusInterface
 
     public function scopeRootNodes($builder)
     {
-        $builder
+        // $builder
     }
 
 
