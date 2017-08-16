@@ -46,20 +46,20 @@
 	@endif
 
 	<div class="ui grid">
-		<div class="four wide column">
+		<div class="four wide computer eight wide tablet sixteen wide mobile column">
 			@include('contents::content.partials.attributes')
 		</div>
-		<div class="four wide column">
+		<div class="four wide computer eight wide tablet sixteen wide mobile column">
 			@if($content->meta->count())
 				@include('contents::content.partials.metadata')
 			@endif
 		</div>
-		<div class="four wide column">
+		<div class="four wide computer eight wide tablet sixteen wide mobile column">
 			{{-- @if($content->relations->count()) --}}
 				@include('contents::content.partials.relations')
 			{{-- @endif --}}
 		</div>
-		<div class="four wide column">
+		<div class="four wide computer eight wide tablet sixteen wide mobile column">
 			<h4 class="ui horizontal divider header">
 				<i class="settings icon"></i>
 				{{ ___('Settings') }}
