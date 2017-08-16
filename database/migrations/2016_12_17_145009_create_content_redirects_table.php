@@ -31,6 +31,6 @@ class CreateContentRedirectsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('content_history');
+        Schema::dropIfExists('content_redirect');
     }
 }

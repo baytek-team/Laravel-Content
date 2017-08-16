@@ -11,30 +11,23 @@ trait HasAssociations
     /**
      * [association description]
      *
-     * @param  [type] $related     [description]
-     * @param  [type] $relationKey [description]
-     * @param  [type] $relation    [description]
+     * @param  [type] $modelClass     Class to invoke when creating a builder instance
+     * @param  [type] $relationKey    [description]
+     * @param  [type] $constraints    [description]
      * @return Baytek\Laravel\Content\Models\Relations\HasMany              [description]
      */
-    public function association($related, $relationKey = null, $relation = null)
+    public function association($modelClass, $relationKey = null, $constraints = [])
     {
         // If no relation name was given, we will use this debug backtrace to extract
         // the calling method's name and use that as the relationship name as most
         // of the time this will be what we desire to use for the relationships.
-        if (is_null($relation)) {
-            $relation = $this->guessBelongsToRelation();
-        }
-
-        $instance = $this->newRelatedInstance($related);
-
-        // If no foreign key was supplied, we can use a backtrace to guess the proper
-        // foreign key name by using the name of the relationship function, which
-        // when combined with an "_id" should conventionally match the columns.
-        // if (is_null($foreignKey)) {
-        //     $foreignKey = Str::snake($relation).'_'.$instance->getKeyName();
+        // if (is_null($relation)) {
+        //     $relation = $this->guessBelongsToRelation();
         // }
 
-        // $foreignKey = 'contents.id';
+        // Create the instance of model we want to join from, this will apply all global
+        // scopes to the subsequent queries.
+        $instance = $this->newRelatedInstance($modelClass);
 
         // Once we have the foreign key names, we'll just create a new Eloquent query
         // for the related models and returns the relationship instance which will
@@ -42,7 +35,7 @@ trait HasAssociations
         $ownerKey = $instance->getKeyName();
 
         return new HasMany(
-            $instance->newQuery(), $this, $ownerKey, $relationKey, $relation
+            $instance->newQuery(), $this, $ownerKey, $relationKey, $constraints
         );
     }
 

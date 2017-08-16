@@ -11,6 +11,13 @@ use Illuminate\Database\Eloquent\Model;
 // use Illuminate\Contracts\Support\Htmlable;
 // use Illuminate\Support\HigherOrderTapProxy;
 
+if (! function_exists('root')) {
+    function root()
+    {
+        return content(1);
+    }
+}
+
 if (! function_exists('content')) {
     /**
      * Assign high numeric IDs to a config item to force appending.
@@ -83,7 +90,7 @@ if (! function_exists('contents')) {
                 $result = $model::find(content_id($value));
             }
             else {
-                return (new $model)->childrenOfType((new $model)->getWithPath($value))->get();
+                return (new $model)->childrenOfType(Content::withPath($value))->get();
             }
         }
         // else if(is_array($value)) {
@@ -124,10 +131,11 @@ if (! function_exists('content_id')) {
     function content_id($key)
     {
         if(stripos($key, '/') === false) {
+            // FIXNEEDED: We need to call statically.
             return (new Content)->getContentIdByKey($key);
         }
         else {
-            return (new Content)->getWithPath($key)->first()->id;
+            return Content::withPath($key)->first()->id;
         }
     }
 }

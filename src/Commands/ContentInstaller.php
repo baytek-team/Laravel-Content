@@ -70,6 +70,6 @@ class ContentInstaller extends Installer
             'parent-id',
         ];
 
-        return (new $this->model)->whereIn('key', $relevantRecords)->count() === 0;
+        return (new $this->model)->whereIn('contents.key', $relevantRecords)->count() === 0;
     }
 }

@@ -237,7 +237,7 @@ trait RelationScopes
     // This is bad and should be fixed to ensure the full path
     public function getWithPath($path)
     {
-        dd('This method has been deprecated. Please discontinue use. Use `content()` or `Content::withPath()` instead');
+        throw new \Exception('This method has been deprecated. Please discontinue use. Use `content()` or `Content::withPath()` instead');
         $parts = array_reverse(explode('/', $path));
 
         $prefix = env('DB_PREFIX');
@@ -386,7 +386,7 @@ trait RelationScopes
 
     public function scopeChildrenOf($builder, $key, $column = 'key', $depth = 1)
     {
-        $builder->getModel()->setAlias('r');
+        $builder->getModel()->setAlias('r', true);
 
         $builder
             ->select('r.id', 'r.created_at', 'r.updated_at', 'r.status', 'r.revision', 'r.language', 'r.title', 'r.key')
@@ -500,7 +500,8 @@ trait RelationScopes
 
     public function scopeChildrenOfType($builder, $key, $type)
     {
-        $builder->getModel()->setAlias('r');
+        $builder->getModel()->setAlias('r', true);
+
         $builder
             ->select('r.id', 'r.created_at', 'r.updated_at', 'r.status', 'r.revision', 'r.language', 'r.title', 'r.key')
             ->distinct()
@@ -508,17 +509,18 @@ trait RelationScopes
                 $join->on('contents.id', '=', 'children_of_type.relation_id')
                     ->where('children_of_type.relation_type_id', $this->getContentIdByKey('parent-id'));
             })
-            ->join('contents AS r', 'r.id', '=', 'children_of_type.content_id')
             ->join('content_relations AS relation_type', function ($join) use ($type) {
                 $join->on('relation_type.content_id', '=', 'children_of_type.content_id')
                     ->where('relation_type.relation_type_id', $this->getContentIdByKey('content-type'));
-                    if(is_array($type)) {
-                        $join->whereIn('relation_type.relation_id', $this->getContentIdByKeys($type));
-                    }
-                    else {
-                        $join->where('relation_type.relation_id', $this->getContentIdByKey($type));
-                    }
-            });
+
+                if(is_array($type)) {
+                    $join->whereIn('relation_type.relation_id', $this->getContentIdByKeys($type));
+                }
+                else {
+                    $join->where('relation_type.relation_id', $this->getContentIdByKey($type));
+                }
+            })
+            ->join('contents AS r', 'r.id', '=', 'children_of_type.content_id');
 
 
         $this->abstractSelect($builder, $key);
@@ -526,7 +528,7 @@ trait RelationScopes
 
     public function scopeChildenOfTypeWhereMetadata($builder, $key, $type, $metakey, $metavalue, $comparison = '=')
     {
-        $builder->getModel()->setAlias('r');
+        $builder->getModel()->setAlias('r', true);
         $builder
             ->select('r.id', 'r.created_at', 'r.updated_at', 'r.status', 'r.revision', 'r.language', 'r.title', 'r.key')
             ->join('content_relations AS children_of_type', function ($join) {
@@ -558,7 +560,7 @@ trait RelationScopes
 
     public function scopeChildrenOfRelation($builder, $key, $relation)
     {
-        $builder->getModel()->setAlias('r');
+        $builder->getModel()->setAlias('r', true);
 
         return $builder
             ->select('r.id', 'r.created_at', 'r.updated_at', 'r.status', 'r.revision', 'r.language', 'r.title', 'r.key')
@@ -572,7 +574,7 @@ trait RelationScopes
 
     public function scopeChildOfType($builder, $parent, $type, $key)
     {
-        $builder->getModel()->setAlias('r');
+        $builder->getModel()->setAlias('r', true);
 
         return $builder
             ->select('r.id', 'r.created_at', 'r.updated_at', 'r.status', 'r.revision', 'r.language', 'r.title', 'r.key')

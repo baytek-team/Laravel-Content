@@ -2,10 +2,10 @@
 
 @section('page.head.header')
     <h1 class="ui header">
-        <i class="world icon"></i>
+        <i class="heartbeat icon"></i>
         <div class="content">
-            {{ ___('Content Management') }}
-            <div class="sub header">{{ ___('Manage the content content type.') }}</div>
+            Contentinator
+            <div class="sub header">Are you ready to be contentinated?</div>
         </div>
     </h1>
 @endsection

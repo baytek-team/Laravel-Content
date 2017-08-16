@@ -51,7 +51,7 @@ class HasMany extends Relation
      * @param  string  $relationKey
      * @return void
      */
-    public function __construct(Builder $query, Model $parent, $localKey, $relationKey, $relation)
+    public function __construct(Builder $query, Model $parent, $localKey, $relationKey, $constraints)
     {
         $this->localKey = $localKey;
         $this->relationKey = $relationKey;
@@ -122,7 +122,8 @@ class HasMany extends Relation
     {
         $query = $query ?: $this->query;
 
-        $this->query->selectContext = 'r';
+        $query->getModel()->setAlias('r', true);
+        $table = $query->getModel()->getTable();
 
         // We need to join to the intermediate table on the related model's primary
         // key column with the intermediate table's foreign key for the related
@@ -135,7 +136,7 @@ class HasMany extends Relation
             $join->on('contents.id', '=', $childrenHash.'.relation_id')
                 ->where($childrenHash.'.relation_type_id', content_id('parent-id'));
         })
-        ->join('contents AS ' . $this->query->selectContext, $this->query->selectContext.'.id', '=', $childrenHash.'.content_id');
+        ->join('contents AS ' . $table, $table.'.id', '=', $childrenHash.'.content_id');
 
         if($this->relationKey) {
             $query->join('content_relations AS '.$typeHash = $this->getRelationCountHash(), function ($join) use ($childrenHash, $typeHash) {

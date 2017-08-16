@@ -17,10 +17,6 @@
 
     @yield('head')
 
-    <style>
-
-    </style>
-
     <!-- Scripts -->
     <script>
         window.Laravel = <?php echo json_encode([
@@ -57,66 +53,6 @@
                         {{-- @endcan --}}
                         @endforeach
                     @endforeach
-
-                    @if(Auth::user()->hasRole( \Baytek\Laravel\Users\Roles\Root::ROLE ))
-                        @link(___('Settings'), [
-                            'location' => 'settings.index',
-                            'append' => '</span>',
-                            'prepend' => '<i class="settings left icon"></i><span class="collapseable-text">',
-                            'type' => 'route',
-                            'class' => 'item'
-                        ])
-
-                        @link(___('Rootinator'), [
-                            'location' => 'content.index',
-                            'append' => '</span>',
-                            'prepend' => '<i class="wizard left icon"></i><span class="collapseable-text">',
-                            'type' => 'route',
-                            'class' => 'item'
-                        ])
-
-                        {{-- <div class="item">
-                            <i class="configure left icon"></i>
-                            <span class="collapseable-text">{{ ___('Tools') }}</span>
-
-                            <div class="menu">
-                                @can('create', \Baytek\Laravel\Content\Models\Content::class)
-                                    @link(___('Content Navigator'), [
-                                        'location' => 'content.index',
-                                        'type' => 'route',
-                                        'class' => 'item'
-                                    ])
-                                @endcan
-                            </div>
-                        </div> --}}
-                        <div class="item">
-                            <i class="user left icon"></i>
-                            <span class="collapseable-text">{{ ___('Users') }}</span>
-                            <div class="menu">
-                                @link(___('Manage Users'), [
-                                    'location' => 'user.index',
-                                    'type' => 'route',
-                                    'class' => 'item'
-                                ])
-                                @link(___('Roles'), [
-                                    'location' => 'role.index',
-                                    'type' => 'route',
-                                    'class' => 'item'
-                                ])
-                                @link(___('Permissions'), [
-                                    'location' => 'permission.index',
-                                    'type' => 'route',
-                                    'class' => 'item'
-                                ])
-                                @link(___('Permission Matrix'), [
-                                    'location' => 'user.role.index',
-                                    'type' => 'route',
-                                    'class' => 'item'
-                                ])
-                            </div>
-                        </div>
-                    @endif
-
                 @else
                     <a class="item" href="{{ route('login') }}">{{ ___('Login') }}</a>
                     <a class="item" href="{{ route('register') }}">{{ ___('Register') }}</a>
@@ -134,8 +70,54 @@
                     <div class="ui item breadcrumb">
                         @breadcrumbs()
                     </div>
-
                     <div class="right menu">
+                        @if(Auth::user()->hasRole( \Baytek\Laravel\Users\Roles\Root::ROLE ))
+                            <div class="ui dropdown item">
+                                <i class="tree icon"></i>
+                                /root
+                                <i class="dropdown icon"></i>
+                                <div class="menu">
+                                    @link(___('Settings'), [
+                                        'location' => 'settings.index',
+                                        'append' => '</span>',
+                                        'prepend' => '<i class="settings icon"></i><span class="collapseable-text">',
+                                        'type' => 'route',
+                                        'class' => 'item'
+                                    ])
+                                    @link(___('Users'), [
+                                        'location' => 'user.index',
+                                        'type' => 'route',
+                                        'class' => 'item',
+                                        'prepend' => '<i class="user icon"></i>'
+                                    ])
+                                    @link(___('Roles'), [
+                                        'location' => 'role.index',
+                                        'type' => 'route',
+                                        'class' => 'item',
+                                        'prepend' => '<i class="protect icon"></i>'
+                                    ])
+                                    @link(___('Permissions'), [
+                                        'location' => 'permission.index',
+                                        'type' => 'route',
+                                        'class' => 'item',
+                                        'prepend' => '<i class="privacy icon"></i>'
+                                    ])
+                                    @link(___('Permission Matrix'), [
+                                        'location' => 'user.role.index',
+                                        'type' => 'route',
+                                        'class' => 'item',
+                                        'prepend' => '<i class="table icon"></i>'
+                                    ])
+                                    @link(___('Contentinator'), [
+                                        'location' => 'content.index',
+                                        'append' => '</span>',
+                                        'prepend' => '<i class="heartbeat icon"></i><span class="collapseable-text">',
+                                        'type' => 'route',
+                                        'class' => 'item'
+                                    ])
+                                </div>
+                            </div>
+                        @endif
                         {{-- <a class="item" href="/{{ strtolower( ___('Fr') ) }}">
                             <i class="flag icon"></i>
                             {{ ___('Lang') }}

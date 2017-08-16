@@ -28,6 +28,7 @@ class Content extends Model implements StatusInterface
 
     // Defining the table we want to use for all content
     protected $table = 'contents';
+    protected $aliased = false;
 
     public $depth;
 
@@ -115,12 +116,17 @@ class Content extends Model implements StatusInterface
 
     public function children()
     {
-        return $this->association(Content::class);
+        //association(ContentTypeClass, )
+        // dd(func_get_args());
+        return $this->association(Content::class, null, [
+
+        ]);
     }
 
-
-
-
+    public function scopeRootNodes($builder)
+    {
+        $builder
+    }
 
 
     public function getMetaRecord($key)
@@ -238,8 +244,14 @@ class Content extends Model implements StatusInterface
         });
     }
 
-    public function setAlias($alias)
+    public function isAliased()
     {
+        return $this->aliased;
+    }
+
+    public function setAlias($alias, $aliased = false)
+    {
+        $this->aliased = $aliased;
         $this->alias = $alias;
     }
 

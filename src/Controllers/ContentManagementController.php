@@ -12,7 +12,7 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 
-
+use Diff;
 use View;
 
 class ContentManagementController extends ContentController
@@ -100,8 +100,6 @@ class ContentManagementController extends ContentController
      */
     public function show($id)
     {
-        require_once dirname(__FILE__).'/../../lib/php-diff/lib/Diff.php';
-        require_once dirname(__FILE__).'/../../lib/php-diff/lib/Diff/Renderer/Html/Inline.php';
         $renderer = new \Diff_Renderer_Html_Inline;
 
         $content = Content::find($id);
@@ -117,7 +115,6 @@ class ContentManagementController extends ContentController
             $a = explode("\n", $previous);
             $b = explode("\n", $content->content);
             $diff = new \Diff($a, $b, []);
-            // $diff = \Baytek\Laravel\Libraries\Diff::toHTML(\Baytek\Laravel\Libraries\Diff::compare($previous, $content->content));
             $this->viewData['show']['diff'] = $diff->render($renderer);
         }
 
@@ -131,15 +128,8 @@ class ContentManagementController extends ContentController
      */
     public function revision($id, $revision = 0)
     {
-        require_once dirname(__FILE__).'/../../lib/php-diff/lib/Diff.php';
-        require_once dirname(__FILE__).'/../../lib/php-diff/lib/Diff/Renderer/Html/Inline.php';
         $renderer = new \Diff_Renderer_Html_Inline;
 
-        // Options for generating the diff
-        $options = array(
-            //'ignoreWhitespace' => true,
-            //'ignoreCase' => true,
-        );
         // Initialize the diff class
         $content = Content::find($id);
 
@@ -165,7 +155,7 @@ class ContentManagementController extends ContentController
             $previous = unserialize($content->revisions->get($revision-1)->content)->content;
             $a = explode("\n", $previous);
             $b = explode("\n", $content->content);
-            $diff = new \Diff($a, $b, $options);
+            $diff = new \Diff($a, $b, []);
             // $diff = \Baytek\Laravel\Libraries\Diff::toHTML(\Baytek\Laravel\Libraries\Diff::compare($previous, $content->content));
             $this->viewData['show']['diff'] = $diff->render($renderer);
         }
