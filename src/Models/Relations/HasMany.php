@@ -32,6 +32,10 @@ class HasMany extends Relation
      */
     protected $relatedKey = 'content_id';
 
+    protected $relationKey;
+    protected $children = false;
+    protected $metadata;
+
     /**
      * The count of self joins.
      *
@@ -51,10 +55,26 @@ class HasMany extends Relation
      * @param  string  $relationKey
      * @return void
      */
-    public function __construct(Builder $query, Model $parent, $localKey, $relationKey, $constraints)
+    public function __construct(Builder $query, Model $parent, $localKey, $constraints)
     {
         $this->localKey = $localKey;
-        $this->relationKey = $relationKey;
+        // $this->relationKey = $relationKey;
+
+        $this->relationKey = isset($constraints['relation']) ? $constraints['relation'] : null;
+        $this->children = isset($constraints['children']) ? $constraints['children'] : false;
+
+        if(isset($constraints['metadata'])) {
+            foreach($constraints['metadata'] as $key => $metadata) {
+
+                if(count($metadata) === 1) {
+                    $this->metadata[] = [$key, '=', $metadata];
+                }
+                else {
+                    $this->metadata[] = $metadata;
+                }
+            }
+
+        }
 
         parent::__construct($query, $parent);
     }
@@ -121,34 +141,48 @@ class HasMany extends Relation
     protected function performJoin($query = null)
     {
         $query = $query ?: $this->query;
-
-        $query->getModel()->setAlias('r', true);
         $table = $query->getModel()->getTable();
 
         // We need to join to the intermediate table on the related model's primary
         // key column with the intermediate table's foreign key for the related
         // model instance. Then we can set the "where" for the parent models.
-        $baseTable = $this->related->getTable();
+        // $baseTable = $this->related->getTable();
 
-        $key = $baseTable.'.'.$this->related->getKeyName();
+        if($this->children) {
+            $query->getModel()->setAlias('r', true);
+            $table = $query->getModel()->getTable();
 
-        $query->join('content_relations AS '.$childrenHash = $this->getRelationCountHash(), function ($join) use ($childrenHash) {
-            $join->on('contents.id', '=', $childrenHash.'.relation_id')
-                ->where($childrenHash.'.relation_type_id', content_id('parent-id'));
-        })
-        ->join('contents AS ' . $table, $table.'.id', '=', $childrenHash.'.content_id');
+            $query->join('content_relations AS '.$childrenHash = $this->getRelationCountHash(), function ($join) use ($childrenHash) {
+                $join->on('contents.id', '=', $childrenHash.'.relation_id')
+                    ->where($childrenHash.'.relation_type_id', content_id('parent-id'));
+            })
+            ->join('contents AS ' . $table, $table.'.id', '=', $childrenHash.'.content_id');
+        }
 
         if($this->relationKey) {
-            $query->join('content_relations AS '.$typeHash = $this->getRelationCountHash(), function ($join) use ($childrenHash, $typeHash) {
-                $join->on($typeHash.'.content_id', '=', $childrenHash.'.content_id')
+            $joinTo = $this->children ? $childrenHash.'.content_id': $query->getModel()->getTable().'.id';
+
+            $query->join('content_relations AS '.$typeHash = $this->getRelationCountHash(), function ($join) use ($joinTo, $typeHash) {
+                $join->on($typeHash.'.content_id', '=', $joinTo)
                     ->where($typeHash.'.relation_type_id', content_id('content-type'));
-                    if(is_array($this->relationKey)) {
-                        $join->whereIn($typeHash.'.relation_id', content_ids($this->relationKey));
-                    }
-                    else {
-                        $join->where($typeHash.'.relation_id', content_id($this->relationKey));
-                    }
+
+                if(is_array($this->relationKey)) {
+                    $join->whereIn($typeHash.'.relation_id', content_ids($this->relationKey));
+                }
+                else {
+                    $join->where($typeHash.'.relation_id', content_id($this->relationKey));
+                }
             });
+        }
+
+        if($this->metadata) {
+            foreach($this->metadata as $metadata) {
+                $query->join('content_meta AS metadata', function($join) use ($metadata, $table) {
+                    $join->on($table.'.id', '=', 'metadata.content_id')
+                        ->where('metadata.key', $metadata[0])
+                        ->where('metadata.value', $metadata[1], $metadata[2]);
+                });
+            }
         }
 
         return $this;

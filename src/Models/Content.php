@@ -118,10 +118,22 @@ class Content extends Model implements StatusInterface
 
     public function children()
     {
-        //association(ContentTypeClass, )
-        // dd(func_get_args());
-        return $this->association(Content::class, null, [
+        return $this->association(Content::class, [
+            // 'depth' => 1,
+            'children' => true,
+            // 'relation' => 'parent-id'
+        ]);
+    }
 
+    public function webpages()
+    {
+        return $this->association(Content::class, [
+            'relation' => 'webpage'
+            // 'children' => true,
+            // 'metadata' => [
+            //     ['author_id', '=', 1],
+            //     // 'author_id' => 1 // This method assumes the operator is '='
+            // ]
         ]);
     }
 

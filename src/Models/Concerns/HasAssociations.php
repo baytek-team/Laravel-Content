@@ -16,7 +16,7 @@ trait HasAssociations
      * @param  [type] $constraints    [description]
      * @return Baytek\Laravel\Content\Models\Relations\HasMany              [description]
      */
-    public function association($modelClass, $relationKey = null, $constraints = [])
+    public function association($modelClass, $constraints = [])
     {
         // If no relation name was given, we will use this debug backtrace to extract
         // the calling method's name and use that as the relationship name as most
@@ -35,7 +35,7 @@ trait HasAssociations
         $ownerKey = $instance->getKeyName();
 
         return new HasMany(
-            $instance->newQuery(), $this, $ownerKey, $relationKey, $constraints
+            $instance->newQuery(), $this, $ownerKey, $constraints
         );
     }
 

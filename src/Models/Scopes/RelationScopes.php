@@ -528,6 +528,8 @@ trait RelationScopes
 
     public function scopeChildenOfTypeWhereMetadata($builder, $key, $type, $metakey, $metavalue, $comparison = '=')
     {
+        throw new \Exception('ChildenOfTypeWhereMetadata has been deprecated. Create association within your model.');
+
         $builder->getModel()->setAlias('r', true);
         $builder
             ->select('r.id', 'r.created_at', 'r.updated_at', 'r.status', 'r.revision', 'r.language', 'r.title', 'r.key')
