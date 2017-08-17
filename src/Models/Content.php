@@ -8,8 +8,10 @@ use Baytek\Laravel\Content\Models\Scopes\ContentTypeScope;
 use Baytek\LaravelStatusBit\Statusable;
 use Baytek\LaravelStatusBit\Interfaces\StatusInterface;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
+// use Illuminate\Database\Eloquent\Builder;
+// use Illuminate\Database\Eloquent\Model;
+use Baytek\Laravel\Content\Eloquent\Builder;
+use Baytek\Laravel\Content\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;

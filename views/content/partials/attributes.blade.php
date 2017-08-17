@@ -7,7 +7,6 @@
 		'key' => $content->key,
 		'status' => $content->statuses()->toFormatted() ?: 'None',
 		'order' => $content->order ?: 'Date Ascending',
-		'revision' => '',
 		'language' => $content->language,
 		'created' => $content->created_at->toDayDateTimeString(),
 		'updated' => $content->updated_at->toDayDateTimeString(),

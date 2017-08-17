@@ -90,7 +90,7 @@ if (! function_exists('contents')) {
                 $result = $model::find(content_id($value));
             }
             else {
-                return (new $model)->childrenOfType(Content::withPath($value))->get();
+                return Content::withPath($value)->children;
             }
         }
         // else if(is_array($value)) {

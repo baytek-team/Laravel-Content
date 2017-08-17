@@ -136,7 +136,7 @@ class ContentManagementController extends ContentController
             $content = unserialize($content->revisions->get($revision)->content);
         }
 
-        if($revision -1 >= 0 || $latestRevision === $revision) {
+        if($revision -1 >= 0 || ($latestRevision === $revision && $revision != 0)) {
             $previous = unserialize($content->revisions->get($revision-1)->content)->content;
             $a = explode("\n", $previous);
             $b = explode("\n", $content->content);
