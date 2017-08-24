@@ -77,7 +77,7 @@ class Content extends Model implements StatusInterface
 
         static::addGlobalScope('not_restricted', function (Builder $builder) {
             $context = property_exists($builder, 'selectContext') ? $builder->selectContext : $builder->getModel()->table;
-            $builder->withStatus($context, ['exclude' => [self::RESTRICTED]]);
+            $builder->withStatus(['exclude' => [self::RESTRICTED]]);
         });
 
         if(config('content.ordering', false)) {
@@ -128,8 +128,8 @@ class Content extends Model implements StatusInterface
     public function webpages()
     {
         return $this->association(Content::class, [
-            'relation' => 'webpage'
-            // 'children' => true,
+            // 'relation' => 'webpage',
+            'children' => true,
             // 'metadata' => [
             //     ['author_id', '=', 1],
             //     // 'author_id' => 1 // This method assumes the operator is '='

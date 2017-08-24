@@ -148,6 +148,10 @@ class HasMany extends Relation
         // model instance. Then we can set the "where" for the parent models.
         // $baseTable = $this->related->getTable();
 
+        if(!$this->children && !$this->relationKey && !$this->metadata) {
+            throw new \Exception('You do not have any conditions, this would simply return the item in stack');
+        }
+
         if($this->children) {
             $query->getModel()->setAlias('r', true);
             $table = $query->getModel()->getTable();
