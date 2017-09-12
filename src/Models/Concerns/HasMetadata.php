@@ -91,6 +91,7 @@ trait HasMetadata
             }
         }
 
+        unset($this->relations['meta']);
         unset($this->relations['restrictedMeta']);
 
         return $attributes;

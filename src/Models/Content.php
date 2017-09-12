@@ -34,6 +34,8 @@ class Content extends Model implements StatusInterface
 
     public $depth;
 
+    protected $metadataAttributes = [];
+
     protected $attributes = [
         'language' => 'en',
     ];
@@ -74,6 +76,32 @@ class Content extends Model implements StatusInterface
     protected static function boot()
     {
         parent::boot();
+
+        self::creating(function($model){
+            if(property_exists($model, 'metadata')) {
+                $model->metadataAttributes = collect($model->attributes)->only($model->metadata)->all();
+                $model->attributes = collect($model->attributes)->except($model->metadata)->all();
+            }
+        });
+
+        self::created(function($model){
+            if(property_exists($model, 'metadata')) {
+                $model->saveMetadata($model->metadataAttributes);
+            }
+        });
+
+        self::updating(function($model){
+            if(property_exists($model, 'metadata')) {
+                $model->metadataAttributes = collect($model->attributes)->only($model->metadata)->all();
+                $model->attributes = collect($model->attributes)->except($model->metadata)->all();
+            }
+        });
+
+        self::updated(function($model){
+            if(property_exists($model, 'metadata')) {
+                $model->saveMetadata($model->metadataAttributes);
+            }
+        });
 
         static::addGlobalScope('not_restricted', function (Builder $builder) {
             $context = property_exists($builder, 'selectContext') ? $builder->selectContext : $builder->getModel()->table;
