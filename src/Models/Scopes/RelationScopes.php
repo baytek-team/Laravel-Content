@@ -433,10 +433,7 @@ trait RelationScopes
                     ->where('of_relation_type.relation_id', content_id($type));
             });
 
-        dd($builder->get());
         return $builder;
-            // ->join('contents AS r', 'r.id', '=', 'type.content_id')
-            // ->where('contents.key', $key);
     }
 
     // select * from pretzel_contents c
