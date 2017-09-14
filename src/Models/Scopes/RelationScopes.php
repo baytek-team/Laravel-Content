@@ -91,7 +91,7 @@ trait RelationScopes
     {
         $contentId = $this->id;
         $relations = Cache::get('content.cache.relations', collect([]));
-        $parentTypeId = content($type);
+        $parentTypeId = content_id($type);
 
         $result = $relations->filter(function ($relation) use ($contentId, $parentTypeId) {
             return $relation->content_id == $contentId && $relation->relation_type_id == $parentTypeId;
@@ -145,7 +145,7 @@ trait RelationScopes
     {
         $result = [];
         foreach($types as $type) {
-            array_push($result, content($type));
+            array_push($result, content_id($type));
         }
         return $result;
     }
@@ -169,7 +169,7 @@ trait RelationScopes
     // Alias for getContentIdByKey
     public function getIdWithKey($key)
     {
-        return content($key);
+        return content_id($key);
     }
 
     //
@@ -392,7 +392,7 @@ trait RelationScopes
             ->distinct()
             ->join('content_relations AS children_of', 'contents.id', '=', 'children_of.relation_id')
             ->join('contents AS r', 'r.id', '=', 'children_of.content_id')
-            ->where('children_of.relation_type_id', content('parent-id'));
+            ->where('children_of.relation_type_id', content_id('parent-id'));
             // ->where('contents.'.$column, $key);
 
             $this->abstractSelect($builder, $key);
@@ -409,14 +409,14 @@ trait RelationScopes
 
         $typeIds = [];
         foreach( $types as $type ) {
-            $typeIds[] = content($type);
+            $typeIds[] = content_id($type);
         }
 
         return $builder
             ->select('contents.id', 'contents.created_at', 'contents.updated_at', 'contents.status', 'contents.revision', 'contents.language', 'contents.title', 'contents.key')
             ->join('content_relations AS of_relation_type', function ($join) use ($typeIds) {
                 $join->on('contents.id', '=', 'of_relation_type.content_id')
-                    ->where('of_relation_type.relation_type_id', content('content-type'))
+                    ->where('of_relation_type.relation_type_id', content_id('content-type'))
                     ->whereIn('of_relation_type.relation_id', $typeIds);
             });
     }
@@ -425,13 +425,16 @@ trait RelationScopes
     {
         $builder->getModel()->setAlias('contents');
 
-        return $builder
+        $builder
             ->select('contents.id', 'contents.created_at', 'contents.updated_at', 'contents.status', 'contents.revision', 'contents.language', 'contents.title', 'contents.key')
             ->join('content_relations AS of_relation_type', function ($join) use ($type, $relation) {
                 $join->on('contents.id', '=', 'of_relation_type.content_id')
-                    ->where('of_relation_type.relation_type_id', content($relation))
-                    ->where('of_relation_type.relation_id', content($type));
+                    ->where('of_relation_type.relation_type_id', content_id($relation))
+                    ->where('of_relation_type.relation_id', content_id($type));
             });
+
+        dd($builder->get());
+        return $builder;
             // ->join('contents AS r', 'r.id', '=', 'type.content_id')
             // ->where('contents.key', $key);
     }
@@ -506,17 +509,17 @@ trait RelationScopes
             ->distinct()
             ->join('content_relations AS children_of_type', function ($join) {
                 $join->on('contents.id', '=', 'children_of_type.relation_id')
-                    ->where('children_of_type.relation_type_id', content('parent-id'));
+                    ->where('children_of_type.relation_type_id', content_id('parent-id'));
             })
             ->join('content_relations AS relation_type', function ($join) use ($type) {
                 $join->on('relation_type.content_id', '=', 'children_of_type.content_id')
-                    ->where('relation_type.relation_type_id', content('content-type'));
+                    ->where('relation_type.relation_type_id', content_id('content-type'));
 
                 if(is_array($type)) {
                     $join->whereIn('relation_type.relation_id', $this->getContentIdByKeys($type));
                 }
                 else {
-                    $join->where('relation_type.relation_id', content($type));
+                    $join->where('relation_type.relation_id', content_id($type));
                 }
             })
             ->join('contents AS r', 'r.id', '=', 'children_of_type.content_id');
@@ -534,13 +537,13 @@ trait RelationScopes
             ->select('r.id', 'r.created_at', 'r.updated_at', 'r.status', 'r.revision', 'r.language', 'r.title', 'r.key')
             ->join('content_relations AS children_of_type', function ($join) {
                 $join->on('contents.id', '=', 'children_of_type.relation_id')
-                    ->where('children_of_type.relation_type_id', content('parent-id'));
+                    ->where('children_of_type.relation_type_id', content_id('parent-id'));
             })
             ->join('contents AS r', 'r.id', '=', 'children_of_type.content_id')
             ->join('content_relations AS relation_type', function ($join) use ($type) {
                 $join->on('relation_type.content_id', '=', 'children_of_type.content_id')
-                    ->where('relation_type.relation_type_id', content('content-type'))
-                    ->where('relation_type.relation_id', content($type));
+                    ->where('relation_type.relation_type_id', content_id('content-type'))
+                    ->where('relation_type.relation_id', content_id($type));
             })
             ->join('content_meta AS metadata', function($join) use ($metakey, $metavalue, $comparison) {
                 $join->on('r.id', '=', 'metadata.content_id')
@@ -567,7 +570,7 @@ trait RelationScopes
             ->select('r.id', 'r.created_at', 'r.updated_at', 'r.status', 'r.revision', 'r.language', 'r.title', 'r.key')
             ->join('content_relations AS children_of_relation', function ($join) use ($relation) {
                 $join->on('children_of_relation.content_id', '=', 'contents.id')
-                    ->where('children_of_relation.relation_type_id', content($relation));
+                    ->where('children_of_relation.relation_type_id', content_id($relation));
             })
             ->join('contents AS r', 'r.id', '=', 'children_of_relation.relation_id')
             ->where('contents.key', $key);
@@ -581,13 +584,13 @@ trait RelationScopes
             ->select('r.id', 'r.created_at', 'r.updated_at', 'r.status', 'r.revision', 'r.language', 'r.title', 'r.key')
             ->join('content_relations AS child_of_type', function ($join) {
                 $join->on('contents.id', '=', 'child_of_type.relation_id')
-                    ->where('child_of_type.relation_type_id', content('parent-id'));
+                    ->where('child_of_type.relation_type_id', content_id('parent-id'));
             })
             ->join('contents AS r', 'r.id', '=', 'child_of_type.content_id')
             ->join('content_relations AS type', function ($join) use ($type) {
                 $join->on('type.content_id', '=', 'child_of_type.content_id')
-                    ->where('type.relation_type_id', content('content-type'))
-                    ->where('type.relation_id', content($type));
+                    ->where('type.relation_type_id', content_id('content-type'))
+                    ->where('type.relation_id', content_id($type));
             })
             ->where('r.key', $key)
             ->whereIn('contents.id', $parent->pluck('id'));
