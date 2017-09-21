@@ -130,12 +130,20 @@ if (! function_exists('content_id')) {
      */
     function content_id($key)
     {
-        if(stripos($key, '/') === false) {
-            // FIXNEEDED: We need to call statically.
-            return (new Content)->getContentIdByKey($key);
+        if(is_numeric($key)) {
+            return (int)$key;
         }
-        else {
-            return Content::withPath($key)->first()->id;
+        else if(is_string($key)) {
+            if(stripos($key, '/') === false) {
+                // FIXNEEDED: We need to call statically.
+                return (new Content)->getContentIdByKey($key);
+            }
+            else {
+                return Content::withPath($key)->first()->id;
+            }
+        }
+        else if(is_object($key) && $key instanceof Model) {
+            return $value->id;
         }
     }
 }

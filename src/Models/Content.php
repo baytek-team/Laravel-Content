@@ -69,6 +69,35 @@ class Content extends Model implements StatusInterface
     ];
 
     /**
+     * The constructor method of the model.
+     *
+     * @return void
+     */
+    public function __construct(array $attributes = [])
+    {
+        if(property_exists($this, 'metadata')) {
+            $this->fillable(array_merge($this->fillable, $this->metadata));
+        }
+
+        parent::__construct($attributes);
+
+        if(property_exists($this, 'contentType')) {
+            static::addGlobalScope('content_type', function (Builder $builder) {
+                $builder->ofType($this->contentType);
+            });
+        }
+    }
+
+    /**
+     * Get route key, this is generic function
+     * @return String the value for the key
+     */
+    public function getRouteKeyName()
+    {
+        return $this->getTable().'.id';
+    }
+
+    /**
      * The "booting" method of the model.
      *
      * @return void
@@ -77,37 +106,50 @@ class Content extends Model implements StatusInterface
     {
         parent::boot();
 
-        self::creating(function($model){
+        self::creating(function ($model) {
             if(property_exists($model, 'metadata')) {
                 $model->metadataAttributes = collect($model->attributes)->only($model->metadata)->all();
                 $model->attributes = collect($model->attributes)->except($model->metadata)->all();
             }
         });
 
-        self::created(function($model){
+        // After the model has been saved.
+        self::created(function ($model) {
+            // Check if there is any metadata to save.
             if(property_exists($model, 'metadata')) {
                 $model->saveMetadata($model->metadataAttributes);
             }
+
+
+            // Check to see if there are any relationships required to save
+            if(property_exists($model, 'relationships')) {
+                $model->saveRelations($model->relationships);
+                // foreach ($model->relationships as $contentType => $type) {
+                //     // Save the actual relationship ID
+                //     $model->saveRelation($contentType, $type);
+                // }
+            }
         });
 
-        self::updating(function($model){
+        self::updating(function ($model) {
             if(property_exists($model, 'metadata')) {
                 $model->metadataAttributes = collect($model->attributes)->only($model->metadata)->all();
                 $model->attributes = collect($model->attributes)->except($model->metadata)->all();
             }
         });
 
-        self::updated(function($model){
+        self::updated(function ($model) {
             if(property_exists($model, 'metadata')) {
                 $model->saveMetadata($model->metadataAttributes);
             }
         });
 
         static::addGlobalScope('not_restricted', function (Builder $builder) {
-            $context = property_exists($builder, 'selectContext') ? $builder->selectContext : $builder->getModel()->table;
             $builder->withStatus(['exclude' => [self::RESTRICTED]]);
         });
 
+
+        // Order by the ordering field in the database.
         if(config('content.ordering', false)) {
             static::addGlobalScope('ordered', function (Builder $builder) {
                 $prefix = DB::getTablePrefix();
@@ -124,6 +166,10 @@ class Content extends Model implements StatusInterface
         }
     }
 
+    /**
+     * Meta relationship
+     * @return   [description]
+     */
     public function meta()
     {
         return $this->hasMany(ContentMeta::class, 'content_id');
@@ -153,17 +199,17 @@ class Content extends Model implements StatusInterface
         ]);
     }
 
-    public function webpages()
-    {
-        return $this->association(Content::class, [
-            // 'relation' => 'webpage',
-            'children' => true,
-            // 'metadata' => [
-            //     ['author_id', '=', 1],
-            //     // 'author_id' => 1 // This method assumes the operator is '='
-            // ]
-        ]);
-    }
+    // public function webpages()
+    // {
+    //     return $this->association(Content::class, [
+    //         // 'relation' => 'webpage',
+    //         'children' => true,
+    //         // 'metadata' => [
+    //         //     ['author_id', '=', 1],
+    //         //     // 'author_id' => 1 // This method assumes the operator is '='
+    //         // ]
+    //     ]);
+    // }
 
     public function scopeRootNodes($builder)
     {
@@ -196,7 +242,7 @@ class Content extends Model implements StatusInterface
         return Content::find($this->relatedBy($type)->pluck('relation_id')->all())->first();
 
         // foreach($this->relations()->get() as $relation) {
-        //     if($relation->relation_type_id == $this->getContentIdByKey($type)) {
+        //     if($relation->relation_type_id == content_id($type)) {
         //         return Content::find($relation->relation_id);
         //     }
         // }
@@ -206,7 +252,7 @@ class Content extends Model implements StatusInterface
     {
         $relation = ContentRelation::where([
             'content_id' => $this->id,
-            'relation_type_id' => $this->getContentIdByKey($type)
+            'relation_type_id' => content_id($type)
         ])->delete();
     }
 
@@ -227,24 +273,24 @@ class Content extends Model implements StatusInterface
     }
 
     // This method saves the content relation
-    public function saveRelation($type, $relation_id)
+    public function saveRelation($type, $content)
     {
         $relation = ContentRelation::where([
             'content_id' => $this->id,
-            'relation_id' => $relation_id,
-            'relation_type_id' => $this->getContentIdByKey($type)
+            'relation_id' => content_id($content),
+            'relation_type_id' => content_id($type)
         ])->get();
 
         if($relation->count()) {
-            $relation->first()->relation_id = $relation_id;
+            $relation->first()->relation_id = content_id($content);
             $relation->first()->save();
         }
         else {
             // We need to check to see if the relation exists already before creating a new one.
             (new ContentRelation([
                 'content_id' => $this->id,
-                'relation_id' => $relation_id,
-                'relation_type_id' => $this->getContentIdByKey($type),
+                'relation_id' => content_id($content),
+                'relation_type_id' => content_id($type),
             ]))->save();
         }
     }
@@ -301,51 +347,4 @@ class Content extends Model implements StatusInterface
     {
         return ($this->alias ?: parent::getTable());
     }
-
-
-
-    // public static function hierarchy($content, $paginate = true, $perPage = 15)
-    // {
-    //     $request = request();
-    //     $relations = Cache::get('content.cache.relations')->where('relation_type_id', 4);
-    //     $items = Content::loopying($content, $relations, $content);
-
-    //     $total = count($items);
-    //     $perPage = $paginate ? $perPage : $total;
-    //     $currentPage = Paginator::resolveCurrentPage();
-    //     $pagination = new LengthAwarePaginator(
-    //         array_slice($items, ($currentPage - 1) * $perPage, $perPage, true),
-    //         $total,
-    //         $perPage,
-    //         $currentPage,
-    //         [
-    //             'path' => $request->url(),
-    //             'query' => $request->query()
-    //         ]
-    //     );
-
-    //     return $pagination;
-    // }
-
-
-    // public static function loopying(&$contents, $relations, &$all = -1, $depth = 0, &$used = [], &$result = [])
-    // {
-    //     foreach($contents as $content) {
-    //         if(!in_array($content->id, $used)) {
-    //             // echo str_repeat('&mdash;', $depth) . " {$content->id} {$content->title}<br/>";
-
-    //             $related = $relations->where('relation_id', $content->id)->pluck('content_id');
-    //             $children = $all->only($related->all())->keyBy('id');
-    //             array_push($used, $content->id);
-
-    //             $content->depth = $depth;
-    //             array_push($result, $content);
-
-    //             static::loopying($children, $relations, $all, $depth + 1, $used, $result);
-    //         }
-    //     }
-
-    //     return $result;
-    // }
-
 }
