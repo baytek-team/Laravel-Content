@@ -140,11 +140,12 @@ class ContentServiceProvider extends AuthServiceProvider
         }
 
         $this->app->register(RouteServiceProvider::class);
+        $this->app->register(ContentEventServiceProvider::class);
+
         $this->app->register(\Laracasts\Flash\FlashServiceProvider::class);
         $this->app->register(\Baytek\Laravel\Settings\SettingsServiceProvider::class);
         $this->app->register(\Baytek\LaravelStatusBit\StatusBitServiceProvider::class);
         $this->app->register(\Baytek\Laravel\Users\ServiceProvider::class);
-        $this->app->register(\Baytek\Laravel\Content\ContentEventServiceProvider::class);
         $this->app->register(\Baytek\Laravel\Menu\MenuServiceProvider::class);
     	$this->app->register(\Collective\Html\HtmlServiceProvider::class);
     }

@@ -27,20 +27,54 @@ class Content extends Model implements StatusInterface
         SoftDeletes,
         Statusable;
 
+    /**
+     * List of fields which should be cast when rendering JSON
+     * @var [type]
+     */
+    protected $casts = [
+        'status' => 'int',
+        'revision' => 'int',
+    ];
 
-    // Defining the table we want to use for all content
+    /**
+     * Defining the table we want to use for all content
+     * @var string
+     */
     protected $table = 'contents';
+
+    /**
+     * Is the table aliased?
+     * @var boolean
+     */
     protected $aliased = false;
 
+    /**
+     * Variable once used to tell the depth of the hierarchy
+     * @todo  Remove this if no longer used
+     * @var unknown
+     */
     public $depth;
 
+    /**
+     * Variable used to store the metadata fields while the content is saving
+     * @var array
+     */
     protected $metadataAttributes = [];
 
+    /**
+     * List of attributes that should be saved when the model is saved.
+     * @todo  This may no longer be used, test and remove if not required.
+     * @todo  This may have been replaced with metadata
+     * @var [type]
+     */
     protected $attributes = [
         'language' => 'en',
     ];
 
-    // Defining the fillable fields when saving records
+    /**
+     * List of fields that can be mass assigned
+     * @var array
+     */
     protected $fillable = [
         'revision',
         'status',
@@ -50,10 +84,17 @@ class Content extends Model implements StatusInterface
         'content',
     ];
 
-    // Setting up default relationships which are none
+    /**
+     * List of relationships that should be populated when the model is saved
+     * @var array
+     */
     public $relationships = [];
 
-    // Eager loading relationship lists
+    /**
+     * Eager loading relationship lists
+     * @todo  This may no longer be used, remove if not required.
+     * @var array
+     */
     public static $eager = [
         'meta',
         'relations',
@@ -61,7 +102,11 @@ class Content extends Model implements StatusInterface
         'relations.relationType',
     ];
 
-    // Default list of content types
+    /**
+     * Default list of content types
+     * @todo  This may no longer be used, remove if not required.
+     * @var array
+     */
     public $types = [
         'content',
         'content-type',
@@ -120,14 +165,9 @@ class Content extends Model implements StatusInterface
                 $model->saveMetadata($model->metadataAttributes);
             }
 
-
             // Check to see if there are any relationships required to save
             if(property_exists($model, 'relationships')) {
                 $model->saveRelations($model->relationships);
-                // foreach ($model->relationships as $contentType => $type) {
-                //     // Save the actual relationship ID
-                //     $model->saveRelation($contentType, $type);
-                // }
             }
         });
 
@@ -139,15 +179,20 @@ class Content extends Model implements StatusInterface
         });
 
         self::updated(function ($model) {
+            // Check if there is any metadata to save.
             if(property_exists($model, 'metadata')) {
                 $model->saveMetadata($model->metadataAttributes);
+            }
+
+            // Check to see if there are any relationships required to save
+            if(property_exists($model, 'relationships')) {
+                $model->saveRelations($model->relationships);
             }
         });
 
         static::addGlobalScope('not_restricted', function (Builder $builder) {
             $builder->withStatus(['exclude' => [self::RESTRICTED]]);
         });
-
 
         // Order by the ordering field in the database.
         if(config('content.ordering', false)) {
