@@ -19,6 +19,13 @@
             "src/Support/helpers.php"
         ]
     },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Baytek\\Laravel\\Content\\ContentServiceProvider"
+            ]
+        }
+    },
     "require": {
         "php": ">=5.6.4",
         "laravelcollective/html":"^5.3.0",
