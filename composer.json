@@ -26,6 +26,10 @@
             ]
         }
     },
+    "repositories": [{
+        "type": "composer",
+        "url": "https://packages.baytek.ca"
+    }],
     "require": {
         "php": ">=5.6.4",
         "laravelcollective/html":"^5.3.0",
