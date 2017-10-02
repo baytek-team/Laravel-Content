@@ -206,7 +206,7 @@ class Content extends Model implements StatusInterface
     {
         $metadata = ContentMeta::where([
             'content_id' => $this->id,
-            'language' => \App::getLocale(),
+            'language' => $this->language ?: \App::getLocale(),
             'key' => $key
         ])->get();
 
@@ -218,7 +218,7 @@ class Content extends Model implements StatusInterface
             $meta = (new ContentMeta([
                 'content_id' => $this->id,
                 'key' => $key,
-                'language' => \App::getLocale(),
+                'language' => $this->language ?: \App::getLocale(),
                 'value' => $value,
             ]));
 
