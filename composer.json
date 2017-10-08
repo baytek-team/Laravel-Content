@@ -34,10 +34,10 @@
         "php": ">=5.6.4",
         "laracasts/flash":"^3.0.0",
         "laravelcollective/html":"^5.3.0",
-        "baytek/laravel-menu": "~1.1",
-        "baytek/laravel-settings": "~1.1",
-        "baytek/laravel-statusbit": "~1.3",
-        "baytek/laravel-user": "~1.1"
+        "baytek/laravel-menu": "~1.1.0",
+        "baytek/laravel-settings": "~1.1.0",
+        "baytek/laravel-statusbit": "~1.3.0",
+        "baytek/laravel-user": "~1.1.0"
     },
     "post-install-cmd": [
         "php artisan install:content"
