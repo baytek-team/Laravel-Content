@@ -32,7 +32,11 @@
     }],
     "require": {
         "php": ">=5.6.4",
+        "laracasts/flash":"^3.0.0",
         "laravelcollective/html":"^5.3.0",
+        "baytek/laravel-menu": "dev-master",
+        "baytek/laravel-settings": "dev-master",
+        "baytek/laravel-statusbit": "dev-master",
         "baytek/laravel-user": "dev-master"
     },
     "post-install-cmd": [
