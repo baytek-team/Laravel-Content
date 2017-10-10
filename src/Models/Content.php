@@ -7,6 +7,7 @@ use Baytek\Laravel\Content\Models\Scopes\ContentTypeScope;
 
 use Baytek\LaravelStatusBit\Statusable;
 use Baytek\LaravelStatusBit\Interfaces\StatusInterface;
+
 use Baytek\Laravel\Content\Eloquent\Builder;
 use Baytek\Laravel\Content\Eloquent\Model;
 
@@ -51,7 +52,7 @@ class Content extends Model implements StatusInterface
      * @todo  Remove this if no longer used
      * @var unknown
      */
-    public $depth;
+    // public $depth;
 
     /**
      * Variable used to store the metadata fields while the content is saving
@@ -61,9 +62,7 @@ class Content extends Model implements StatusInterface
 
     /**
      * List of attributes that should be saved when the model is saved.
-     * @todo  This may no longer be used, test and remove if not required.
-     * @todo  This may have been replaced with metadata
-     * @var [type]
+     * @var array
      */
     protected $attributes = [
         'language' => 'en',
@@ -105,11 +104,11 @@ class Content extends Model implements StatusInterface
      * @todo  This may no longer be used, remove if not required.
      * @var array
      */
-    public $types = [
-        'content',
-        'content-type',
-        'relation-type',
-    ];
+    // public $types = [
+    //     'content',
+    //     'content-type',
+    //     'relation-type',
+    // ];
 
     /**
      * The constructor method of the model.

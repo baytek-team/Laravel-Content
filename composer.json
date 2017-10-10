@@ -31,10 +31,6 @@
             "baytek/laravel-user": "~1.1.0"
         }
     },
-    "repositories": [{
-        "type": "composer",
-        "url": "https://packages.baytek.ca"
-    }],
     "require": {
         "php": ">=5.6.4",
         "laracasts/flash":"^3.0.0",
