@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
  */
 class Builder extends EloquentBuilder
 {
-/**
+    /**
      * Get the hydrated models without eager loading.
      *
      * @param  array  $columns
