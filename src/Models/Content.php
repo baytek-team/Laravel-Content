@@ -100,17 +100,6 @@ class Content extends Model implements StatusInterface
     ];
 
     /**
-     * Default list of content types
-     * @todo  This may no longer be used, remove if not required.
-     * @var array
-     */
-    // public $types = [
-    //     'content',
-    //     'content-type',
-    //     'relation-type',
-    // ];
-
-    /**
      * The constructor method of the model.
      *
      * @return void
@@ -121,13 +110,12 @@ class Content extends Model implements StatusInterface
             $this->fillable(array_merge($this->fillable, $this->metadata));
         }
 
-        parent::__construct($attributes);
-
         if(property_exists($this, 'contentType')) {
             static::addGlobalScope('content_type', function (Builder $builder) {
                 $builder->ofType($this->contentType);
             });
         }
+        parent::__construct($attributes);
     }
 
     /**
