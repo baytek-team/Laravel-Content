@@ -1,14 +1,13 @@
 <?php
 
-namespace Baytek\Laravel\Content\Models;
+namespace Baytek\Laravel\Content;
+
+use Baytek\Laravel\Content;
 
 use Illuminate\Database\Eloquent\Model;
-// use Baytek\Laravel\Content\Traits\HasCompositePrimaryKey;
 
-class ContentRelation extends Model
+class Relation extends Model
 {
-    // use HasCompositePrimaryKey;
-
     /**
      * primaryKey
      *

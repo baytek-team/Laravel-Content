@@ -2,8 +2,8 @@
 
 namespace Baytek\Laravel\Content;
 
-use Baytek\Laravel\Content\Models\Content;
-use Baytek\Laravel\Content\Models\ContentRelation;
+use Baytek\Laravel\Content;
+use Baytek\Laravel\Content\Relation;
 use Baytek\Laravel\Content\Policies\ContentPolicy;
 use Baytek\Laravel\Content\Middleware\LocaleMiddleware;
 
@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
 
-class ContentServiceProvider extends AuthServiceProvider
+class ServiceProvider extends AuthServiceProvider
 {
     /**
      * List of artisan commands to be added to command kernel
@@ -140,7 +140,7 @@ class ContentServiceProvider extends AuthServiceProvider
         }
 
         $this->app->register(RouteServiceProvider::class);
-        $this->app->register(ContentEventServiceProvider::class);
+        $this->app->register(EventServiceProvider::class);
 
         $this->app->register(\Laracasts\Flash\FlashServiceProvider::class);
         // $this->app->register(\Baytek\Laravel\Settings\SettingsServiceProvider::class);

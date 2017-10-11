@@ -1,15 +1,17 @@
 <?php
 namespace Baytek\Laravel\Content;
 
+use App;
+use DB;
+
 use Illuminate\Database\Seeder as IlluminateSeeder;
 use Illuminate\Database\Eloquent\Model;
 
-use Baytek\Laravel\Content\Models\Content;
-use Baytek\Laravel\Content\Models\ContentMeta;
-use Baytek\Laravel\Content\Models\ContentRelation;
+use Baytek\Laravel\Content;
+use Baytek\Laravel\Content\Meta;
+use Baytek\Laravel\Content\Relation;
 
 use Carbon\Carbon;
-use DB;
 
 abstract class Seeder extends IlluminateSeeder
 {
@@ -61,7 +63,7 @@ abstract class Seeder extends IlluminateSeeder
         }
 
         foreach ($meta as $key => $value) {
-            $metaRecord = (new ContentMeta(['language' => \App::getLocale(), 'key' => $key, 'value' => $value]));
+            $metaRecord = (new Meta(['language' => App::getLocale(), 'key' => $key, 'value' => $value]));
 
             $content->meta()->save($metaRecord);
 
@@ -89,7 +91,7 @@ abstract class Seeder extends IlluminateSeeder
                 return false;
             }
 
-            (new ContentRelation([
+            (new Relation([
                 'content_id'  => $content_id,
                 'relation_type_id' => $relation_type_record->id,
                 'relation_id' => $relation_record->id,

@@ -1,15 +1,15 @@
 <?php
 
-namespace Baytek\Laravel\Content\Models;
+namespace Baytek\Laravel;
 
-use Baytek\Laravel\Content\Models\Scopes\TranslationScope;
-use Baytek\Laravel\Content\Models\Scopes\ContentTypeScope;
+// Relative path class imports
+use Content\Eloquent\Builder;
+use Content\Eloquent\Model;
+use Content\Models\Scopes\TranslationScope;
+use Content\Models\Scopes\ContentTypeScope;
 
 use Baytek\LaravelStatusBit\Statusable;
 use Baytek\LaravelStatusBit\Interfaces\StatusInterface;
-
-use Baytek\Laravel\Content\Eloquent\Builder;
-use Baytek\Laravel\Content\Eloquent\Model;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -20,9 +20,9 @@ use DB;
 
 class Content extends Model implements StatusInterface
 {
-    use Concerns\HasMetadata,
-        Concerns\HasAssociations,
-        Scopes\RelationScopes,
+    use Content\Models\Concerns\HasMetadata,
+        Content\Models\Concerns\HasAssociations,
+        Content\Models\Scopes\RelationScopes,
         SoftDeletes,
         Statusable;
 
@@ -202,22 +202,22 @@ class Content extends Model implements StatusInterface
      */
     public function meta()
     {
-        return $this->hasMany(ContentMeta::class, 'content_id');
+        return $this->hasMany(Content\Meta::class, 'content_id');
     }
 
     public function restrictedMeta()
     {
-        return $this->hasMany(ContentMeta::class, 'content_id')->withoutGlobalScope('not_restricted');
+        return $this->hasMany(Content\Meta::class, 'content_id')->withoutGlobalScope('not_restricted');
     }
 
     public function relations()
     {
-        return $this->hasMany(ContentRelation::class, 'content_id');
+        return $this->hasMany(Content\Relation::class, 'content_id');
     }
 
     public function revisions()
     {
-        return $this->hasMany(ContentHistory::class, 'content_id');
+        return $this->hasMany(Content\History::class, 'content_id');
     }
 
     public function children()
@@ -280,7 +280,7 @@ class Content extends Model implements StatusInterface
 
     public function removeRelationByType($type)
     {
-        $relation = ContentRelation::where([
+        $relation = Content\Relation::where([
             'content_id' => $this->id,
             'relation_type_id' => content_id($type)
         ])->delete();
@@ -289,7 +289,7 @@ class Content extends Model implements StatusInterface
     //Remove a specific relation by relation_id
     public function removeRelationById($id)
     {
-        $relation = ContentRelation::where([
+        $relation = Content\Relation::where([
             'content_id' => $this->id,
             'relation_id' => $id,
         ])->delete();
@@ -305,7 +305,7 @@ class Content extends Model implements StatusInterface
     // This method saves the content relation
     public function saveRelation($type, $content)
     {
-        $relation = ContentRelation::where([
+        $relation = Content\Relation::where([
             'content_id' => $this->id,
             'relation_id' => content_id($content),
             'relation_type_id' => content_id($type)
@@ -317,7 +317,7 @@ class Content extends Model implements StatusInterface
         }
         else {
             // We need to check to see if the relation exists already before creating a new one.
-            (new ContentRelation([
+            (new Content\Relation([
                 'content_id' => $this->id,
                 'relation_id' => content_id($content),
                 'relation_type_id' => content_id($type),
@@ -338,7 +338,7 @@ class Content extends Model implements StatusInterface
         }
 
         $set->each(function ($value, $key) {
-            $metadata = ContentMeta::where([
+            $metadata = Content\Meta::where([
                 'content_id' => $this->id,
                 'language' => \App::getLocale(),
                 'key' => $key
@@ -349,7 +349,7 @@ class Content extends Model implements StatusInterface
                 $metadata->first()->save();
             }
             else {
-                $meta = (new ContentMeta([
+                $meta = (new Content\Meta([
                     'content_id' => $this->id,
                     'key' => $key,
                     'language' => \App::getLocale(),

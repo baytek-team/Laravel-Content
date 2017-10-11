@@ -1,8 +1,8 @@
 <?php
 namespace Baytek\Laravel\Content\Commands;
 
-use Baytek\Laravel\Content\Models\Content;
-use Baytek\Laravel\Content\Models\ContentRelation;
+use Baytek\Laravel\Content;
+use Baytek\Laravel\Content\Relation;
 
 use Faker\Generator;
 
@@ -56,14 +56,14 @@ class RandomContentSeeder extends Command
 
         factory(Content::class, (int)$this->argument('records'))->create()->each(function ($content, $index) {
             // Save item as webpage
-            (new ContentRelation([
+            (new Relation([
                 'content_id'  => $content->id,
                 'relation_id' => 4,
                 'relation_type_id' => 2,
             ]))->save();
 
             // Pick a random piece of content as parent id
-            (new ContentRelation([
+            (new Relation([
                 'content_id'  => $content->id,
                 'relation_id' => Content::ofContentType('webpage')->inRandomOrder()->limit(1)->first()->id,
                 'relation_type_id' => 3,

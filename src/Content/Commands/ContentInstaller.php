@@ -1,8 +1,8 @@
 <?php
 namespace Baytek\Laravel\Content\Commands;
 
-use Baytek\Laravel\Content\ContentServiceProvider;
-use Baytek\Laravel\Content\Models\Content;
+use Baytek\Laravel\Content\ServiceProvider;
+use Baytek\Laravel\Content;
 use Baytek\Laravel\Content\Seeders\ContentSeeder;
 use Spatie\Permission\Models\Permission;
 
@@ -13,7 +13,7 @@ class ContentInstaller extends Installer
 {
     public $name = 'Content';
     protected $protected = ['Content'];
-    protected $provider = ContentServiceProvider::class;
+    protected $provider = Content::class;
     protected $model = Content::class;
     protected $seeder = ContentSeeder::class;
     protected $fakeSeeder = false;

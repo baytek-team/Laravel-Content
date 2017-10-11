@@ -1,9 +1,6 @@
 <?php
 namespace Baytek\Laravel\Content\Commands;
 
-use Baytek\Laravel\Content\Models\Content;
-use Baytek\Laravel\Content\Models\ContentRelation;
-
 use Faker\Generator;
 
 use Illuminate\Console\Command;

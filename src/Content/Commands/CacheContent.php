@@ -2,8 +2,7 @@
 namespace Baytek\Laravel\Content\Commands;
 
 use Baytek\Laravel\Content\Events\ContentEvent;
-use Baytek\Laravel\Content\Models\Content;
-use Baytek\Laravel\Content\Models\ContentRelation;
+use Baytek\Laravel\Content;
 
 use Faker\Generator;
 

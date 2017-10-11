@@ -1,10 +1,12 @@
 <?php
 
-namespace Baytek\Laravel\Content\Models;
+namespace Baytek\Laravel\Content;
+
+use Baytek\Laravel\Content;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ContentHistory extends Model
+class History extends Model
 {
     /**
      * primaryKey

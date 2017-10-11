@@ -1,18 +1,16 @@
 <?php
 
-namespace Baytek\Laravel\Content\Models;
+namespace Baytek\Laravel\Content;
 
 use Baytek\LaravelStatusBit\Statusable;
 use Baytek\LaravelStatusBit\Interfaces\StatusInterface;
-use Baytek\Laravel\Content\Models\Content;
-use Baytek\Laravel\Content\Traits\HasCompositePrimaryKey;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
-class ContentMeta extends Model implements StatusInterface
+class Meta extends Model implements StatusInterface
 {
-	use HasCompositePrimaryKey,
+	use Traits\HasCompositePrimaryKey,
 		Statusable;
 	/**
 	 * primaryKey
@@ -72,6 +70,6 @@ class ContentMeta extends Model implements StatusInterface
      */
     public function content()
     {
-    	return $this->belongsTo(Content::class);
+    	return $this->belongsTo(\Baytek\Laravel\Content::class);
     }
 }

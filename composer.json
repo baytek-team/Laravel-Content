@@ -11,18 +11,17 @@
     ],
     "autoload": {
         "psr-4": {
-            "Baytek\\Laravel\\Content\\": "src/",
-            "Baytek\\Laravel\\Libraries\\": "lib/"
+            "Baytek\\Laravel\\": "src/"
         },
         "files": [
-            "src/localization.php",
-            "src/Support/helpers.php"
+            "src/Content/localization.php",
+            "src/Content/Support/helpers.php"
         ]
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Baytek\\Laravel\\Content\\ContentServiceProvider"
+                "Baytek\\Laravel\\Content\\ServiceProvider"
             ]
         },
         "packages": {
