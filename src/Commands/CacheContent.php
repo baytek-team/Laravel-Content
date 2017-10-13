@@ -1,4 +1,5 @@
 <?php
+
 namespace Baytek\Laravel\Content\Commands;
 
 use Baytek\Laravel\Content\Events\ContentEvent;
