@@ -5,8 +5,8 @@ namespace Baytek\Laravel\Content\Models;
 use Baytek\Laravel\Content\Models\Scopes\TranslationScope;
 use Baytek\Laravel\Content\Models\Scopes\ContentTypeScope;
 
-use Baytek\LaravelStatusBit\Statusable;
-use Baytek\LaravelStatusBit\Interfaces\StatusInterface;
+use Baytek\Laravel\StatusBit\Statusable;
+use Baytek\Laravel\StatusBit\Interfaces\StatusInterface;
 
 use Baytek\Laravel\Content\Eloquent\Builder;
 use Baytek\Laravel\Content\Eloquent\Model;
