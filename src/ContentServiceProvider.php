@@ -7,6 +7,8 @@ use Baytek\Laravel\Content\Models\ContentRelation;
 use Baytek\Laravel\Content\Policies\ContentPolicy;
 use Baytek\Laravel\Content\Middleware\LocaleMiddleware;
 
+use Blade;
+
 use Faker\Generator;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Database\Eloquent\Model;
@@ -122,6 +124,20 @@ class ContentServiceProvider extends AuthServiceProvider
                 });
 
             return !$children->pluck('key')->contains(str_slug($value));
+        });
+
+        Blade::extend(function ($value) {
+            return preg_replace(
+                // Expression
+                '/(.*?)@escape(.*?)@endescape?(.*?)/s',
+                // Replacement
+                '$1<?php echo <<<\'EOS\'
+$2
+EOS;
+?>$3',
+                // Value
+                $value
+            );
         });
     }
 

@@ -24,6 +24,7 @@ class Builder extends EloquentBuilder
             if(isset($record->content_type) && $record->content_type) {
                 return (new $record->content_type)->newFromBuilder($record);
             }
+
             return $this->model->newFromBuilder($record);
         })->all();
     }
@@ -46,4 +47,7 @@ class Builder extends EloquentBuilder
 
         return $this;
     }
+
+
+
 }
