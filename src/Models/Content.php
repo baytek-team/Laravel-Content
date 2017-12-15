@@ -21,10 +21,13 @@ use DB;
 class Content extends Model implements StatusInterface
 {
     use Concerns\HasMetadata,
-        Concerns\HasAssociations,
+        Concerns\HasRelationships,
         Scopes\RelationScopes,
-        SoftDeletes,
-        Statusable;
+        SoftDeletes;
+
+    use Statusable {
+        Statusable::__construct as private __statusConstruct;
+    }
 
     /**
      * List of fields which should be cast when rendering JSON
@@ -106,15 +109,18 @@ class Content extends Model implements StatusInterface
      */
     public function __construct(array $attributes = [])
     {
-        if(property_exists($this, 'metadata')) {
+        $this->__statusConstruct($attributes);
+
+        if (property_exists($this, 'metadata')) {
             $this->fillable(array_merge($this->fillable, $this->metadata));
         }
 
-        if(property_exists($this, 'contentType')) {
+        if (property_exists($this, 'contentType')) {
             static::addGlobalScope('content_type', function (Builder $builder) {
                 $builder->ofType($this->contentType);
             });
         }
+
         parent::__construct($attributes);
     }
 
@@ -137,7 +143,7 @@ class Content extends Model implements StatusInterface
         parent::boot();
 
         self::creating(function ($model) {
-            if(property_exists($model, 'metadata')) {
+            if (property_exists($model, 'metadata')) {
                 $model->metadataAttributes = collect($model->attributes)->only($model->metadata)->all();
                 $model->attributes = collect($model->attributes)->except($model->metadata)->all();
             }
@@ -146,18 +152,18 @@ class Content extends Model implements StatusInterface
         // After the model has been saved.
         self::created(function ($model) {
             // Check if there is any metadata to save.
-            if(property_exists($model, 'metadata')) {
+            if (property_exists($model, 'metadata')) {
                 $model->saveMetadata($model->metadataAttributes);
             }
 
             // Check to see if there are any relationships required to save
-            if(property_exists($model, 'relationships')) {
+            if (property_exists($model, 'relationships')) {
                 $model->saveRelations($model->relationships);
             }
         });
 
         self::updating(function ($model) {
-            if(property_exists($model, 'metadata')) {
+            if (property_exists($model, 'metadata')) {
                 $model->metadataAttributes = collect($model->attributes)->only($model->metadata)->all();
                 $model->attributes = collect($model->attributes)->except($model->metadata)->all();
             }
@@ -165,12 +171,12 @@ class Content extends Model implements StatusInterface
 
         self::updated(function ($model) {
             // Check if there is any metadata to save.
-            if(property_exists($model, 'metadata')) {
+            if (property_exists($model, 'metadata')) {
                 $model->saveMetadata($model->metadataAttributes);
             }
 
             // Check to see if there are any relationships required to save
-            if(property_exists($model, 'relationships')) {
+            if (property_exists($model, 'relationships')) {
                 $model->saveRelations($model->relationships);
             }
         });
@@ -180,7 +186,7 @@ class Content extends Model implements StatusInterface
         });
 
         // Order by the ordering field in the database.
-        if(config('content.ordering', false)) {
+        if (config('content.ordering', false)) {
             static::addGlobalScope('ordered', function (Builder $builder) {
                 $prefix = DB::getTablePrefix();
                 $context = property_exists($builder, 'selectContext') ? $builder->selectContext : $builder->getModel()->table;
@@ -191,7 +197,7 @@ class Content extends Model implements StatusInterface
 
         static::addGlobalScope(new ContentTypeScope);
 
-        if(\App::getLocale() != 'en') {
+        if (\App::getLocale() != 'en') {
             static::addGlobalScope(new TranslationScope);
         }
     }
@@ -222,7 +228,7 @@ class Content extends Model implements StatusInterface
 
     public function children()
     {
-        return $this->association(Content::class, [
+        return $this->hasManyContent(Content::class, [
             // 'depth' => 1,
             'children' => true,
             // 'relation' => 'parent-id'
@@ -251,7 +257,7 @@ class Content extends Model implements StatusInterface
     {
         $meta = $this->meta->where('key', $key);
 
-        if($meta->count()) {
+        if ($meta->count()) {
             return $meta->first();
         }
 
@@ -260,7 +266,7 @@ class Content extends Model implements StatusInterface
 
     public function getMeta($key, $default = null)
     {
-        if($meta = $this->getMetaRecord($key)) {
+        if ($meta = $this->getMetaRecord($key)) {
             return $meta->value;
         }
 
@@ -297,7 +303,7 @@ class Content extends Model implements StatusInterface
 
     public function saveRelations($relations)
     {
-        foreach($relations as $key => $value) {
+        foreach ($relations as $key => $value) {
             $this->saveRelation($key, $value);
         }
     }
@@ -311,11 +317,10 @@ class Content extends Model implements StatusInterface
             'relation_type_id' => content_id($type)
         ])->get();
 
-        if($relation->count()) {
+        if ($relation->count()) {
             $relation->first()->relation_id = content_id($content);
             $relation->first()->save();
-        }
-        else {
+        } else {
             // We need to check to see if the relation exists already before creating a new one.
             (new ContentRelation([
                 'content_id' => $this->id,
@@ -327,13 +332,11 @@ class Content extends Model implements StatusInterface
 
     public function saveMetadata($key, $value = null)
     {
-        if(is_string($key)) {
+        if (is_string($key)) {
             $set = collect([$key => $value]);
-        }
-        else if(is_array($key)) {
+        } elseif (is_array($key)) {
             $set = collect($key);
-        }
-        else if(is_object($key) && $key instanceof Collection) {
+        } elseif (is_object($key) && $key instanceof Collection) {
             $set = $key;
         }
 
@@ -344,11 +347,10 @@ class Content extends Model implements StatusInterface
                 'key' => $key
             ])->get();
 
-            if($metadata->count()) {
+            if ($metadata->count()) {
                 $metadata->first()->value = $value;
                 $metadata->first()->save();
-            }
-            else {
+            } else {
                 $meta = (new ContentMeta([
                     'content_id' => $this->id,
                     'key' => $key,

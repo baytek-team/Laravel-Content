@@ -20,10 +20,10 @@
 <div class="ui equal width form">
 	<div class="fields">
 		@php
-			$sep = count($content::$statuses) / 2;
+			$sep = count($content->statuses) / 2;
 			$index = 1;
 		@endphp
-		@foreach($content::$statuses as $key => $status)
+		@foreach($content->statuses as $key => $status)
 
 			<div class="field">
 				<div class="ui checkbox">

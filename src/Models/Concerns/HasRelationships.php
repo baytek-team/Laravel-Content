@@ -5,9 +5,8 @@ namespace Baytek\Laravel\Content\Models\Concerns;
 use Baytek\Laravel\Content\Models\Relations\HasMany;
 use Illuminate\Support\Str;
 
-trait HasAssociations
+trait HasRelationships
 {
-
     /**
      * [association description]
      *
@@ -16,7 +15,7 @@ trait HasAssociations
      * @param  [type] $constraints    [description]
      * @return Baytek\Laravel\Content\Models\Relations\HasMany              [description]
      */
-    public function association($modelClass, $constraints = [])
+    public function hasManyContent($modelClass, $constraints = [])
     {
         // If no relation name was given, we will use this debug backtrace to extract
         // the calling method's name and use that as the relationship name as most
@@ -35,17 +34,10 @@ trait HasAssociations
         $ownerKey = $instance->getKeyName();
 
         return new HasMany(
-            $instance->newQuery(), $this, $ownerKey, $constraints
+            $instance->newQuery(),
+            $this,
+            $ownerKey,
+            $constraints
         );
-    }
-
-    /**
-     * Alias for association
-     *
-     * @return Baytek\Laravel\Content\Models\Concerns\HasAssociations [description]
-     */
-    public function kin()
-    {
-        return call_user_func_array([$this, 'association'], func_get_args());
     }
 }

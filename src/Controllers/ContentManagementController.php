@@ -81,7 +81,7 @@ class ContentManagementController extends ContentController
     {
         // overriding the view if we have an inline view namespace
         // FIXME: This needs to use setters, fancier as well.
-        if(isset(\Route::getCurrentRoute()->action['as']) && \Route::getCurrentRoute()->action['as'] == 'content.inline') {
+        if (isset(\Route::getCurrentRoute()->action['as']) && \Route::getCurrentRoute()->action['as'] == 'content.inline') {
             $this->views['show'] = 'content.inline';
         }
 
@@ -95,7 +95,7 @@ class ContentManagementController extends ContentController
             'diff' => false,
         ];
 
-        if($content->revisions->count()){
+        if ($content->revisions->count()) {
             $previous = unserialize($content->revisions->last()->content)->content;
             $a = explode("\n", $previous);
             $b = explode("\n", $content->content);
@@ -126,17 +126,15 @@ class ContentManagementController extends ContentController
             'diff' => false
         ];
 
-        if($content->revision === $revision) {
+        if ($content->revision === $revision) {
             // This is an exception, but content is already set where we want it
-        }
-        else if($content->revision - 1 < $revision) {
+        } elseif ($content->revision - 1 < $revision) {
             throw new \Exception('Content revision does not exist');
-        }
-        else if($content->revision - 1 >= $revision) {
+        } elseif ($content->revision - 1 >= $revision) {
             $content = unserialize($content->revisions->get($revision)->content);
         }
 
-        if($revision -1 >= 0 || ($latestRevision === $revision && $revision != 0)) {
+        if ($revision -1 >= 0 || ($latestRevision === $revision && $revision != 0)) {
             $previous = unserialize($content->revisions->get($revision-1)->content)->content;
             $a = explode("\n", $previous);
             $b = explode("\n", $content->content);
@@ -167,5 +165,4 @@ class ContentManagementController extends ContentController
     {
         return parent::contentDestroy($id);
     }
-
 }
