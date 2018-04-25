@@ -24,13 +24,11 @@
             "providers": [
                 "Baytek\\Laravel\\Content\\ContentServiceProvider"
             ]
-        },
-        "packages": {
-
         }
     },
     "require": {
-        "php": ">=5.6.4",
+        "php": ">=7.0.0",
+        "laravel/framework": "5.5.*",
         "laracasts/flash":"^3.0.0",
         "laravelcollective/html":"^5.3.0",
         "baytek/laravel-user": "~1.1.0",

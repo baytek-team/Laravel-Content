@@ -80,14 +80,14 @@ class ContentServiceProvider extends AuthServiceProvider
             $id = null;
 
             // Check if the route params are set, if so use it.
-            if(count($route->parameters())) {
+            if (count($route->parameters())) {
                 $id = collect($route->parameters())->last();
                 if (is_object($id)) {
                     $id = $id->id;
                 }
             }
 
-            if(array_key_exists($parameters[1], $data)) {
+            if (array_key_exists($parameters[1], $data)) {
                 $parent_id = $data[$parameters[1]];
 
                 $children = Content::childrenOf($parent_id, 'id')->get()
@@ -96,8 +96,7 @@ class ContentServiceProvider extends AuthServiceProvider
                     });
                 //dd(!$children->pluck('key')->contains(str_slug($value)));
                 return !$children->pluck('key')->contains(str_slug($value));
-            }
-            else {
+            } else {
                 return true;
             }
 
@@ -109,10 +108,10 @@ class ContentServiceProvider extends AuthServiceProvider
             $id = null;
 
             // Check if the route params are set, if so use it.
-            if(count($route->parameters())) {
+            if (count($route->parameters())) {
                 $id = collect($route->parameters())->last();
 
-                if(is_object($id) && $id instanceof Model) {
+                if (is_object($id) && $id instanceof Model) {
                     // Sorry, I need just the id.
                     $id = $id->id;
                 }
@@ -151,7 +150,7 @@ EOS;
         // Register commands
         $this->commands($this->commands);
 
-        if(config('app.debug') && class_exists(\Clockwork\Support\Laravel\ClockworkServiceProvider::class)) {
+        if (config('app.debug') && class_exists(\Clockwork\Support\Laravel\ClockworkServiceProvider::class)) {
             $this->app->register(\Clockwork\Support\Laravel\ClockworkServiceProvider::class);
         }
 
@@ -159,10 +158,10 @@ EOS;
         $this->app->register(ContentEventServiceProvider::class);
 
         $this->app->register(\Laracasts\Flash\FlashServiceProvider::class);
-        $this->app->register(\Baytek\Laravel\Settings\SettingsServiceProvider::class);
-        $this->app->register(\Baytek\Laravel\StatusBit\StatusBitServiceProvider::class);
-        $this->app->register(\Baytek\Laravel\Users\ServiceProvider::class);
-        $this->app->register(\Baytek\Laravel\Menu\MenuServiceProvider::class);
-    	$this->app->register(\Collective\Html\HtmlServiceProvider::class);
+        // $this->app->register(\Baytek\Laravel\Settings\SettingsServiceProvider::class);
+        // $this->app->register(\Baytek\Laravel\StatusBit\StatusBitServiceProvider::class);
+        // $this->app->register(\Baytek\Laravel\Users\ServiceProvider::class);
+        // $this->app->register(\Baytek\Laravel\Menu\MenuServiceProvider::class);
+        $this->app->register(\Collective\Html\HtmlServiceProvider::class);
     }
 }
