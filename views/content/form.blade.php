@@ -50,18 +50,16 @@
 
 <input type="hidden" name="meta_ids" value="{{ json_encode($content->meta->pluck('id')) }}">
 
-@foreach($content->meta as $meta)
-	@if($meta == $content->meta->first())
-		<div class="two fields">
-			<div class="field">
-				<label>{{ ___('Meta Key') }}</label>
-			</div>
-			<div class="field">
-				<label>{{ ___('Meta Value') }}</label>
-			</div>
-		</div>
-	@endif
+<div class="two fields">
+	<div class="field">
+		<label>{{ ___('Meta Key') }}</label>
+	</div>
+	<div class="field">
+		<label>{{ ___('Meta Value') }}</label>
+	</div>
+</div>
 
+@foreach($content->meta as $meta)
 
 	<div class="two fields">
 		<div class="field{{ $errors->has('meta_key') ? ' error' : '' }}">

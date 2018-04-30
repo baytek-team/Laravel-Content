@@ -132,13 +132,13 @@ class ContentController extends Controller
      *
      * @param SettingsProvider $settings Automatically provides the required settings
      */
-    public function __construct(/*SettingsProvider $settings*/)
+    public function __construct()
     {
         $current = Route::current();
-        if(!is_null($current)) {
+        if (!is_null($current)) {
             $action = $current->getAction();
 
-            if(!is_null($current) && (collect($current->parameterNames)->first() == 'translation' || (isset($action['as']) && stripos($action['as'], 'translation') === 0))) {
+            if (!is_null($current) && (collect($current->parameterNames)->first() == 'translation' || (isset($action['as']) && stripos($action['as'], 'translation') === 0))) {
                 $this->isTranslation = true;
 
                 $this->views = [
@@ -182,7 +182,7 @@ class ContentController extends Controller
      */
     protected function loadViewsFrom($path, $namespace)
     {
-        if(is_dir($appPath = app()->resourcePath().'/views/vendor/'.$namespace)) {
+        if (is_dir($appPath = app()->resourcePath().'/views/vendor/'.$namespace)) {
             app()['view']->addNamespace($namespace, $appPath);
         }
 
@@ -199,14 +199,16 @@ class ContentController extends Controller
     {
         $view = false;
 
-        if($this->viewNamespace && View::exists($view = implode('::', [strtolower($this->viewNamespace), $this->views[$name]]))) {}
-        else if(View::exists($view = implode('::', [$this->names['plural'], $this->views[$name]]))) {}
-        else if(View::exists($view = implode('::', [$this->names['singular'], $this->views[$name]]))) {}
-        else if(View::exists($view = implode('.', array_filter([$this->viewPrefix, $this->names['plural'], $this->views[$name]])))) {}
-        else if(View::exists($view = implode('.', array_filter([$this->viewPrefix, $this->names['singular'], $this->views[$name]])))) {}
-        else if(View::exists($view = implode('.', [$this->names['plural'], $this->views[$name]]))) {}
-        else if(View::exists($view = implode('.', [$this->names['singular'], $this->views[$name]]))) {}
-        else {throw new \Exception('View doesnt exist');}
+        if ($this->viewNamespace && View::exists($view = implode('::', [strtolower($this->viewNamespace), $this->views[$name]]))) {
+        } elseif (View::exists($view = implode('::', [$this->names['plural'], $this->views[$name]]))) {
+        } elseif (View::exists($view = implode('::', [$this->names['singular'], $this->views[$name]]))) {
+        } elseif (View::exists($view = implode('.', array_filter([$this->viewPrefix, $this->names['plural'], $this->views[$name]])))) {
+        } elseif (View::exists($view = implode('.', array_filter([$this->viewPrefix, $this->names['singular'], $this->views[$name]])))) {
+        } elseif (View::exists($view = implode('.', [$this->names['plural'], $this->views[$name]]))) {
+        } elseif (View::exists($view = implode('.', [$this->names['singular'], $this->views[$name]]))) {
+        } else {
+            throw new \Exception("View doesnt exist. prefix: [$this->viewPrefix], plural: [{$this->names['plural']}] view: [$name]");
+        }
 
         return $view;
     }
@@ -256,7 +258,7 @@ class ContentController extends Controller
 
         $params = $this->params($params, $this->viewData['index']);
 
-        if(!isset($params['plural'])) {
+        if (!isset($params['plural'])) {
             $params['plural'] = $model->with($model::$eager)->get()->keyBy('id');
         }
 
@@ -316,7 +318,7 @@ class ContentController extends Controller
         flash('Content Created')->success();
         event(new ContentEvent($content));
 
-        if($this->redirects) {
+        if ($this->redirects) {
             return redirect(route(($this->redirectsKey ?: $this->names['singular']).'.index', $content));
         }
 
@@ -331,7 +333,7 @@ class ContentController extends Controller
      */
     public function contentShow($id)
     {
-        if(is_null($id)) {
+        if (is_null($id)) {
             abort(404);
         }
 
@@ -341,7 +343,7 @@ class ContentController extends Controller
         // Eager load the subset models, meta data and relationships
         $content = $this->bound($id);
 
-        if(is_null($content)) {
+        if (is_null($content)) {
             abort(404);
         }
 
@@ -448,7 +450,7 @@ class ContentController extends Controller
         $content = (new $this->model($request->all()));
         $content->save();
 
-        foreach($orignal->meta as $meta) {
+        foreach ($orignal->meta as $meta) {
 
             $metaRecord = (new ContentMeta([
                 'key' => $meta->key,
@@ -520,8 +522,7 @@ class ContentController extends Controller
                         ]);
 
                     unset($metaIds[array_search($id, $metaIds)]);
-                }
-                else {
+                } else {
                     $metaRecord = (new ContentMeta([
                         'language' => \App::getLocale(),
                         'key' => $key,
@@ -554,7 +555,7 @@ class ContentController extends Controller
 
         ContentRelation::destroy(['content_id' => $content->id]);
 
-        foreach($request->content_id as $index => $content_id) {
+        foreach ($request->content_id as $index => $content_id) {
 
             // $contentRelation = ContentRelation::where([
             //     'content_id' => $content->id,

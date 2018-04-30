@@ -128,9 +128,9 @@ class Content extends Model implements StatusInterface
      * Get route key, this is generic function
      * @return String the value for the key
      */
-    public function getRouteKeyName()
+    public function getRouteKey()
     {
-        return $this->getTable().'.id';
+        return $this->getAttribute('id');
     }
 
     /**
