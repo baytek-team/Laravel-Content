@@ -43,13 +43,21 @@
                     @foreach($menu as $menuGroup)
                         @foreach($menuGroup->items as $item)
                             @if (!$item->metadata('permission') || $item->metadata('permission') && Auth::user()->can($item->metadata('permission')))
-                                @link($item->title, [
-                                    'location' => $item->content,
-                                    'append' => $item->metadata('append'),
-                                    'prepend' => $item->metadata('prepend'),
-                                    'type' => $item->metadata('type'),
-                                    'class' => $item->metadata('class') . (explode('.', Route::getCurrentRoute()->getAction()['as'])[0] == explode('.', $item->content)[0] ? ' active': '')
-                                ])
+                                @php
+                                    $class = (
+                                        Route::getCurrentRoute() &&
+                                        explode('.', Route::getCurrentRoute()->getAction()['as'])[0] == explode('.', $item->content)[0]
+                                        ? ' active': ''
+                                    );
+
+                                @endphp
+                                    @link($item->title, [
+                                        'location' => $item->content,
+                                        'append' => $item->metadata('append'),
+                                        'prepend' => $item->metadata('prepend'),
+                                        'type' => $item->metadata('type'),
+                                        'class' => $item->metadata('class') . $class
+                                    ])
                             @endif
                         @endforeach
                     @endforeach
@@ -71,7 +79,7 @@
                         @breadcrumbs()
                     </div>
                     <div class="right menu">
-                        @if(Auth::user()->hasRole( \Baytek\Laravel\Users\Roles\Root::ROLE ))
+                        @if(Auth::user() && Auth::user()->hasRole( \Baytek\Laravel\Users\Roles\Root::ROLE ))
                             <div class="ui dropdown item">
                                 {{-- <i class="tree icon"></i> --}}
                                 /root
