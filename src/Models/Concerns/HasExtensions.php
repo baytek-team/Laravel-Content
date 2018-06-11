@@ -34,16 +34,16 @@ trait HasExtensions
 
         $builder = $this->newEloquentBuilder($this->newBaseQueryBuilder());
 
-        $model = new $class;
-
         // Once we have the query builders, we will set the model instances so the
         // builder can easily access any information it may need from the model
         // while it is constructing and executing various queries against it.
-        return $builder->setModel($this)
+        $builder->setModel($model = new $class);
+        $builder->getQuery()->from($this->getTable());
+        return $builder
             ->select('*', "{$model->getTable()}.*", "{$this->getTable()}.*")
             ->leftJoin($model->getTable(), "{$this->getTable()}.$localKey", '=', "{$model->getTable()}.$foreignKey")
-            ->with($this->with)
-            ->withCount($this->withCount);
+            ->with($model->with)
+            ->withCount($model->withCount);
     }
 
     /**
