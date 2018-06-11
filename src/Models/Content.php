@@ -111,9 +111,10 @@ class Content extends Model implements StatusInterface
     {
         $this->__statusConstruct($attributes);
 
-        if (property_exists($this, 'metadata')) {
-            $this->fillable(array_merge($this->fillable, $this->metadata));
-        }
+        // This adds to the list of fillable fields the metadata properties
+        // if (property_exists($this, 'metadata')) {
+        //     $this->fillable(array_merge($this->fillable, $this->metadata));
+        // }
 
         if (property_exists($this, 'contentType')) {
             static::addGlobalScope('content_type', function (Builder $builder) {
@@ -150,11 +151,11 @@ class Content extends Model implements StatusInterface
     protected static function boot()
     {
         parent::boot();
-
         self::creating(function ($model) {
             if (property_exists($model, 'metadata')) {
-                $model->metadataAttributes = collect($model->attributes)->only($model->metadata)->all();
-                $model->attributes = collect($model->attributes)->except($model->metadata)->all();
+                $model->metadataAttributes = collect($model->getAttributes())->only($model->metadata)->all();
+                $model->attributes = collect($model->getAttributes())->except($model->metadata)->all();
+
             }
         });
 
@@ -173,8 +174,8 @@ class Content extends Model implements StatusInterface
 
         self::updating(function ($model) {
             if (property_exists($model, 'metadata')) {
-                $model->metadataAttributes = collect($model->attributes)->only($model->metadata)->all();
-                $model->attributes = collect($model->attributes)->except($model->metadata)->all();
+                $model->metadataAttributes = collect($model->getAttributes())->only($model->metadata)->all();
+                $model->attributes = collect($model->getAttributes())->except($model->metadata)->all();
             }
         });
 
@@ -209,6 +210,11 @@ class Content extends Model implements StatusInterface
         if (\App::getLocale() != 'en') {
             static::addGlobalScope(new TranslationScope);
         }
+    }
+
+    public function getMetadataKeys()
+    {
+        return $this->metadata ?: [];
     }
 
     /**

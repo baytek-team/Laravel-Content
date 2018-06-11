@@ -30,7 +30,7 @@ trait HasExtensions
         if(!method_exists($this, 'extends'))
             return parent::newQueryWithoutScopes();
 
-        list($class, $forgienKey, $localKey) = $this->extends();
+        list($class, $foreignKey, $localKey) = $this->extends();
 
         $builder = $this->newEloquentBuilder($this->newBaseQueryBuilder());
 
@@ -41,7 +41,7 @@ trait HasExtensions
         // while it is constructing and executing various queries against it.
         return $builder->setModel($this)
             ->select('*', "{$model->getTable()}.*", "{$this->getTable()}.*")
-            ->leftJoin($model->getTable(), "{$this->getTable()}.$localKey", '=', "{$model->getTable()}.$forgienKey")
+            ->leftJoin($model->getTable(), "{$this->getTable()}.$localKey", '=', "{$model->getTable()}.$foreignKey")
             ->with($this->with)
             ->withCount($this->withCount);
     }
@@ -65,9 +65,11 @@ trait HasExtensions
             ];
         }
 
+        $metadata = method_exists($model, 'getMetadataKeys') ? $model->getMetadataKeys(): [];
+
         return array_only(
-            array_merge($model->attributes, $attributes),
-            array_merge($model->getFillable(), $additional)
+            array_merge($model->getAttributes(), $attributes),
+            array_except(array_merge($model->getFillable(), $additional), $metadata)
         );
     }
 
@@ -79,11 +81,29 @@ trait HasExtensions
      */
     protected function insertAndSetIdParent($attributes)
     {
-        list($class, $forgienKey, $localKey) = $this->extends();
-        $query = $this->newEloquentBuilder($this->newBaseQueryBuilder())->setModel(new $class);
+        list($class, $foreignKey, $localKey) = $this->extends();
 
-        $attributes = $this->prepareInsert(new $class, $attributes);
-        $id = $query->insertGetId($attributes, $keyName = $this->getKeyName());
+        $model = new $class($attributes);
+
+        if ($model->fireModelEvent('creating') === false) {
+            return false;
+        }
+
+        $query = $model
+            ->newEloquentBuilder($model->newBaseQueryBuilder())
+            ->setModel($model);
+
+        $attributes = $this->prepareInsert($model, $attributes);
+
+        $id = $query->insertGetId($attributes, $keyName = $model->getKeyName());
+
+        $model->exists = true;
+
+        $model->wasRecentlyCreated = true;
+
+        $model->setAttribute($keyName, $id);
+
+        $model->fireModelEvent('created', false);
 
         return $id;
     }
@@ -97,10 +117,14 @@ trait HasExtensions
      */
     protected function insertAndSetId(Builder $query, $attributes)
     {
-        list($class, $forgienKey, $localKey) = $this->extends();
+        list($class, $foreignKey, $localKey) = $this->extends();
 
         $attrs = $this->prepareInsert($this, $attributes);
         $attrs[$localKey] = $this->insertAndSetIdParent($attributes);
+
+        if ($this->fireModelEvent('creating') === false) {
+            return false;
+        }
 
         $id = $query->insertGetId($attrs, $keyName = $this->getKeyName());
 
