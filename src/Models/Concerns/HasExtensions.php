@@ -8,6 +8,27 @@ use Illuminate\Database\Eloquent\Builder;
 trait HasExtensions
 {
     /**
+     * Begin querying a model with eager loading.
+     *
+     * @param  array|string  $relations
+     * @return \Illuminate\Database\Eloquent\Builder|static
+     */
+    public static function parentWith($relations)
+    {
+        list($class, $foreignKey, $localKey) = ($local = new static)->extends();
+
+        // $model = new $class;
+        $builder = $local->newQuery();
+        $builder->setModel($model = new $class);
+        $builder->getQuery()->from($local->getTable());
+
+        return $builder->with(
+            is_string($relations) ? func_get_args() : $relations
+        )
+        ->select('*', "{$local->getTable()}.id as content_id", "{$model->getTable()}.*", "{$local->getTable()}.*", "{$model->getTable()}.id");
+    }
+
+    /**
      * Set the keys for a save update query.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query

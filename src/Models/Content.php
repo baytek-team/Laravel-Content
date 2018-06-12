@@ -223,7 +223,7 @@ class Content extends Model implements StatusInterface
      */
     public function meta()
     {
-        return $this->hasMany(ContentMeta::class, 'content_id');
+        return $this->hasMany(ContentMeta::class, 'content_id', 'id');
     }
 
     public function restrictedMeta()
