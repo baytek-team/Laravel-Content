@@ -19,6 +19,7 @@ class ContentNotificationSubscriber
 
     /**
      * Cache the content id value pairs for quicker lookups
+     *
      * @param  Baytek\Laravel\Content\Events\ContentEvent  $event Content event class
      * @return void
      */

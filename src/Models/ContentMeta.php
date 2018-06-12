@@ -31,12 +31,14 @@ class ContentMeta extends Model implements StatusInterface
 
 	/**
      * Set the user meta table
+     *
      * @var string
      */
 	protected $table = 'content_meta';
 
 	/**
      * Set the fillable fields
+     *
      * @var array
      */
 	protected $fillable = [
@@ -49,12 +51,14 @@ class ContentMeta extends Model implements StatusInterface
 
 	/**
 	 * Do not use timestamps
+     *
 	 * @var boolean
 	 */
 	public $timestamps = false;
 
 	/**
 	 * Model boot method
+     *
 	 * @return void
 	 */
 	protected static function boot()
@@ -68,7 +72,8 @@ class ContentMeta extends Model implements StatusInterface
 
 	/**
      * Content model relation
-     * @return BelongsTo Content model
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function content()
     {

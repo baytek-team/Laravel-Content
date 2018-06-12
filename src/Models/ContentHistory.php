@@ -21,14 +21,25 @@ class ContentHistory extends Model
      */
     // public $incrementing = false;
 
+    /**
+     * Indicates if timestamps are being used
+     *
+     * @var bool
+     */
 	public $timestamps = false;
-    protected $table = 'content_history';
-	// protected $fillable = [
-	// 	'content_id',
-	// 	'relation_id',
-	// 	'relation_type_id',
-	// ];
 
+    /**
+     * Indicates the table to be used
+     *
+     * @var string
+     */
+    protected $table = 'content_history';
+
+    /**
+     * Content history related to content class
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function content()
     {
     	return $this->belongsTo(Content::class);

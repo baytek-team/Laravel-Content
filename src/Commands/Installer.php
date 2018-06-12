@@ -122,6 +122,11 @@ abstract class Installer extends Command implements InstallerContract
         return false;
     }
 
+    /**
+     * Check and create protection
+     *
+     * @return bool Result of protection
+     */
     public function protect()
     {
         if($this->shouldProtect()) {
@@ -140,6 +145,11 @@ abstract class Installer extends Command implements InstallerContract
         return false;
     }
 
+    /**
+     * Check and publish
+     *
+     * @return bool Result of publish
+     */
     public function publish()
     {
         if($this->shouldPublish()) {
@@ -151,6 +161,11 @@ abstract class Installer extends Command implements InstallerContract
         return false;
     }
 
+    /**
+     * Check and seed
+     *
+     * @return bool Result of seed
+     */
     public function seed()
     {
         if($this->shouldSeed()) {
@@ -162,6 +177,11 @@ abstract class Installer extends Command implements InstallerContract
         return false;
     }
 
+    /**
+     * Check and fake seed
+     *
+     * @return bool Result of fake seed
+     */
     public function seedFake()
     {
         if($this->fakeSeeder) {

@@ -10,6 +10,12 @@ use Baytek\Laravel\Content\Eloquent\Builder;
  */
 class Model extends EloquentModel
 {
+    /**
+     * Create new Eloquent Builder instance
+     *
+     * @param  string $query The query
+     * @return Baytek\Laravel\Content\Eloquent\Builder
+     */
     public function newEloquentBuilder($query)
     {
         return new Builder($query);

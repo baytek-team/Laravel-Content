@@ -6,7 +6,21 @@ use Illuminate\Support\Str;
 
 trait HasMetadata
 {
+    /**
+     * Metadata Cache
+     *
+     * @var array
+     * @static
+     * @access protected
+     */
     protected static $metadataCache = [];
+
+    /**
+     * Custom cache
+     *
+     * @var array
+     * @access protected
+     */
     protected $customCache = [];
 
     /**
