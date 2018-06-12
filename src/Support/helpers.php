@@ -35,12 +35,9 @@ if (! function_exists('content')) {
                 $id = content_id($value);
             }
             else {
-                if($hydrate) {
-                    return Content::withPath($value)->first();
-                }
-                else {
-                    return content_id($value);
-                }
+                return $hydrate ?
+                    hydrate(Content::withPath($value)->first()) :
+                    content_id($value);
             }
         }
         // else if(is_array($value)) {
@@ -66,10 +63,21 @@ if (! function_exists('content')) {
             $id = null;
         }
 
-        return ($hydrate) ? Content::find($id) : $id;
+        return $hydrate ? hydrate(Content::find($id)) : $id;
     }
 }
 
+if (! function_exists('hydrate')) {
+
+    function hydrate($record, $model = Baytek\Laravel\Content\Models\Content::class)
+    {
+        if(isset($record->content_type) && $record->content_type) {
+            return (new $record->content_type)->newFromBuilder($record);
+        }
+
+        return $record;
+    }
+}
 
 if (! function_exists('contents')) {
     /**
