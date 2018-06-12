@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 
-class HasMany extends Relation
+class HasOne extends Relation
 {
     /**
      * The intermediate table for the relation.
@@ -86,7 +86,7 @@ class HasMany extends Relation
      */
     public function getResults()
     {
-        return $this->query->get();
+        return $this->query->first() ?: $this->getDefaultFor($this->parent);
     }
 
     /**
@@ -99,7 +99,7 @@ class HasMany extends Relation
     public function initRelation(array $models, $relation)
     {
         foreach ($models as $model) {
-            $model->setRelation($relation, $this->related->newCollection());
+            $model->setRelation($relation, $this->getDefaultFor($model));
         }
 
         return $models;
@@ -224,7 +224,7 @@ class HasMany extends Relation
      */
     public function match(array $models, Collection $results, $relation)
     {
-        return $this->matchMany($models, $results, $relation);
+        return $this->matchOne($models, $results, $relation);
     }
 
     /**
@@ -245,5 +245,18 @@ class HasMany extends Relation
     public function getRelationCountHash()
     {
         return 'laravel_reserved_'.static::$selfJoinCount++;
+    }
+
+    /**
+     * Make a new related instance for the given model.
+     *
+     * @param  \Illuminate\Database\Eloquent\Model  $parent
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public function newRelatedInstanceFor(Model $parent)
+    {
+        return $this->related->newInstance()->setAttribute(
+            $this->getForeignKeyName(), $parent->{$this->localKey}
+        );
     }
 }
