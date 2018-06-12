@@ -59,6 +59,15 @@ class ContentSeeder extends Seeder
                 ['content-type', 'relation-type'],
             ]
         ],
+        [
+            'key' => 'many-to-many',
+            'title' => 'Many to Many',
+            'content' => 'Relationship type for relating contents and taxonomy-style contents',
+            'relations' => [
+                ['parent-id', 'relation-type'],
+                ['content-type', 'relation-type'],
+            ]
+        ],
     ];
 
     /**
