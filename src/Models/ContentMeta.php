@@ -20,7 +20,7 @@ class ContentMeta extends Model implements StatusInterface
 	 * @var integer
 	 * @access protected
 	 */
-	protected $primaryKey = ['content_id', 'key'];
+	protected $primaryKey = ['content_id', 'key', 'language', 'value'];
 
 	/**
 	 * Indicates if the IDs are auto-incrementing.
