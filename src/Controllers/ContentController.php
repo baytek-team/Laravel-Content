@@ -590,7 +590,5 @@ class ContentController extends Controller
             //     }
             // }
         }
-
-
     }
 }

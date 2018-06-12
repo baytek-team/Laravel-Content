@@ -8,5 +8,10 @@ use Illuminate\Auth\Access\HandlesAuthorization;
 
 class ContentPolicy extends GeneralPolicy
 {
+    /**
+     * Content type of the ContentPolicy
+     *
+     * @var string
+     */
     public $contentType = 'Content';
 }

@@ -2,14 +2,15 @@
 
 namespace Baytek\Laravel\Content;
 
+use Blade;
+
+use Faker\Generator;
+
 use Baytek\Laravel\Content\Models\Content;
 use Baytek\Laravel\Content\Models\ContentRelation;
 use Baytek\Laravel\Content\Policies\ContentPolicy;
 use Baytek\Laravel\Content\Middleware\LocaleMiddleware;
 
-use Blade;
-
-use Faker\Generator;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider;

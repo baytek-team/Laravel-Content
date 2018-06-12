@@ -13,6 +13,7 @@ use Exception;
 
 trait RelationScopes
 {
+
     public function abstractSelect($builder, $value)
     {
         if(is_numeric($value)) {
