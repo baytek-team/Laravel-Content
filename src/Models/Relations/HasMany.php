@@ -7,8 +7,12 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 
+use Baytek\Laravel\Content\Models\Concerns\HasMatches;
+
 class HasMany extends Relation
 {
+    use HasMatches;
+
     /**
      * The intermediate table for the relation.
      *
