@@ -2,13 +2,18 @@
 
 namespace Baytek\Laravel\Content\Models\Relations;
 
-use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\Relation;
+
+use Baytek\Laravel\Content\Models\Concerns\HasMatches;
+use Illuminate\Database\Eloquent\Relations\Concerns\SupportsDefaultModels;
 
 class HasOne extends Relation
 {
+    use SupportsDefaultModels, HasMatches;
+
     /**
      * The intermediate table for the relation.
      *
@@ -256,7 +261,7 @@ class HasOne extends Relation
     public function newRelatedInstanceFor(Model $parent)
     {
         return $this->related->newInstance()->setAttribute(
-            $this->getForeignKeyName(), $parent->{$this->localKey}
+            $this->$foreignKey, $parent->{$this->localKey}
         );
     }
 }
