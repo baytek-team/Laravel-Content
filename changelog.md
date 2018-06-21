@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+
+## [1.2.16] - 2018-06-21
+### Added
+Adding better viewing for contentinator
+Addressing some methods in helper for selecting content()
+
+### Changed
+Changing 'addSelect' instead of 'select'
+Changed how hasManyContent works, we can now pass arrays of content
+Minor bug fixes
+Changed how some of the UI elements would load missing content
+
+
 ## [1.2.0] - 2017-07-08
 ### Added
 - Added new theme designed by Mathieu
