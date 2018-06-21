@@ -205,6 +205,7 @@ class Content extends Model implements StatusInterface
             });
         }
 
+        // Do a left join to get the content type of the the content
         static::addGlobalScope(new ContentTypeScope);
 
         if (\App::getLocale() != 'en') {
@@ -241,14 +242,32 @@ class Content extends Model implements StatusInterface
         return $this->hasMany(ContentHistory::class, 'content_id');
     }
 
+    // This is the old method
+
+    // public function children()
+    // {
+    //     return $this->hasManyContent(Content::class, [
+    //         'children' => true,
+    //     ]);
+    // }
+
     public function children()
     {
         return $this->hasManyContent(Content::class, [
-            // 'depth' => 1,
-            'children' => true,
-            // 'relation' => 'parent-id'
+            'direction' => 'up',
+            'relation' => ['parent-id' => null]
         ]);
     }
+
+    public function related()
+    {
+        return $this->hasManyContent(Content::class, [
+            'order-by' => 'relation_type_id',
+            'direction' => 'up',
+            'relation' => true
+        ]);
+    }
+
 
     // public function webpages()
     // {

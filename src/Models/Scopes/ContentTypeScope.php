@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Scope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 
+// Gets the current content type of a piece of content
 class ContentTypeScope implements Scope
 {
     /**
@@ -20,12 +21,12 @@ class ContentTypeScope implements Scope
         $prefix = $builder->getQuery()->grammar->getTablePrefix();
         $context = $builder->getModel()->getTable();
 
-        if(!$builder->getModel()->isAliased()) {
+        if (!$builder->getModel()->isAliased()) {
             $builder->from($builder->getQuery()->from ." AS " . $builder->getModel()->getTable());
         }
 
         $builder
-            ->select($context . '.*')
+            ->addSelect("$context.*")
             ->addSelect(\DB::raw($prefix.'content_type.content as content_type'))
             ->leftJoin('content_relations AS content_type_relation', function ($join) use ($context) {
                 $join->on($context.'.id', '=', 'content_type_relation.content_id')

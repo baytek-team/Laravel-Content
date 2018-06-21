@@ -249,30 +249,14 @@
     <!-- Scripts -->
     {{-- <script src="//{{ Request::getHost() }}:6001/socket.io/socket.io.js"></script> --}}
     <script src="/js/app.js"></script>
-    @if(env('APP_ENV') == 'local')
+    {{-- @if(env('APP_ENV') == 'local')
         <script
             data-enabled
             data-host="//vault.baytek.ca/"
             src="//vault.baytek.ca/analytics.js"></script>
-    @endif
+    @endif --}}
 
     @yield('scripts')
-    <script>
-        if ($('.admin').length) {
-            $('.admin .ui.vertical.menu .menu').hide();
-            $('#secondary-navigation .menu div.item .active').parent().slideDown();
-
-            $(function(){
-                $('#secondary-navigation .menu div.item').on('click', function(e){
-                    if(e.target.nodeName != "A") {
-                        if($(this).find('.menu').is(':visible')) return false;
-                        $('.admin .ui.vertical.menu .menu').slideUp();
-                        $(this).find('.menu').slideToggle();
-                    }
-                });
-            });
-        }
-    </script>
 
     @if(isset($validation)) {!! $validation !!} @endif
 

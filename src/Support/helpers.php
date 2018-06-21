@@ -19,12 +19,7 @@ if (! function_exists('root')) {
 }
 
 if (! function_exists('content')) {
-    /**
-     * Assign high numeric IDs to a config item to force appending.
-     *
-     * @param  string  $key String we want to get the key for
-     * @return int
-     */
+
     function content($value, $hydrate = true, $model = Baytek\Laravel\Content\Models\Content::class)
     {
         if(is_numeric($value)) {
@@ -63,29 +58,12 @@ if (! function_exists('content')) {
             $id = null;
         }
 
-        return $hydrate ? hydrate(Content::find($id)) : $id;
-    }
-}
-
-if (! function_exists('hydrate')) {
-
-    function hydrate($record, $model = Baytek\Laravel\Content\Models\Content::class)
-    {
-        if(isset($record->content_type) && $record->content_type) {
-            return (new $record->content_type)->newFromBuilder($record);
-        }
-
-        return $record;
+        return $hydrate ? Content::find($id) : $id;
     }
 }
 
 if (! function_exists('contents')) {
-    /**
-     * Assign high numeric IDs to a config item to force appending.
-     *
-     * @param  string  $key String we want to get the key for
-     * @return int
-     */
+
     function contents($value, $model = Baytek\Laravel\Content\Models\Content::class)
     {
         $result = null;
@@ -130,12 +108,7 @@ if (! function_exists('contents')) {
 }
 
 if (! function_exists('content_id')) {
-    /**
-     * Assign high numeric IDs to a config item to force appending.
-     *
-     * @param  string  $key String we want to get the key for
-     * @return int
-     */
+
     function content_id($key)
     {
         if(is_numeric($key)) {
@@ -153,6 +126,18 @@ if (! function_exists('content_id')) {
         else if(is_object($key) && $key instanceof Model) {
             return $value->id;
         }
+    }
+}
+
+if (! function_exists('hydrate')) {
+
+    function hydrate($record, $model = Baytek\Laravel\Content\Models\Content::class)
+    {
+        if(isset($record->content_type) && $record->content_type) {
+            return (new $record->content_type)->newFromBuilder($record);
+        }
+
+        return $record;
     }
 }
 

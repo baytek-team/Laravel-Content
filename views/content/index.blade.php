@@ -5,7 +5,7 @@
         <i class="heartbeat icon"></i>
         <div class="content">
             Contentinator
-            <div class="sub header">Are you contentinated?<br/> Contentination level: @php echo rand(0,100);@endphp%</div>
+            <div class="sub header">Contentination level: @php echo rand(0,100);@endphp%</div>
         </div>
     </h1>
 @endsection
@@ -26,45 +26,124 @@
     {
         padding: 0;
     }
-
 </style>
-<table class="ui very basic content table">
-    <thead>
-        <tr>
-            <th>{{ ___('Title') }}</th>
-            <th class="center aligned collapsing">{{ ___('Actions') }}</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if(isset($contents))
-            @foreach($contents as $content)
-                <tr @if($contents->first() == $content) class="row-template" data-original-id="{{ $content->id }}" @endif data-depth="0" data-expanded="" >
-                    <td>
-                        <a href="{{ route('content.children', $content->id) }}" class="dynamic-load item">
-                            <i class="plus small icon"></i>
-                        </a>
-                        <a href="{{ route('content.list', $content->id) }}" class="title">{{ $content->title }}</a>
-                    </td>
-                    <td class="right aligned collapsing">
-                        <div class="ui text compact menu">
-                            <a href="{{ route('content.show', $content->id) }}" class="item">
-                                <i class="eye icon"></i>
-                            </a>
-                            <a href="{{ route('content.edit', $content->id) }}" class="item">
-                                <i class="pencil icon"></i>
-                            </a>
-                            <a href="{{ route('content.destroy', $content->id) }}" class="item">
-                                <i class="delete icon"></i>
-                            </a>
-                        </div>
-                    </td>
-                </tr>
-            @endforeach
-        @endif
-    </tbody>
-</table>
-{{-- {{ $contents->links('pagination.default') }} --}}
 
+<h2 class="ui header">
+    {{-- <i class="content icon"></i> --}}
+    <div class="content">
+        {{ $content->title }}
+        {{-- <div class="sub header">{{ ___('Manage the content content type.') }}</div> --}}
+    </div>
+</h2>
+
+@if(!empty($content->content))
+    <h4 class="ui horizontal divider header">
+        <i class="globe icon"></i>
+        {{ ___('Content') }}
+    </h4>
+    <div class="ui basic segment" style='max-height: 400px; overflow: auto'>
+        {!! $content->content !!}
+    </div>
+@endif
+
+{{-- @if($diff)
+    @include('contents::content.partials.differences')
+@endif --}}
+
+<div class="ui grid">
+    <div class="four wide widescreen eight wide computer eight wide tablet sixteen wide mobile column">
+        @include('contents::content.partials.attributes')
+    </div>
+    <div class="four wide widescreen eight wide computer eight wide tablet sixteen wide mobile column">
+        @if($content->relations->count())
+            @include('contents::content.partials.relations')
+        @endif
+    </div>
+    <div class="four wide widescreen eight wide computer eight wide tablet sixteen wide mobile column">
+        @if($content->meta->count())
+            @include('contents::content.partials.metadata')
+        @endif
+    </div>
+    <div class="four wide widescreen eight wide computer eight wide tablet sixteen wide mobile column">
+        <h4 class="ui horizontal divider header">
+            <i class="settings icon"></i>
+            {{ ___('Settings') }}
+        </h4>
+        @if(!empty(config('cms.content.content')))
+            <div class="ui segment">
+                @php
+                    dump(config('cms.content.content'));
+                @endphp
+            </div>
+        @endif
+    </div>
+</div>
+
+@if(!count($contents))
+    <div class="ui divider"></div>
+    <h2>Nothing relates to this content</h2>
+@else
+    <h4 class="ui horizontal divider header">
+        {{-- <i class="globe icon"></i> --}}
+        {{ ___('Content that relates to: ') . $content->key }}
+    </h4>
+
+        @php
+            $type = 0;
+            $close = false;
+        @endphp
+
+        @foreach($contents as $content)
+            @if($content->relation_type_id != $type)
+                @if($type != 0)
+                    </tbody>
+                </table>
+                @endif
+                @php
+                    $type = $content->relation_type_id;
+                @endphp
+            <div class="ui hidden divider"></div>
+            <div class="ui hidden divider"></div>
+            <table class="ui very basic content table">
+                <thead>
+                    <tr>
+                        <th>{{ content($content->relation_type_id)->title }}</th>
+                        <th class="center aligned collapsing">{{ ___('Actions') }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+            @endif
+
+
+            <tr @if($contents->first() == $content) class="row-template" data-original-id="{{ $content->id }}" @endif data-depth="0" data-expanded="" >
+                <td>
+                    <a href="{{ route('content.children', $content->id) }}" class="dynamic-load item">
+                        <i class="plus small icon"></i>
+                    </a>
+                    <a href="{{ route('content.list', $content->id) }}" class="title">
+                        {{ $content->title }}
+                    </a>
+                </td>
+                <td class="right aligned collapsing">
+                    <div class="ui text compact menu">
+                        <a href="{{ route('content.show', $content->id) }}" class="item">
+                            <i class="eye icon"></i>
+                        </a>
+                        <a href="{{ route('content.edit', $content->id) }}" class="item">
+                            <i class="pencil icon"></i>
+                        </a>
+                        <a href="{{ route('content.destroy', $content->id) }}" class="item">
+                            <i class="delete icon"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        @endforeach
+        </tbody>
+        </table>
+
+    {{-- {{ $contents->links('pagination.default') }} --}}
+    @endif
 @endsection
 
 @section('scripts')

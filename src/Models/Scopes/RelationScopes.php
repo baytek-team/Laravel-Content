@@ -16,29 +16,23 @@ trait RelationScopes
 
     public function abstractSelect($builder, $value)
     {
-        if(is_numeric($value)) {
+        if (is_numeric($value)) {
             $builder->where('contents.id', $value);
-        }
-        else if(is_string($value)) {
+        } elseif (is_string($value)) {
             $builder->where('contents.key', $value);
-        }
-        else if(is_array($value)) {
+        } elseif (is_array($value)) {
             $first = array_first($value);
 
-            if(is_numeric($first)) {
+            if (is_numeric($first)) {
                 $builder->whereIn('contents.id', $value);
-            }
-            else if(is_string($first)) {
+            } elseif (is_string($first)) {
                 $builder->whereIn('contents.key', $value);
-            }
-            else {
+            } else {
                 throw new Exception('Passed array but value type is not supported');
             }
-        }
-        else if(is_object($value) && $value instanceof Collection) {
+        } elseif (is_object($value) && $value instanceof Collection) {
             $builder->whereIn('contents.id', $value->pluck('id'));
-        }
-        else if(is_object($value) && $value instanceof Model) {
+        } elseif (is_object($value) && $value instanceof Model) {
             $builder->where('contents.key', $value->key);
         }
         return $builder;
@@ -109,7 +103,7 @@ trait RelationScopes
     {
         $result = $this->relatedBy('parent-id');
 
-        if($result->isEmpty()) {
+        if ($result->isEmpty()) {
             return null;
         }
 
@@ -124,7 +118,7 @@ trait RelationScopes
     {
         $result = $this->relatedBy('translations');
 
-        if($result->isEmpty()) {
+        if ($result->isEmpty()) {
             return null;
         }
 
@@ -135,7 +129,7 @@ trait RelationScopes
     {
         $result = parent::withoutGlobalScopes()->where('key', $type)->get();
 
-        if($result->isEmpty()) {
+        if ($result->isEmpty()) {
             throw new ContentNotFoundException($type);
         }
 
@@ -145,7 +139,7 @@ trait RelationScopes
     public function getContentIdByKeys($types)
     {
         $result = [];
-        foreach($types as $type) {
+        foreach ($types as $type) {
             array_push($result, content_id($type));
         }
         return $result;
@@ -153,8 +147,8 @@ trait RelationScopes
 
     public function getContentIdByKey($type)
     {
-        if($cache = Cache::get('content.cache.keys')) {
-            if($cached = $cache->flip()->get($type, false)) {
+        if ($cache = Cache::get('content.cache.keys')) {
+            if ($cached = $cache->flip()->get($type, false)) {
                 return $cached;
             }
         }
@@ -176,8 +170,8 @@ trait RelationScopes
     //
     public function getKeyWithId($id)
     {
-        if($cache = Cache::get('content.cache.keys')) {
-            if($cached = $cache->get($id, false)) {
+        if ($cache = Cache::get('content.cache.keys')) {
+            if ($cached = $cache->get($id, false)) {
                 return $cached;
             }
         }
@@ -247,7 +241,7 @@ trait RelationScopes
         FROM ${prefix}contents level0c
         ";
 
-        for($x = 0; $x < count($parts); $x++) {
+        for ($x = 0; $x < count($parts); $x++) {
             $level = $x + 1;
             $builder .= "
             inner join
@@ -260,19 +254,19 @@ trait RelationScopes
 
         $builder .= " WHERE 0=0 ";
 
-        for($x = 0; $x < count($parts); $x++) {
+        for ($x = 0; $x < count($parts); $x++) {
             $builder .= "AND level${x}c.`key` = '$parts[$x]' ";
         }
 
         $result = DB::select($builder, [$path]);
 
-        if(isset($result->content_type)) {
+        if (isset($result->content_type)) {
             return (new $result->content_type)->newFromBuilder($result);
         }
 
         $collection = static::hydrate($result);
 
-        if($collection->isEmpty()) {
+        if ($collection->isEmpty()) {
             throw new ContentNotFoundException($path);
         }
 
@@ -287,7 +281,7 @@ trait RelationScopes
 
         $builder->getModel()->setAlias('level0c');
 
-        for($x = 0; $x < count($parts); $x++) {
+        for ($x = 0; $x < count($parts); $x++) {
             $level = $x + 1;
 
             $builder
@@ -299,7 +293,7 @@ trait RelationScopes
 
         }
 
-        for($x = 0; $x < count($parts); $x++) {
+        for ($x = 0; $x < count($parts); $x++) {
             $builder->where("level${x}c.key", '=', $parts[$x]);
         }
 
@@ -377,7 +371,7 @@ trait RelationScopes
     public function scopeWhereMetadata($builder, $key, $value, $comparison = '=')
     {
         return $builder
-            ->join('content_meta AS metadata', function($join) use ($key, $value, $comparison) {
+            ->join('content_meta AS metadata', function ($join) use ($key, $value, $comparison) {
                 $join->on('contents.id', '=', 'metadata.content_id')
                     ->where('metadata.key', $key)
                     ->where('metadata.value', $comparison, $value);
@@ -409,7 +403,7 @@ trait RelationScopes
         $builder->getModel()->setAlias('contents');
 
         $typeIds = [];
-        foreach( $types as $type ) {
+        foreach ($types as $type) {
             $typeIds[] = content_id($type);
         }
 
@@ -427,7 +421,7 @@ trait RelationScopes
         $builder->getModel()->setAlias('contents');
 
         $builder
-            ->select('contents.id', 'contents.created_at', 'contents.updated_at', 'contents.status', 'contents.revision', 'contents.language', 'contents.title', 'contents.key')
+            ->addSelect('contents.id', 'contents.created_at', 'contents.updated_at', 'contents.status', 'contents.revision', 'contents.language', 'contents.title', 'contents.key')
             ->join('content_relations AS of_relation_type', function ($join) use ($type, $relation) {
                 $join->on('contents.id', '=', 'of_relation_type.content_id')
                     ->where('of_relation_type.relation_type_id', content_id($relation))
@@ -513,10 +507,9 @@ trait RelationScopes
                 $join->on('relation_type.content_id', '=', 'children_of_type.content_id')
                     ->where('relation_type.relation_type_id', content_id('content-type'));
 
-                if(is_array($type)) {
+                if (is_array($type)) {
                     $join->whereIn('relation_type.relation_id', $this->getContentIdByKeys($type));
-                }
-                else {
+                } else {
                     $join->where('relation_type.relation_id', content_id($type));
                 }
             })
@@ -543,7 +536,7 @@ trait RelationScopes
                     ->where('relation_type.relation_type_id', content_id('content-type'))
                     ->where('relation_type.relation_id', content_id($type));
             })
-            ->join('content_meta AS metadata', function($join) use ($metakey, $metavalue, $comparison) {
+            ->join('content_meta AS metadata', function ($join) use ($metakey, $metavalue, $comparison) {
                 $join->on('r.id', '=', 'metadata.content_id')
                     ->where('metadata.key', $metakey)
                     ->where('metadata.value', $comparison, $metavalue);
@@ -615,7 +608,7 @@ trait RelationScopes
 
     public function scopeWithContents($builder)
     {
-        return $builder->select( (explode('.', $builder->getQuery()->columns[0])[0] ?: 'contents')  .'.*');
+        return $builder->select((explode('.', $builder->getQuery()->columns[0])[0] ?: 'contents')  .'.*');
     }
 
     /**
@@ -624,7 +617,7 @@ trait RelationScopes
     public function scopeOrderByMeta($builder, $key, $direction = 'asc')
     {
         return $builder
-            ->join('content_meta AS metadata_order', function($join) use ($key) {
+            ->join('content_meta AS metadata_order', function ($join) use ($key) {
                 $join->on('contents.id', '=', 'metadata_order.content_id')
                     ->where('metadata_order.key', $key);
             })
@@ -649,5 +642,4 @@ trait RelationScopes
         return $builder->where($table.'.title', 'like', [$search])
             ->orderBy($table.'.title', 'asc');
     }
-
 }

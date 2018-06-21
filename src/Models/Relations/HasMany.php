@@ -36,9 +36,12 @@ class HasMany extends Relation
      */
     protected $relatedKey = 'content_id';
 
-    protected $relationKey;
     protected $children = false;
+    protected $hasSetAlias = false;
     protected $metadata;
+    protected $order;
+    protected $parent;
+    protected $relation;
 
     /**
      * The count of self joins.
@@ -46,6 +49,13 @@ class HasMany extends Relation
      * @var int
      */
     protected static $selfJoinCount = 0;
+
+    /**
+     * Whether this relation should return a collection.
+     *
+     * @var boolean
+     */
+    protected $isMany = true;
 
     /**
      * Create a new has one or many relationship instance.
@@ -56,24 +66,25 @@ class HasMany extends Relation
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @param  \Illuminate\Database\Eloquent\Model  $parent
      * @param  string  $localKey
-     * @param  string  $relationKey
+     * @param  string  $relation
      * @return void
      */
     public function __construct(Builder $query, Model $parent, $localKey, $constraints)
     {
         $this->localKey = $localKey;
-        // $this->relationKey = $relationKey;
+        $this->parent = $parent;
 
-        $this->relationKey = isset($constraints['relation']) ? $constraints['relation'] : null;
-        $this->children = isset($constraints['children']) ? $constraints['children'] : false;
+        $this->relation = isset($constraints['relation']) ? $constraints['relation'] : null;
+        $this->direction = isset($constraints['direction']) ? $constraints['direction'] : 'down';
+        // $this->children = isset($constraints['children']) && $constraints['children'] == true;
+        $this->order = isset($constraints['order-by']) ? $constraints['order-by'] : false;
 
-        if(isset($constraints['metadata'])) {
-            foreach($constraints['metadata'] as $key => $metadata) {
+        if (isset($constraints['metadata'])) {
+            foreach ($constraints['metadata'] as $key => $metadata) {
 
-                if(count($metadata) === 1) {
+                if (count($metadata) === 1) {
                     $this->metadata[] = [$key, '=', $metadata];
-                }
-                else {
+                } else {
                     $this->metadata[] = $metadata;
                 }
             }
@@ -83,6 +94,8 @@ class HasMany extends Relation
         parent::__construct($query, $parent);
     }
 
+
+
     /**
      * Get the results of the relationship.
      *
@@ -90,7 +103,33 @@ class HasMany extends Relation
      */
     public function getResults()
     {
-        return $this->query->get();
+        $results = $this->get();
+
+        return $this->isMany? $results : $results->first();
+    }
+
+    /**
+     * Declare that a single result should be returned.
+     *
+     * @return $this
+     */
+    public function expectOne()
+    {
+        $this->isMany = false;
+
+        return $this;
+    }
+
+    /**
+     * Declare that a collection of results should be returned.
+     *
+     * @return $this
+     */
+    public function expectMany()
+    {
+        $this->isMany = true;
+
+        return $this;
     }
 
     /**
@@ -132,8 +171,19 @@ class HasMany extends Relation
     public function addEagerConstraints(array $models)
     {
         $this->query->whereIn(
-            $this->foreignKey, $this->getKeys($models, $this->localKey)
+            $this->foreignKey,
+            $this->getKeys(
+                $models,
+                $this->localKey
+            )
         );
+    }
+
+
+
+    public function addJoinCondition()
+    {
+
     }
 
     /**
@@ -152,40 +202,123 @@ class HasMany extends Relation
         // model instance. Then we can set the "where" for the parent models.
         // $baseTable = $this->related->getTable();
 
-        if(!$this->children && !$this->relationKey && !$this->metadata) {
+        if (!$this->children && !$this->relation && !$this->metadata) {
             throw new \Exception('You do not have any conditions, this would simply return the item in stack');
         }
 
-        if($this->children) {
-            $query->getModel()->setAlias('r', true);
-            $table = $query->getModel()->getTable();
+        // If children is set
+        // if ($this->children) {
+        //     $query->getModel()->setAlias('r', true);
+        //     $table = $query->getModel()->getTable();
 
-            $query->join('content_relations AS '.$childrenHash = $this->getRelationCountHash(), function ($join) use ($childrenHash) {
-                $join->on('contents.id', '=', $childrenHash.'.relation_id')
-                    ->where($childrenHash.'.relation_type_id', content_id('parent-id'));
-            })
-            ->join('contents AS ' . $table, $table.'.id', '=', $childrenHash.'.content_id');
+        //     $query->join('content_relations AS '.$childrenHash = $this->getRelationCountHash(), function ($join) use ($childrenHash) {
+        //         $join->on('contents.id', '=', $childrenHash.'.relation_id')
+        //             ->where($childrenHash.'.relation_type_id', content_id('parent-id'));
+        //     })
+        //     ->join('contents AS '.$table, $table.'.id', '=', $childrenHash.'.content_id');
+        // }
+
+
+        if ($this->relation) {
+            $this->doRelationJoins($query, $this->relation);
         }
 
-        if($this->relationKey) {
-            $joinTo = $this->children ? $childrenHash.'.content_id': $query->getModel()->getTable().'.id';
+        $this->doMetadataJoins($query);
 
-            $query->join('content_relations AS '.$typeHash = $this->getRelationCountHash(), function ($join) use ($joinTo, $typeHash) {
-                $join->on($typeHash.'.content_id', '=', $joinTo)
-                    ->where($typeHash.'.relation_type_id', content_id('content-type'));
+        return $this;
+    }
 
-                if(is_array($this->relationKey)) {
-                    $join->whereIn($typeHash.'.relation_id', content_ids($this->relationKey));
-                }
-                else {
-                    $join->where($typeHash.'.relation_id', content_id($this->relationKey));
-                }
-            });
+
+    /**
+     * Add the relation joins to the complex relations
+     *
+     * @return string
+     */
+    public function doRelationJoins($query, $conditions)
+    {
+        $type = false;
+        $value = false;
+
+        // If the relation is a string
+        if (is_string($relationValue = $conditions)) {
+
+            // we will assume that we are looking for a content-type relation
+            $type = 'content-type';
+
+        // If the relation is an array
+        } elseif (is_array($conditions)) {
+
+            if (count($conditions) > 1) {
+                throw new \Exception('You have passed in too many items for the relation constraint.');
+            }
+
+            // Set the relation value that we want to match on
+            $value = array_values($conditions)[0];
+
+            // Check to see if the array key is numeric, if it is that means the key was not defined by the programmer
+            // I am also doing a bit of trickery here, if the relation type is not a number it will be set to $type
+            if (is_numeric($type = array_keys($conditions)[0])) {
+                $type = 'content-type';
+            }
+
+
+        // If the relation is equal to true
+        } elseif ($conditions === true) {
+
         }
 
-        if($this->metadata) {
-            foreach($this->metadata as $metadata) {
-                $query->join('content_meta AS metadata', function($join) use ($metadata, $table) {
+        $query->join('content_relations AS '.$relationTypeJoinHash = $this->getRelationCountHash(), function ($join) use ($type, $value, $query, $relationTypeJoinHash) {
+
+            if ($this->order && ! $this->hasSetAlias) {
+                $query->orderBy($relationTypeJoinHash.'.'.$this->order);
+                $query->addSelect($relationTypeJoinHash.'.'.$this->order.'');
+            }
+
+            $column = ($this->direction == 'down') ? 'content_id': 'relation_id';
+            $join->on($relationTypeJoinHash.'.'.$column, '=', $query->getModel()->getTable().'.id');
+
+            if ($type) {
+                $join->where($relationTypeJoinHash.'.relation_type_id', content_id($type));
+            }
+
+            if (!is_array($value)) {
+                if (is_string($value)) {
+                    $join->where($relationTypeJoinHash.'.relation_id', content_id($value));
+                } elseif ($value) {
+                    $join->where($relationTypeJoinHash.'.relation_id', $value);
+                }
+            }
+        })
+        ->join('contents AS '.$depthTable = $this->getContentCountHash(), function ($join) use ($query, $type, $value, $depthTable, $relationTypeJoinHash) {
+
+            if (is_array($value) || ! $this->hasSetAlias) {
+                $this->hasSetAlias = true;
+                $query->getModel()->setAlias($depthTable, true);
+            }
+
+            $column = ($this->direction == 'down') ? 'relation_id': 'content_id';
+            $join->on($depthTable.'.id', '=', $relationTypeJoinHash.'.'.$column);
+
+            if ($type) {
+                $join->where($relationTypeJoinHash.'.relation_type_id', content_id($type));
+            }
+        });
+
+        if (is_array($value)) {
+            $this->doRelationJoins($query, $value);
+        }
+    }
+
+    /**
+     * Add the metadata joins to the complex relations
+     *
+     * @return string
+     */
+    public function doMetadataJoins($query)
+    {
+        if ($this->metadata) {
+            foreach ($this->metadata as $metadata) {
+                $query->join('content_meta AS metadata', function ($join) use ($metadata, $table) {
                     $join->on($table.'.id', '=', 'metadata.content_id')
                         ->where('metadata.key', $metadata[0])
                         ->where('metadata.value', $metadata[1], $metadata[2]);
@@ -193,8 +326,10 @@ class HasMany extends Relation
             }
         }
 
-        return $this;
+        return $query;
     }
+
+
 
     /**
      * Get the fully qualified "related key" for the relation.
@@ -214,7 +349,9 @@ class HasMany extends Relation
     protected function addWhereConstraints()
     {
         $this->query->where(
-            $this->getQualifiedForeignKeyName(), '=', $this->parent->getKey()
+            $this->getQualifiedForeignKeyName(),
+            '=',
+            $this->parent->getKey()
         );
     }
 
@@ -248,6 +385,17 @@ class HasMany extends Relation
      */
     public function getRelationCountHash()
     {
-        return 'laravel_reserved_'.static::$selfJoinCount++;
+        return 'content_relation_join_'.static::$selfJoinCount++;
+    }
+
+
+    /**
+     * Get a relationship join table hash.
+     *
+     * @return string
+     */
+    public function getContentCountHash()
+    {
+        return 'content_join_'.static::$selfJoinCount++;
     }
 }

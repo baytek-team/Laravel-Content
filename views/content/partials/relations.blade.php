@@ -8,8 +8,8 @@
 		@foreach($content->relations as $relation)
 			@if($relation->relation_type_id && $relation->relation_id)
 			<tr>
-				<td>{{ $content->find($relation->relation_type_id)->key }}</td>
-				<td>{{ $content->find($relation->relation_id)->key }}</td>
+				<td>{{ content($relation->relation_type_id)->key }}</td>
+				<td>{{ content($relation->relation_id)->key }}</td>
 			</tr>
 			@endif
 		@endforeach
