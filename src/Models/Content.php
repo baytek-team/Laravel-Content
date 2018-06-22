@@ -125,23 +125,6 @@ class Content extends Model implements StatusInterface
         parent::__construct($attributes);
     }
 
-    /**
-     * Get route key name, this is generic function
-     * @return String the value for the key
-     */
-    public function getRouteKeyName()
-    {
-        return $this->getTable() . '.id';
-    }
-
-    /**
-     * Get route key, this is generic function
-     * @return String the value for the key
-     */
-    public function getRouteKey()
-    {
-        return $this->getAttribute('id');
-    }
 
     /**
      * The "booting" method of the model.
@@ -213,24 +196,34 @@ class Content extends Model implements StatusInterface
         }
     }
 
-    public function getMetadataKeys()
+
+    /**
+     * Get route key name, this is generic function
+     * @return String the value for the key
+     */
+    public function getRouteKeyName()
     {
-        return $this->metadata ?: [];
+        return $this->getTable() . '.id';
     }
 
     /**
-     * Meta relationship
-     * @return   [description]
+     * Get route key, this is generic function
+     * @return String the value for the key
      */
-    public function meta()
+    public function getRouteKey()
     {
-        return $this->hasMany(ContentMeta::class, 'content_id', 'id');
+        return $this->getAttribute('id');
     }
 
-    public function restrictedMeta()
-    {
-        return $this->hasMany(ContentMeta::class, 'content_id')->withoutGlobalScope('not_restricted');
-    }
+
+
+    /***
+     *
+     * RELATIONS
+     *
+     */
+
+
 
     public function relations()
     {
@@ -268,45 +261,24 @@ class Content extends Model implements StatusInterface
         ]);
     }
 
-
-    // public function webpages()
-    // {
-    //     return $this->association(Content::class, [
-    //         // 'relation' => 'webpage',
-    //         'children' => true,
-    //         // 'metadata' => [
-    //         //     ['author_id', '=', 1],
-    //         //     // 'author_id' => 1 // This method assumes the operator is '='
-    //         // ]
-    //     ]);
-    // }
-
+    /**
+     * scopeRootNodes function that was here but never used
+     *
+     * @deprecated 1.2.16 No longer used by internal code and not recommended.
+     */
     public function scopeRootNodes($builder)
     {
         // $builder
     }
 
-
-    public function getMetaRecord($key)
-    {
-        $meta = $this->meta->where('key', $key);
-
-        if ($meta->count()) {
-            return $meta->first();
-        }
-
-        return null;
-    }
-
-    public function getMeta($key, $default = null)
-    {
-        if ($meta = $this->getMetaRecord($key)) {
-            return $meta->value;
-        }
-
-        return $default;
-    }
-
+    /**
+     * Get relationship
+     *
+     * @deprecated 1.2.16 No longer used by internal code and not recommended.
+     *
+     * @param  string $type Type key
+     * @return Content
+     */
     public function getRelationship($type)
     {
         return Content::find($this->relatedBy($type)->pluck('relation_id')->all())->first();
@@ -364,39 +336,7 @@ class Content extends Model implements StatusInterface
         }
     }
 
-    public function saveMetadata($key, $value = null)
-    {
-        if (is_string($key)) {
-            $set = collect([$key => $value]);
-        } elseif (is_array($key)) {
-            $set = collect($key);
-        } elseif (is_object($key) && $key instanceof Collection) {
-            $set = $key;
-        }
 
-        $set->each(function ($value, $key) {
-            $metadata = ContentMeta::where([
-                'content_id' => $this->id,
-                'language' => \App::getLocale(),
-                'key' => $key
-            ])->get();
-
-            if ($metadata->count()) {
-                $metadata->first()->value = $value;
-                $metadata->first()->save();
-            } else {
-                $meta = (new ContentMeta([
-                    'content_id' => $this->id,
-                    'key' => $key,
-                    'language' => \App::getLocale(),
-                    'value' => $value,
-                ]));
-
-                $meta->save();
-                $this->meta()->save($meta);
-            }
-        });
-    }
 
     public function isAliased()
     {

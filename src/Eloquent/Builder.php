@@ -3,11 +3,28 @@
 namespace Baytek\Laravel\Content\Eloquent;
 
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+
 /**
  * @mixin \Illuminate\Database\Query\Builder
  */
 class Builder extends EloquentBuilder
 {
+
+    // /**
+    //  * Set the relationships that should be eager loaded.
+    //  *
+    //  * @param  mixed  $relations
+    //  * @return $this
+    //  */
+    // public function parentWith($relations)
+    // {
+    //     $eagerLoad = $this->parseWithRelations(is_string($relations) ? func_get_args() : $relations);
+
+    //     $this->eagerLoad = array_merge($this->eagerLoad, $eagerLoad);
+
+    //     return $this;
+    // }
+
     /**
      * Get the hydrated models without eager loading.
      * Build that model if its content type is set.
@@ -19,9 +36,9 @@ class Builder extends EloquentBuilder
     {
         $records = $this->query->get($columns);
 
-        return $records->map(function($record) {
+        return $records->map(function ($record) {
             // Check if the content type is set, if so build that type.
-            if(isset($record->content_type) && $record->content_type) {
+            if (isset($record->content_type) && $record->content_type) {
                 return (new $record->content_type)->newFromBuilder($record);
             }
 
@@ -38,16 +55,12 @@ class Builder extends EloquentBuilder
      */
     public function determineWhere($column, $value)
     {
-        if(is_array($value)) {
+        if (is_array($value)) {
             $this->query->whereIn($column, $value);
-        }
-        else {
+        } else {
             $this->query->where($column, $value);
         }
 
         return $this;
     }
-
-
-
 }

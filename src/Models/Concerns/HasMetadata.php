@@ -2,6 +2,8 @@
 
 namespace Baytek\Laravel\Content\Models\Concerns;
 
+use Baytek\Laravel\Content\Models\ContentMeta;
+
 use Illuminate\Support\Str;
 
 trait HasMetadata
@@ -41,16 +43,16 @@ trait HasMetadata
      */
     public function metadata($key = null)
     {
-        if(empty($this->customCache) || !array_key_exists('metadata', $this->customCache)) {
+        if (empty($this->customCache) || !array_key_exists('metadata', $this->customCache)) {
             $this->customCache = $this->populateMetadata();
         }
 
-        if(!array_key_exists('metadata', $this->customCache)) {
+        if (!array_key_exists('metadata', $this->customCache)) {
             return;
         }
 
-        if(!is_null($key)) {
-            if(!array_key_exists($key, $this->customCache['metadata'])) {
+        if (!is_null($key)) {
+            if (!array_key_exists($key, $this->customCache['metadata'])) {
                 return;
             }
 
@@ -67,7 +69,7 @@ trait HasMetadata
      */
     public function relationships()
     {
-        if(empty($this->customCache) || !array_key_exists('relationships', $this->customCache)) {
+        if (empty($this->customCache) || !array_key_exists('relationships', $this->customCache)) {
             $this->customCache = $this->populateCustomRelationships();
         }
 
@@ -90,7 +92,7 @@ trait HasMetadata
                 }
 
                 $value->each(function ($metadata) use (&$attributes) {
-                    if(!array_key_exists(str_replace('-', '_', $metadata->key), $attributes['metadata'])) {
+                    if (!array_key_exists(str_replace('-', '_', $metadata->key), $attributes['metadata'])) {
                         $attributes['metadata'][str_replace('-', '_', $metadata->key)] = $metadata->value;
                     }
                 });
@@ -100,7 +102,11 @@ trait HasMetadata
         if (isset($attributes['metadata'])) {
             foreach ($this->getMetadataAttributes() as $key) {
                 $attributes['metadata'][$key] = $this->populateMetadataAttribute(
-                    $key, array_key_exists($key, $attributes['metadata']) ? $attributes['metadata'][$key] : null
+                    $key,
+                    array_key_exists(
+                        $key,
+                        $attributes['metadata']
+                    ) ? $attributes['metadata'][$key] : null
                 );
             }
         }
@@ -128,8 +134,9 @@ trait HasMetadata
                 }
 
                 foreach ($value as $relation) {
-                    if(!$relation->relations['relationType'])
+                    if (!$relation->relations['relationType']) {
                         continue;
+                    }
 
                     $newKey = str_replace('-', '_', $relation->relations['relationType']->key);
 
@@ -139,8 +146,7 @@ trait HasMetadata
 
                     if ($newKey == str_plural($newKey)) {
                         $attributes['relationships'][$newKey][] = $relation->relations['relation']->key;
-                    }
-                    else {
+                    } else {
                         if (!is_array($attributes['relationships'][$newKey])) {
                             $attributes['relationships'][$newKey] = [$attributes['relationships'][$newKey]];
                             // throw new \Exception('Content relationship is not plural, but has many relations.');
@@ -163,11 +169,11 @@ trait HasMetadata
      */
     public function metaDataToArray()
     {
-        if(empty($this->customCache) || !array_key_exists('metadata', $this->customCache)) {
+        if (empty($this->customCache) || !array_key_exists('metadata', $this->customCache)) {
             $this->customCache = array_merge($this->customCache, $this->populateMetadata());
         }
 
-        if(empty($this->customCache) || !array_key_exists('relations', $this->customCache)) {
+        if (empty($this->customCache) || !array_key_exists('relations', $this->customCache)) {
             $this->customCache = array_merge($this->customCache, $this->populateCustomRelationships());
         }
 
@@ -227,5 +233,89 @@ trait HasMetadata
         preg_match_all('/(?<=^|;)set([^;]+?)Metadata(;|$)/', implode(';', get_class_methods($class)), $matches);
 
         return $matches[1];
+    }
+
+
+
+
+
+
+
+    /**
+     * Meta relationship
+     * @return   Meta relationship
+     */
+    public function meta()
+    {
+        return $this->hasMany(ContentMeta::class, 'content_id', 'id');
+    }
+
+    /**
+     * Meta relationship
+     * @return   Meta relationship
+     */
+    public function restrictedMeta()
+    {
+        return $this->hasMany(ContentMeta::class, 'content_id')->withoutGlobalScope('not_restricted');
+    }
+
+
+    public function getMetadataKeys()
+    {
+        return $this->metadata ?: [];
+    }
+
+    public function getMetaRecord($key)
+    {
+        $meta = $this->meta->where('key', $key);
+
+        if ($meta->count()) {
+            return $meta->first();
+        }
+
+        return null;
+    }
+
+    public function getMeta($key, $default = null)
+    {
+        if ($meta = $this->getMetaRecord($key)) {
+            return $meta->value;
+        }
+
+        return $default;
+    }
+
+    public function saveMetadata($key, $value = null)
+    {
+        if (is_string($key)) {
+            $set = collect([$key => $value]);
+        } elseif (is_array($key)) {
+            $set = collect($key);
+        } elseif (is_object($key) && $key instanceof Collection) {
+            $set = $key;
+        }
+
+        $set->each(function ($value, $key) {
+            $metadata = ContentMeta::where([
+                'content_id' => $this->id,
+                'language' => \App::getLocale(),
+                'key' => $key
+            ])->get();
+
+            if ($metadata->count()) {
+                $metadata->first()->value = $value;
+                $metadata->first()->save();
+            } else {
+                $meta = (new ContentMeta([
+                    'content_id' => $this->id,
+                    'key' => $key,
+                    'language' => \App::getLocale(),
+                    'value' => $value,
+                ]));
+
+                $meta->save();
+                $this->meta()->save($meta);
+            }
+        });
     }
 }

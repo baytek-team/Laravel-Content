@@ -170,8 +170,10 @@ class HasMany extends Relation
      */
     public function addEagerConstraints(array $models)
     {
+
         $this->query->whereIn(
-            $this->foreignKey,
+            // $this->foreignKey,
+            'contents.id',
             $this->getKeys(
                 $models,
                 $this->localKey
@@ -218,6 +220,7 @@ class HasMany extends Relation
         //     ->join('contents AS '.$table, $table.'.id', '=', $childrenHash.'.content_id');
         // }
 
+        $query->addSelect('contents.id AS ocid');
 
         if ($this->relation) {
             $this->doRelationJoins($query, $this->relation);
@@ -271,7 +274,7 @@ class HasMany extends Relation
 
             if ($this->order && ! $this->hasSetAlias) {
                 $query->orderBy($relationTypeJoinHash.'.'.$this->order);
-                $query->addSelect($relationTypeJoinHash.'.'.$this->order.'');
+                $query->addSelect($relationTypeJoinHash.'.'.$this->order);
             }
 
             $column = ($this->direction == 'down') ? 'content_id': 'relation_id';
@@ -365,18 +368,63 @@ class HasMany extends Relation
      */
     public function match(array $models, Collection $results, $relation)
     {
-        return $this->matchMany($models, $results, $relation);
+        $dictionary = $this->buildDictionary($results);
+
+
+        // Once we have the dictionary we can simply spin through the parent models to
+        // link them up with their children using the keyed dictionary to make the
+        // matching very convenient and easy work. Then we'll just return them.
+        foreach ($models as $model) {
+            if (isset($dictionary[$key = $model->getAttribute($this->localKey)])) {
+                $model->setRelation(
+                    $relation,
+                    $this->getRelationValue(
+                        $dictionary,
+                        $key,
+                        'many'
+                    )
+                );
+            }
+        }
+
+        return $models;
+
+        // return $this->matchMany($models, $results, $relation);
+    }
+
+
+
+    /**
+     * Get the value of a relationship by one or many type.
+     *
+     * @param  array   $dictionary
+     * @param  string  $key
+     * @param  string  $type
+     * @return mixed
+     */
+    protected function getRelationValue(array $dictionary, $key, $type)
+    {
+        $value = $dictionary[$key];
+
+        return $type == 'one' ? reset($value) : $this->related->newCollection($value);
     }
 
     /**
-     * Get the foreign key for the relationship.
+     * Build model dictionary keyed by the relation's foreign key.
      *
-     * @return string
+     * @param  \Illuminate\Database\Eloquent\Collection  $results
+     * @return array
      */
-    public function getQualifiedForeignKeyName()
+    protected function buildDictionary(Collection $results)
     {
-        return $this->foreignKey;
+        // $foreign = $this->getForeignKeyName();
+        $foreign = 'ocid';
+
+        return $results->mapToDictionary(function ($result) use ($foreign) {
+            return [$result->{$foreign} => $result];
+        })->all();
     }
+
 
     /**
      * Get a relationship join table hash.
