@@ -262,7 +262,7 @@ trait HasMetadata
 
     public function getMetadataKeys()
     {
-        return $this->metadata ?: [];
+        return property_exists($this, 'metadata') && isset($this->metadata) ? $this->metadata : [];
     }
 
     public function getMetaRecord($key)
