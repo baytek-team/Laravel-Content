@@ -74,9 +74,11 @@ trait HasMatches
     {
         $foreign = $this->getForeignKeyName();
 
-        return $results->mapToDictionary(function ($result) use ($foreign) {
-            return [$result->{$foreign} => $result];
-        })->all();
+        return $results->mapToDictionary(
+            function ($result) use ($foreign) {
+                return [$result->{$foreign} => $result];
+            }
+        )->all();
     }
 
     /**
