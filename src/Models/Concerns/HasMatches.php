@@ -51,7 +51,12 @@ trait HasMatches
         foreach ($models as $model) {
             if (isset($dictionary[$key = $model->getAttribute($this->localKey)])) {
                 $model->setRelation(
-                    $relation, $this->getRelationValue($dictionary, $key, $type)
+                    $relation,
+                    $this->getRelationValue(
+                        $dictionary,
+                        $key,
+                        $type
+                    )
                 );
             }
         }
@@ -84,5 +89,25 @@ trait HasMatches
         $segments = explode('.', $this->getQualifiedForeignKeyName());
 
         return end($segments);
+    }
+
+    /**
+     * Get the key for comparing against the parent key in "has" query.
+     *
+     * @return string
+     */
+    public function getExistenceCompareKey()
+    {
+        return $this->getQualifiedForeignKeyName();
+    }
+
+    /**
+     * Get the foreign key for the relationship.
+     *
+     * @return string
+     */
+    public function getQualifiedForeignKeyName()
+    {
+        return $this->foreignKey;
     }
 }

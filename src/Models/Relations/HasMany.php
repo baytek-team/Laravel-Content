@@ -170,22 +170,13 @@ class HasMany extends Relation
      */
     public function addEagerConstraints(array $models)
     {
-
         $this->query->whereIn(
-            // $this->foreignKey,
-            'contents.id',
+            $this->foreignKey, // 'contents.id',
             $this->getKeys(
                 $models,
                 $this->localKey
             )
         );
-    }
-
-
-
-    public function addJoinCondition()
-    {
-
     }
 
     /**
@@ -295,7 +286,7 @@ class HasMany extends Relation
         ->join('contents AS '.$depthTable = $this->getContentCountHash(), function ($join) use ($query, $type, $value, $depthTable, $relationTypeJoinHash) {
 
             if (is_array($value) || ! $this->hasSetAlias) {
-                $this->hasSetAlias = true;
+                $this->hasSetAlias = $depthTable;
                 $query->getModel()->setAlias($depthTable, true);
             }
 
