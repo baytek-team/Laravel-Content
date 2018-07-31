@@ -29,6 +29,8 @@ class Content extends Model implements StatusInterface
         Statusable::__construct as private __statusConstruct;
     }
 
+    public $originalAttributes;
+
     /**
      * List of fields which should be cast when rendering JSON
      * @var array
@@ -111,6 +113,8 @@ class Content extends Model implements StatusInterface
     {
         $this->__statusConstruct($attributes);
 
+        $this->originalAttributes = $attributes;
+
         // This adds to the list of fillable fields the metadata properties
         // if (property_exists($this, 'metadata')) {
         //     $this->fillable(array_merge($this->fillable, $this->metadata));
@@ -135,10 +139,17 @@ class Content extends Model implements StatusInterface
     {
         parent::boot();
         self::creating(function ($model) {
-            if (property_exists($model, 'metadata')) {
-                $model->metadataAttributes = collect($model->getAttributes())->only($model->metadata)->all();
-                $model->attributes = collect($model->getAttributes())->except($model->metadata)->all();
 
+            // dd($model->attributes);
+
+            if (property_exists($model, 'metadata')) {
+                $model->metadataAttributes = collect($model->originalAttributes)
+                    ->only($model->metadata)
+                    ->all();
+
+                // $model->attributes = collect($model->attributes)
+                //     ->except($model->metadata)
+                //     ->all();
             }
         });
 
@@ -157,8 +168,13 @@ class Content extends Model implements StatusInterface
 
         self::updating(function ($model) {
             if (property_exists($model, 'metadata')) {
-                $model->metadataAttributes = collect($model->getAttributes())->only($model->metadata)->all();
-                $model->attributes = collect($model->getAttributes())->except($model->metadata)->all();
+                $model->metadataAttributes = collect($model->originalAttributes)
+                    ->only($model->metadata)
+                    ->all();
+
+                // $model->attributes = collect($model->attributes)
+                //     ->except($model->metadata)
+                //     ->all();
             }
         });
 
@@ -215,16 +231,11 @@ class Content extends Model implements StatusInterface
         return $this->getAttribute('id');
     }
 
-
-
     /***
      *
      * RELATIONS
      *
      */
-
-
-
     public function relations()
     {
         return $this->hasMany(ContentRelation::class, 'content_id');
@@ -335,8 +346,6 @@ class Content extends Model implements StatusInterface
             ]))->save();
         }
     }
-
-
 
     public function isAliased()
     {

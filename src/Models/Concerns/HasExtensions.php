@@ -5,8 +5,18 @@ namespace Baytek\Laravel\Content\Models\Concerns;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Builder;
 
+// use Baytek\Laravel\Content\Eloquent\Builder;
+
 trait HasExtensions
 {
+    public $originalAttributes;
+
+    public function __construct($attributes)
+    {
+        $this->originalAttributes = $attributes;
+        parent::__construct($attributes);
+    }
+
     /**
      * Begin querying a model with eager loading.
      *
@@ -25,7 +35,12 @@ trait HasExtensions
         return $builder->with(
             is_string($relations) ? func_get_args() : $relations
         )
-        ->select('*', "{$local->getTable()}.id as content_id", "{$model->getTable()}.*", "{$local->getTable()}.*", "{$model->getTable()}.id");
+        ->select(
+            '*',
+            "{$local->getTable()}.id as content_id",
+            "{$model->getTable()}.*", "{$local->getTable()}.*",
+            "{$model->getTable()}.id"
+        );
     }
 
     /**
@@ -48,8 +63,9 @@ trait HasExtensions
      */
     public function newQueryWithoutScopes()
     {
-        if(!method_exists($this, 'extends'))
+        if (!method_exists($this, 'extends')) {
             return parent::newQueryWithoutScopes();
+        }
 
         list($class, $foreignKey, $localKey) = $this->extends();
 
@@ -80,7 +96,7 @@ trait HasExtensions
     {
         $additional = [];
 
-        if($model->usesTimestamps()) {
+        if ($model->usesTimestamps()) {
             $model->updateTimestamps();
             $additional = [
                 static::CREATED_AT,
@@ -143,7 +159,7 @@ trait HasExtensions
         list($class, $foreignKey, $localKey) = $this->extends();
 
         $attrs = $this->prepareInsert($this, $attributes);
-        $attrs[$localKey] = $this->insertAndSetIdParent($attributes);
+        $attrs[$localKey] = $this->insertAndSetIdParent($this->originalAttributes);
 
         if ($this->fireModelEvent('creating') === false) {
             return false;
