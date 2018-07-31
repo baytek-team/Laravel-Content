@@ -72,6 +72,12 @@ class BelongsToOneOrMany extends BelongsToMany
                     $this->isMany ? $this->related->newCollection($dictionary[$key]) : $this->related->newCollection($dictionary[$key])->first()
                 );
             }
+            else {
+                $model->setRelation(
+                    $relation,
+                    $this->isMany ? [] : null
+                );
+            }
         }
 
         return $models;
