@@ -11,7 +11,7 @@ trait HasExtensions
 {
     public $originalAttributes;
 
-    public function __construct($attributes)
+    public function __construct($attributes = [])
     {
         $this->originalAttributes = $attributes;
         parent::__construct($attributes);
