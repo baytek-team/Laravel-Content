@@ -8,6 +8,37 @@ use Illuminate\Support\Str;
 
 trait HasMetadata
 {
+
+    /**
+     * Fill the model with an array of attributes.
+     *
+     * @param  array  $attributes
+     * @return $this
+     *
+     * @throws \Illuminate\Database\Eloquent\MassAssignmentException
+     */
+    public function fill(array $attributes)
+    {
+        $totallyGuarded = $this->totallyGuarded();
+
+        foreach ($attributes as $key => $value) {
+            $key = $this->removeTableFromKey($key);
+
+            // The developers may choose to place some attributes in the "fillable" array
+            // which means only those attributes may be set through mass assignment to
+            // the model, and all others will just get ignored for security reasons.
+            if (property_exists($this, 'metadata') && in_array($key, $this->metadata)) {
+                $this->metadataAttributes[$key] = $value;
+            } elseif ($this->isFillable($key)) {
+                $this->setAttribute($key, $value);
+            } elseif ($totallyGuarded) {
+                throw new MassAssignmentException($key);
+            }
+        }
+
+        return $this;
+    }
+
     /**
      * Metadata Cache
      *

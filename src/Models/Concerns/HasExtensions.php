@@ -5,8 +5,6 @@ namespace Baytek\Laravel\Content\Models\Concerns;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Builder;
 
-// use Baytek\Laravel\Content\Eloquent\Builder;
-
 trait HasExtensions
 {
     public $originalAttributes;

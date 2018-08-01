@@ -29,7 +29,7 @@ class Content extends Model implements StatusInterface
         Statusable::__construct as private __statusConstruct;
     }
 
-    public $originalAttributes;
+    // public $originalAttributes;
 
     /**
      * List of fields which should be cast when rendering JSON
@@ -113,13 +113,6 @@ class Content extends Model implements StatusInterface
     {
         $this->__statusConstruct($attributes);
 
-        $this->originalAttributes = $attributes;
-
-        // This adds to the list of fillable fields the metadata properties
-        // if (property_exists($this, 'metadata')) {
-        //     $this->fillable(array_merge($this->fillable, $this->metadata));
-        // }
-
         if (property_exists($this, 'contentType')) {
             static::addGlobalScope('content_type', function (Builder $builder) {
                 $builder->ofType($this->contentType);
@@ -138,20 +131,6 @@ class Content extends Model implements StatusInterface
     protected static function boot()
     {
         parent::boot();
-        self::creating(function ($model) {
-
-            // dd($model->attributes);
-
-            if (property_exists($model, 'metadata')) {
-                $model->metadataAttributes = collect($model->originalAttributes)
-                    ->only($model->metadata)
-                    ->all();
-
-                // $model->attributes = collect($model->attributes)
-                //     ->except($model->metadata)
-                //     ->all();
-            }
-        });
 
         // After the model has been saved.
         self::created(function ($model) {
@@ -163,18 +142,6 @@ class Content extends Model implements StatusInterface
             // Check to see if there are any relationships required to save
             if (property_exists($model, 'relationships')) {
                 $model->saveRelations($model->relationships);
-            }
-        });
-
-        self::updating(function ($model) {
-            if (property_exists($model, 'metadata')) {
-                $model->metadataAttributes = collect($model->originalAttributes)
-                    ->only($model->metadata)
-                    ->all();
-
-                // $model->attributes = collect($model->attributes)
-                //     ->except($model->metadata)
-                //     ->all();
             }
         });
 
@@ -211,6 +178,21 @@ class Content extends Model implements StatusInterface
             static::addGlobalScope(new TranslationScope);
         }
     }
+
+
+    /**
+     * Update the model in the database.
+     *
+     * @param  array  $attributes
+     * @param  array  $options
+     * @return bool
+     */
+    // public function update(array $attributes = [], array $options = [])
+    // {
+    //     $this->originalAttributes = $attributes;
+
+    //     return parent::update($attributes, $options);
+    // }
 
 
     /**
