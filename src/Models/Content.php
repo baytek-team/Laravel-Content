@@ -133,29 +133,29 @@ class Content extends Model implements StatusInterface
         parent::boot();
 
         // After the model has been saved.
-        self::created(function ($model) {
-            // Check if there is any metadata to save.
-            if (property_exists($model, 'metadata')) {
-                $model->saveMetadata($model->metadataAttributes);
-            }
+        // self::created(function ($model) {
+        //     // Check if there is any metadata to save.
+        //     if (property_exists($model, 'metadata')) {
+        //         $model->saveMetadata($model->metadataAttributes);
+        //     }
 
-            // Check to see if there are any relationships required to save
-            if (property_exists($model, 'relationships')) {
-                $model->saveRelations($model->relationships);
-            }
-        });
+        //     // Check to see if there are any relationships required to save
+        //     if (property_exists($model, 'relationships')) {
+        //         $model->saveRelations($model->relationships);
+        //     }
+        // });
 
-        self::updated(function ($model) {
-            // Check if there is any metadata to save.
-            if (property_exists($model, 'metadata')) {
-                $model->saveMetadata($model->metadataAttributes);
-            }
+        // self::updated(function ($model) {
+        //     // Check if there is any metadata to save.
+        //     if (property_exists($model, 'metadata')) {
+        //         $model->saveMetadata($model->metadataAttributes);
+        //     }
 
-            // Check to see if there are any relationships required to save
-            if (property_exists($model, 'relationships')) {
-                $model->saveRelations($model->relationships);
-            }
-        });
+        //     // Check to see if there are any relationships required to save
+        //     if (property_exists($model, 'relationships')) {
+        //         $model->saveRelations($model->relationships);
+        //     }
+        // });
 
         static::addGlobalScope('not_restricted', function (Builder $builder) {
             $builder->withStatus(['exclude' => [self::RESTRICTED]]);
@@ -178,22 +178,6 @@ class Content extends Model implements StatusInterface
             static::addGlobalScope(new TranslationScope);
         }
     }
-
-
-    /**
-     * Update the model in the database.
-     *
-     * @param  array  $attributes
-     * @param  array  $options
-     * @return bool
-     */
-    // public function update(array $attributes = [], array $options = [])
-    // {
-    //     $this->originalAttributes = $attributes;
-
-    //     return parent::update($attributes, $options);
-    // }
-
 
     /**
      * Get route key name, this is generic function
