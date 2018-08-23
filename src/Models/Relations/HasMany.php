@@ -375,6 +375,12 @@ class HasMany extends Relation
                     )
                 );
             }
+            else {
+                $model->setRelation(
+                    $relation,
+                    $this->isMany ? [] : null
+                );
+            }
         }
 
         return $models;

@@ -59,6 +59,12 @@ trait HasMatches
                     )
                 );
             }
+            else {
+                $model->setRelation(
+                    $relation,
+                    $this->isMany ? [] : null
+                );
+            }
         }
 
         return $models;
