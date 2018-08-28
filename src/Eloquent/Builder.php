@@ -9,22 +9,6 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
  */
 class Builder extends EloquentBuilder
 {
-
-    // /**
-    //  * Set the relationships that should be eager loaded.
-    //  *
-    //  * @param  mixed  $relations
-    //  * @return $this
-    //  */
-    // public function parentWith($relations)
-    // {
-    //     $eagerLoad = $this->parseWithRelations(is_string($relations) ? func_get_args() : $relations);
-
-    //     $this->eagerLoad = array_merge($this->eagerLoad, $eagerLoad);
-
-    //     return $this;
-    // }
-
     /**
      * Get the hydrated models without eager loading.
      * Build that model if its content type is set.

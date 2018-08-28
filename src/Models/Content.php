@@ -29,8 +29,6 @@ class Content extends Model implements StatusInterface
         Statusable::__construct as private __statusConstruct;
     }
 
-    // public $originalAttributes;
-
     /**
      * List of fields which should be cast when rendering JSON
      * @var array
@@ -181,6 +179,7 @@ class Content extends Model implements StatusInterface
 
     /**
      * Get route key name, this is generic function
+     * 
      * @return String the value for the key
      */
     public function getRouteKeyName()
@@ -190,6 +189,7 @@ class Content extends Model implements StatusInterface
 
     /**
      * Get route key, this is generic function
+     * 
      * @return String the value for the key
      */
     public function getRouteKey()
@@ -202,25 +202,32 @@ class Content extends Model implements StatusInterface
      * RELATIONS
      *
      */
+    
+     /**
+     * Get the content revisions
+     *
+     * @return hasMany
+     */
     public function relations()
     {
         return $this->hasMany(ContentRelation::class, 'content_id');
     }
 
+    /**
+     * Get the content revisions
+     *
+     * @return hasMany
+     */
     public function revisions()
     {
         return $this->hasMany(ContentHistory::class, 'content_id');
     }
 
-    // This is the old method
-
-    // public function children()
-    // {
-    //     return $this->hasManyContent(Content::class, [
-    //         'children' => true,
-    //     ]);
-    // }
-
+    /**
+     * Expirmental method for getting children relations
+     *
+     * @return hasManyContent
+     */
     public function children()
     {
         return $this->hasManyContent(Content::class, [
@@ -229,6 +236,11 @@ class Content extends Model implements StatusInterface
         ]);
     }
 
+    /**
+     * Expirmental method for getting relations
+     *
+     * @return hasManyContent
+     */
     public function related()
     {
         return $this->hasManyContent(Content::class, [
@@ -238,15 +250,8 @@ class Content extends Model implements StatusInterface
         ]);
     }
 
-    /**
-     * scopeRootNodes function that was here but never used
-     *
-     * @deprecated 1.2.16 No longer used by internal code and not recommended.
-     */
-    public function scopeRootNodes($builder)
-    {
-        // $builder
-    }
+    
+
 
     /**
      * Get relationship
@@ -267,7 +272,14 @@ class Content extends Model implements StatusInterface
         // }
     }
 
-    public function removeRelationByType($type)
+
+    /**
+     * Remove a relation
+     *
+     * @param string $type Type of object relation we want to remove
+     * @return void
+     */
+    public function removeRelation($type)
     {
         $relation = ContentRelation::where([
             'content_id' => $this->id,
@@ -275,23 +287,50 @@ class Content extends Model implements StatusInterface
         ])->delete();
     }
 
-    //Remove a specific relation by relation_id
-    public function removeRelationById($id)
+    /**
+     * Remove a relation by its type
+     *
+     * @deprecated 1.3.0 This feature is to be removed as we do not need to specify type to remove
+     * @param string $type Type of object relation we want to remove
+     * @return void
+     */
+    public function removeRelationByType(string $type)
     {
-        $relation = ContentRelation::where([
-            'content_id' => $this->id,
-            'relation_id' => $id,
-        ])->delete();
+        $this->removeRelation($type);
     }
 
-    public function saveRelations($relations)
+    /**
+     * Remove a specific relation by relation_id
+     * 
+     * @deprecated 1.3.0 This feature is to be removed as we do not need to specify type to remove
+     * @param int $type Type of object relation we want to remove
+     * @return void
+     */
+    public function removeRelationById(int $id)
+    {
+        $this->removeRelation($type);
+    }
+
+    /**
+     * Save the relations for this model
+     *
+     * @param array $relations List of relations
+     * @return void
+     */
+    public function saveRelations(array $relations)
     {
         foreach ($relations as $key => $value) {
             $this->saveRelation($key, $value);
         }
     }
 
-    // This method saves the content relation
+    /**
+     * Save a single relation
+     *
+     * @param mixed $type    The content relation type
+     * @param mixed $content The content we would like to relate to
+     * @return void
+     */
     public function saveRelation($type, $content)
     {
         $relation = ContentRelation::where([
@@ -313,17 +352,34 @@ class Content extends Model implements StatusInterface
         }
     }
 
+    /**
+     * Check if is aliased
+     *
+     * @return boolean
+     */
     public function isAliased()
     {
         return $this->aliased;
     }
 
-    public function setAlias($alias, $aliased = false)
+    /**
+     * Set the alias of the table selector
+     *
+     * @param string $alias    Table alias selector
+     * @param boolean $aliased Flag indicating if the table should be treated as an alias
+     * @return void
+     */
+    public function setAlias(string $alias, $aliased = false)
     {
         $this->aliased = $aliased;
         $this->alias = $alias;
     }
 
+    /**
+     * Get the current table selection
+     *
+     * @return string
+     */
     public function getTable()
     {
         return ($this->alias ?: parent::getTable());

@@ -268,7 +268,7 @@ trait HasMetadata
     }
 
     /**
-     * Save the model to the database.
+     * Override the save method, call parent save then save the metadata
      *
      * @param  array  $options
      * @return bool
@@ -307,7 +307,10 @@ trait HasMetadata
         return $this->hasMany(ContentMeta::class, 'content_id')->withoutGlobalScope('not_restricted');
     }
 
-
+    /**
+     * Get the metadata keys
+     * @return   Meta relationship
+     */
     public function getMetadataKeys()
     {
         return property_exists($this, 'metadata') && isset($this->metadata) ? $this->metadata : [];

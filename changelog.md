@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 
+## [1.3.0] - 2018-08-28
+
+
 ## [1.2.16] - 2018-06-21
 ### Added
 Adding better viewing for contentinator
