@@ -31,13 +31,19 @@ class ContentManagementController extends ContentController
      */
     public function index($id = 1)
     {
-        $contents = !is_null($id) ? content($id)->related : Content::withoutGlobalScopes()
+        $content = content($id);
+
+        if (!$content) {
+            abort(404);
+        }
+
+        $contents = !is_null($id) ? $content->related : Content::withoutGlobalScopes()
             ->leftJoin('content_relations', 'contents.id', '=', 'content_relations.content_id')
             ->whereNull('content_id')
             ->get();
 
         return parent::contentIndex([
-            'content' => content($id),
+            'content' => $content,
             'contents' => $contents
         ]);
     }

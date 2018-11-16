@@ -377,7 +377,7 @@ class ContentController extends Controller
         return View::make($this->view('edit'), $this->params([
 
             // This needs to be updated as it returns everything in the content table, this should return the list of objects of that type
-            $this->names['plural'] => $model::select('id', 'status', 'revision', 'language', 'title')->get(),
+            $this->names['plural'] => $model::get(),
 
             // Get the current content model object
             $this->names['singular'] => $content,

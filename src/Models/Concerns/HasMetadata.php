@@ -46,7 +46,7 @@ trait HasMetadata
     public function metadata($key = null)
     {
         if (empty($this->customCache) || !array_key_exists('metadata', $this->customCache)) {
-            $this->customCache = $this->populateMetadata();
+            $this->customCache = array_merge($this->customCache, $this->populateMetadata());
         }
 
         if (!array_key_exists('metadata', $this->customCache)) {
@@ -72,10 +72,14 @@ trait HasMetadata
     public function relationships()
     {
         if (empty($this->customCache) || !array_key_exists('relationships', $this->customCache)) {
-            $this->customCache = $this->populateCustomRelationships();
+            $this->customCache = array_merge($this->customCache, $this->populateCustomRelationships());
         }
 
-        return collect($this->customCache['relationships']);
+        return collect(
+            array_key_exists('relationships', $this->customCache)
+            ? $this->customCache['relationships']
+            : []
+        );
     }
 
     /**
@@ -110,6 +114,12 @@ trait HasMetadata
                         $attributes['metadata']
                     ) ? $attributes['metadata'][$key] : null
                 );
+            }
+        }
+
+        if (empty($attributes) && !empty($this->metadataAttributes)) {
+            foreach ($this->metadataAttributes as $key => $value) {
+                $attributes['metadata'][$key] = $value;
             }
         }
 
@@ -277,7 +287,7 @@ trait HasMetadata
     {
         $result = parent::save($options);
 
-        if(count($this->metadataAttributes)) {
+        if (count($this->metadataAttributes)) {
             $this->saveMetadata($this->metadataAttributes);
         }
 
@@ -287,6 +297,33 @@ trait HasMetadata
         }
 
         return $result;
+    }
+
+    /**
+     * Update the model in the database.
+     *
+     * @param  array  $attributes
+     * @param  array  $options
+     * @return bool
+     */
+    public function update(array $attributes = [], array $options = [])
+    {
+        if (! $this->exists) {
+            return false;
+        }
+
+        $this->fill($attributes);
+
+        if (count($this->metadataAttributes)) {
+            $this->saveMetadata($this->metadataAttributes);
+        }
+
+        // Check to see if there are any relationships required to save
+        if (property_exists($this, 'relationships')) {
+            $this->saveRelations($this->relationships);
+        }
+
+        return $this->save($options);
     }
 
      /**

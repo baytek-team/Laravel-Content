@@ -4,7 +4,8 @@
     <h1 class="ui header">
         <i class="heartbeat icon"></i>
         <div class="content">
-            Contentinator
+            Content:
+            <input id="content-id-changer" type="text" value="{{ $content->id }}">
             <div class="sub header">Contentination level: @php echo rand(0,100);@endphp%</div>
         </div>
     </h1>
@@ -26,15 +27,21 @@
     {
         padding: 0;
     }
+    #content-id-changer {
+        display: inline;
+        border: none;
+        font-size: 20pt;
+        background: none;
+        width: fit-content;
+    }
 </style>
 
 <h2 class="ui header">
-    {{-- <i class="content icon"></i> --}}
     <div class="content">
         {{ $content->title }}
-        {{-- <div class="sub header">{{ ___('Manage the content content type.') }}</div> --}}
     </div>
 </h2>
+
 
 @if(!empty($content->content))
     <h4 class="ui horizontal divider header">
@@ -46,37 +53,37 @@
     </div>
 @endif
 
-{{-- @if($diff)
+@if(isset($diff))
     @include('contents::content.partials.differences')
-@endif --}}
+@endif
 
-<div class="ui grid">
-    <div class="four wide widescreen eight wide computer eight wide tablet sixteen wide mobile column">
+<div class="ui stackable grid equal width">
+    <div class="column">
         @include('contents::content.partials.attributes')
     </div>
-    <div class="four wide widescreen eight wide computer eight wide tablet sixteen wide mobile column">
-        @if($content->relations->count())
+    @if($content->relations->count())
+        <div class="column">
             @include('contents::content.partials.relations')
-        @endif
-    </div>
-    <div class="four wide widescreen eight wide computer eight wide tablet sixteen wide mobile column">
-        @if($content->meta->count())
+        </div>
+    @endif
+    @if($content->meta->count())
+        <div class="column">
             @include('contents::content.partials.metadata')
-        @endif
-    </div>
-    <div class="four wide widescreen eight wide computer eight wide tablet sixteen wide mobile column">
-        <h4 class="ui horizontal divider header">
-            <i class="settings icon"></i>
-            {{ ___('Settings') }}
-        </h4>
-        @if(!empty(config('cms.content.content')))
+        </div>
+    @endif
+    @if(!empty(config('cms.content.content')))
+        <div class="column">
+            <h4 class="ui horizontal divider header">
+                <i class="settings icon"></i>
+                {{ ___('Settings') }}
+            </h4>
             <div class="ui segment">
                 @php
                     dump(config('cms.content.content'));
                 @endphp
             </div>
-        @endif
-    </div>
+        </div>
+    @endif
 </div>
 
 @if(!count($contents))
@@ -148,6 +155,22 @@
 
 @section('scripts')
 <script>
+    var waitingForTimeout;
+    $('#content-id-changer')
+        .on('focus', function() {
+            this.select();
+        })
+        .on('change', function() {
+            window.location = '/admin/content/' + this.value
+        })
+        .on('keyup', function() {
+            var field = this;
+            window.clearTimeout(waitingForTimeout)
+            waitingForTimeout = window.setTimeout(function(){
+                $(field).trigger('change');
+            }, 1500)
+        })
+
     $('.dynamic-load').on('click', function(e){
         e.preventDefault();
         var row = $(this).parent().parent();
