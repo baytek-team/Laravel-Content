@@ -20,6 +20,14 @@ if (! function_exists('root')) {
 
 if (! function_exists('content')) {
 
+    /**
+     * Helper function to get a piece of content
+     *
+     * @param mixed   $value    The value to search for content
+     * @param boolean $hydrate  Whether or not to populate the model
+     * @param string  $model    Class to hydrate model to
+     * @return void
+     */
     function content($value, $hydrate = true, $model = Baytek\Laravel\Content\Models\Content::class)
     {
         if(is_numeric($value)) {
