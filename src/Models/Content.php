@@ -18,6 +18,7 @@ use Illuminate\Pagination\Paginator;
 use Cache;
 use DB;
 
+
 class Content extends Model implements StatusInterface
 {
     use Concerns\HasMetadata,

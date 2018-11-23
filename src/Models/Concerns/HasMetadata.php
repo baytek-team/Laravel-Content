@@ -3,7 +3,7 @@
 namespace Baytek\Laravel\Content\Models\Concerns;
 
 use Baytek\Laravel\Content\Models\ContentMeta;
-
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 trait HasMetadata
@@ -46,7 +46,7 @@ trait HasMetadata
     public function metadata($key = null)
     {
         if (empty($this->customCache) || !array_key_exists('metadata', $this->customCache)) {
-            $this->customCache = $this->populateMetadata();
+            $this->customCache = array_merge($this->customCache, $this->populateMetadata());
         }
 
         if (!array_key_exists('metadata', $this->customCache)) {
@@ -72,10 +72,14 @@ trait HasMetadata
     public function relationships()
     {
         if (empty($this->customCache) || !array_key_exists('relationships', $this->customCache)) {
-            $this->customCache = $this->populateCustomRelationships();
+            $this->customCache = array_merge($this->customCache, $this->populateCustomRelationships());
         }
 
-        return collect($this->customCache['relationships']);
+        return collect(
+            array_key_exists('relationships', $this->customCache)
+            ? $this->customCache['relationships']
+            : []
+        );
     }
 
     /**
@@ -110,6 +114,12 @@ trait HasMetadata
                         $attributes['metadata']
                     ) ? $attributes['metadata'][$key] : null
                 );
+            }
+        }
+
+        if (empty($attributes) && !empty($this->metadataAttributes)) {
+            foreach ($this->metadataAttributes as $key => $value) {
+                $attributes['metadata'][$key] = $value;
             }
         }
 
@@ -268,7 +278,7 @@ trait HasMetadata
     }
 
     /**
-     * Override the save method, call parent save then save the metadata
+     * Save the model to the database.
      *
      * @param  array  $options
      * @return bool
@@ -277,7 +287,7 @@ trait HasMetadata
     {
         $result = parent::save($options);
 
-        if(count($this->metadataAttributes)) {
+        if (count($this->metadataAttributes)) {
             $this->saveMetadata($this->metadataAttributes);
         }
 
@@ -287,6 +297,33 @@ trait HasMetadata
         }
 
         return $result;
+    }
+
+    /**
+     * Update the model in the database.
+     *
+     * @param  array  $attributes
+     * @param  array  $options
+     * @return bool
+     */
+    public function update(array $attributes = [], array $options = [])
+    {
+        if (! $this->exists) {
+            return false;
+        }
+
+        $this->fill($attributes);
+
+        if (count($this->metadataAttributes)) {
+            $this->saveMetadata($this->metadataAttributes);
+        }
+
+        // Check to see if there are any relationships required to save
+        if (property_exists($this, 'relationships')) {
+            $this->saveRelations($this->relationships);
+        }
+
+        return $this->save($options);
     }
 
      /**
@@ -307,10 +344,6 @@ trait HasMetadata
         return $this->hasMany(ContentMeta::class, 'content_id')->withoutGlobalScope('not_restricted');
     }
 
-    /**
-     * Get the metadata keys
-     * @return   Meta relationship
-     */
     public function getMetadataKeys()
     {
         return property_exists($this, 'metadata') && isset($this->metadata) ? $this->metadata : [];
@@ -339,34 +372,68 @@ trait HasMetadata
     public function saveMetadata($key, $value = null)
     {
         if (is_string($key)) {
-            $set = collect([$key => $value]);
-        } elseif (is_array($key)) {
-            $set = collect($key);
+            if (is_array($value)) {
+                $this->setMetadatas($key, $value);
+            } else {
+                $set = collect([$key => $value]);
+            }
         } elseif (is_object($key) && $key instanceof Collection) {
             $set = $key;
+        } elseif (is_array($key)) {
+            $set = collect($key);
         }
 
         $set->each(function ($value, $key) {
-            $metadata = ContentMeta::where([
-                'content_id' => $this->id,
-                'language' => \App::getLocale(),
-                'key' => $key
-            ])->get();
-
-            if ($metadata->count()) {
-                $metadata->first()->value = $value;
-                $metadata->first()->save();
+            if (empty($value)) {
+                return;
+            } elseif (is_array($value)) {
+                $this->setMetadatas($key, collect($value));
+            } elseif ($value instanceof Collection) {
+                $this->setMetadatas($key, $value);
             } else {
-                $meta = (new ContentMeta([
+                $metadata = ContentMeta::where([
                     'content_id' => $this->id,
-                    'key' => $key,
                     'language' => \App::getLocale(),
-                    'value' => $value,
-                ]));
+                    'key' => $key
+                ])->get();
 
-                $meta->save();
-                $this->meta()->save($meta);
+                if ($metadata->count()) {
+                    $metadata->first()->value = $value;
+                    $metadata->first()->save();
+                } else {
+                    $meta = (new ContentMeta([
+                        'content_id' => $this->id,
+                        'key' => $key,
+                        'language' => \App::getLocale(),
+                        'value' => $value,
+                    ]));
+
+                    $meta->save();
+                    $this->meta()->save($meta);
+                }
             }
         });
     }
+
+    public function setMetadatas(string $key, Collection $set)
+    {
+        ContentMeta::where([
+            'content_id' => $this->id,
+            'language' => \App::getLocale(),
+            'key' => $key
+        ])->delete();
+
+        $set->each(function ($value) use ($key) {
+            $meta = (new ContentMeta([
+                'content_id' => $this->id,
+                'key' => $key,
+                'language' => \App::getLocale(),
+                'value' => $value,
+            ]));
+
+            $meta->save();
+            $this->meta()->save($meta);
+        });
+    }
+
 }
