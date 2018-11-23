@@ -3,7 +3,7 @@
 namespace Baytek\Laravel\Content\Models\Concerns;
 
 use Baytek\Laravel\Content\Models\ContentMeta;
-
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 trait HasMetadata
@@ -344,7 +344,6 @@ trait HasMetadata
         return $this->hasMany(ContentMeta::class, 'content_id')->withoutGlobalScope('not_restricted');
     }
 
-
     public function getMetadataKeys()
     {
         return property_exists($this, 'metadata') && isset($this->metadata) ? $this->metadata : [];
@@ -373,34 +372,68 @@ trait HasMetadata
     public function saveMetadata($key, $value = null)
     {
         if (is_string($key)) {
-            $set = collect([$key => $value]);
-        } elseif (is_array($key)) {
-            $set = collect($key);
+            if (is_array($value)) {
+                $this->setMetadatas($key, $value);
+            } else {
+                $set = collect([$key => $value]);
+            }
         } elseif (is_object($key) && $key instanceof Collection) {
             $set = $key;
+        } elseif (is_array($key)) {
+            $set = collect($key);
         }
 
         $set->each(function ($value, $key) {
-            $metadata = ContentMeta::where([
-                'content_id' => $this->id,
-                'language' => \App::getLocale(),
-                'key' => $key
-            ])->get();
-
-            if ($metadata->count()) {
-                $metadata->first()->value = $value;
-                $metadata->first()->save();
+            if (empty($value)) {
+                return;
+            } elseif (is_array($value)) {
+                $this->setMetadatas($key, collect($value));
+            } elseif ($value instanceof Collection) {
+                $this->setMetadatas($key, $value);
             } else {
-                $meta = (new ContentMeta([
+                $metadata = ContentMeta::where([
                     'content_id' => $this->id,
-                    'key' => $key,
                     'language' => \App::getLocale(),
-                    'value' => $value,
-                ]));
+                    'key' => $key
+                ])->get();
 
-                $meta->save();
-                $this->meta()->save($meta);
+                if ($metadata->count()) {
+                    $metadata->first()->value = $value;
+                    $metadata->first()->save();
+                } else {
+                    $meta = (new ContentMeta([
+                        'content_id' => $this->id,
+                        'key' => $key,
+                        'language' => \App::getLocale(),
+                        'value' => $value,
+                    ]));
+
+                    $meta->save();
+                    $this->meta()->save($meta);
+                }
             }
         });
     }
+
+    public function setMetadatas(string $key, Collection $set)
+    {
+        ContentMeta::where([
+            'content_id' => $this->id,
+            'language' => \App::getLocale(),
+            'key' => $key
+        ])->delete();
+
+        $set->each(function ($value) use ($key) {
+            $meta = (new ContentMeta([
+                'content_id' => $this->id,
+                'key' => $key,
+                'language' => \App::getLocale(),
+                'value' => $value,
+            ]));
+
+            $meta->save();
+            $this->meta()->save($meta);
+        });
+    }
+
 }

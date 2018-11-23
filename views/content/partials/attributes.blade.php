@@ -18,7 +18,7 @@
 		@foreach($attributes as $key => $attribute)
 			<tr>
 				<td>{{ $key }}</td>
-				<td>
+				<td class="right aligned">
 				@if($key == 'revision')
 
 				@else

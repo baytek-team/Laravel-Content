@@ -13,7 +13,7 @@
                         {{ content($relation->relation_type_id)->key }}
                     </a>
                 </td>
-				<td>
+				<td class="right aligned">
                     <a href="{{ route('content.list', $relation->relation_id) }}">
                         {{ content($relation->relation_id)->key }}
                     </a>

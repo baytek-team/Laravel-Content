@@ -141,6 +141,21 @@ if (! function_exists('hydrate')) {
     }
 }
 
+if (! function_exists('ddq')) {
+    /**
+     * Populate and dump a query with its bindings
+     *
+     * @param  mixed  $item  Any content model, but usually a Webpage, Folder or File
+     */
+    function ddq($query) {
+        $q = str_replace(['?'], ['\'%s\''], $query->toSql());
+        $q = vsprintf($q, $query->getBindings());
+        die($q);
+        dd($q);
+    }
+}
+
+
 if (! function_exists('getChildrenAndDelete')) {
     /**
      * Recursively delete a piece of content and its descendants
