@@ -12,71 +12,75 @@ use Illuminate\Database\Eloquent\Model;
 
 class ContentMeta extends Model implements StatusInterface
 {
-	use HasCompositePrimaryKey,
-		Statusable;
-	/**
-	 * primaryKey
-	 *
-	 * @var integer
-	 * @access protected
-	 */
-	protected $primaryKey = ['content_id', 'key', 'language'];
+    use HasCompositePrimaryKey,
+        Statusable;
 
-	/**
-	 * Indicates if the IDs are auto-incrementing.
-	 *
-	 * @var bool
-	 */
-	public $incrementing = false;
+    /**
+     * primaryKey
+     *
+     * @var integer
+     * @access protected
+     */
+    protected $primaryKey = ['content_id', 'key', 'language'];
 
-	/**
+    /**
+     * Indicates if the IDs are auto-incrementing.
+     *
+     * @var bool
+     */
+    public $incrementing = false;
+
+    /**
      * Set the user meta table
      *
      * @var string
+     * @access protected
      */
-	protected $table = 'content_meta';
+    protected $table = 'content_meta';
 
-	/**
+    /**
      * Set the fillable fields
      *
      * @var array
+     * @access protected
      */
-	protected $fillable = [
-		'content_id',
-		'status',
-		'key',
-		'language',
-		'value',
-	];
+    protected $fillable = [
+        'content_id',
+        'status',
+        'key',
+        'language',
+        'value',
+    ];
 
-	/**
-	 * Do not use timestamps
+    /**
+     * Do not use timestamps
      *
-	 * @var boolean
-	 */
-	public $timestamps = false;
+     * @var boolean
+     */
+    public $timestamps = false;
 
-	/**
-	 * Model boot method
+    /**
+     * Model boot method
      *
-	 * @return void
-	 */
-	protected static function boot()
-	{
-	    parent::boot();
+     * @return void
+     * @access protected
+     */
+    protected static function boot()
+    {
+        parent::boot();
 
-	    static::addGlobalScope('not_restricted', function (Builder $builder) {
-	        $builder->withStatus(['exclude' => [self::RESTRICTED]]);
-	    });
-	}
+        static::addGlobalScope('not_restricted', function (Builder $builder) {
+            $builder->withStatus(['exclude' => [self::RESTRICTED]]);
+        });
+    }
 
-	/**
+    /**
      * Content model relation
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function content()
     {
-    	return $this->belongsTo(Content::class);
+        return $this->belongsTo(Content::class);
     }
 }

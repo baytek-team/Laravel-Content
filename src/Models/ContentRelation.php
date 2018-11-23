@@ -24,26 +24,58 @@ class ContentRelation extends Model
      */
     public $incrementing = false;
 
-	public $timestamps = false;
-    protected $table = 'content_relations';
-	protected $fillable = [
-		'content_id',
-		'relation_id',
-		'relation_type_id',
-	];
+    /**
+     * Indicates if we are to use the time stamps
+     *
+     * @var bool
+     */
+    public $timestamps = false;
 
+    /**
+     * Assign the table for the model
+     *
+     * @var string
+     */
+    protected $table = 'content_relations';
+
+    /**
+     * List of fields that are fillable
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'content_id',
+        'relation_id',
+        'relation_type_id',
+    ];
+
+    /**
+     * Content relation back to content
+     *
+     * @return void
+     */
     public function content()
     {
-    	return $this->belongsTo(Content::class);
+        return $this->belongsTo(Content::class);
     }
 
+    /**
+     * Get the relation of a content
+     *
+     * @return void
+     */
     public function relation()
     {
-    	return $this->belongsTo(Content::class);
+        return $this->belongsTo(Content::class);
     }
 
+    /**
+     * Get the relation type of a content
+     *
+     * @return void
+     */
     public function relationType()
     {
-    	return $this->belongsTo(Content::class);
+        return $this->belongsTo(Content::class);
     }
 }
