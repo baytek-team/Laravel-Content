@@ -136,7 +136,11 @@ abstract class Installer extends Command implements InstallerContract
                 $update = Permission::create(['name' => ucwords('update ' . $model)]);
                 $delete = Permission::create(['name' => ucwords('delete ' . $model)]);
 
-                Role::findByName('Root')->permissions()->saveMany([$view, $create, $update, $delete]);
+                $roles = ['Root', 'Administrator'];
+
+                foreach ($roles as $role) {
+                    Role::findByName($role)->permissions()->saveMany([$view, $create, $update, $delete]);
+                }
             }
 
             return true;
