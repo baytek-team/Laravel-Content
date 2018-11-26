@@ -18,7 +18,7 @@ class TranslationScope implements Scope
     public function apply(Builder $builder, Model $model)
     {
         $prefix = $builder->getQuery()->grammar->getTablePrefix();
-        $context = $builder->getModel()->getAlias();
+        $context = $builder->getModel()->getTable();
 
         $query = $builder
             ->select(
