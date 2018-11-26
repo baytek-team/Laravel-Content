@@ -133,7 +133,9 @@ if (! function_exists('hydrate')) {
 
     function hydrate($record, $model = Baytek\Laravel\Content\Models\Content::class)
     {
-        if(isset($record->content_type) && $record->content_type) {
+        if (isset($record->content_type) && $record->content_type) {
+            return (new $record->content_type)::find($record->id);
+        } else if ($record instanceof Illuminate\Database\Eloquent\Builder) {
             return (new $record->content_type)->newFromBuilder($record);
         }
 
