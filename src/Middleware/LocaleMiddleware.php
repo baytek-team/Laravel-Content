@@ -29,8 +29,8 @@ class LocaleMiddleware
         // explode(',', $language)
 
         // Next check the domain, and override the language
-        foreach(config('language.domains') as $localeKey => $localeDomain) {
-            if($localeDomain == $domain) {
+        foreach (config('language.domains') as $localeKey => $localeDomain) {
+            if ($localeDomain == $domain) {
                 $language = $localeKey;
             }
         }
@@ -40,7 +40,12 @@ class LocaleMiddleware
             $language = Session::get('locale');
         }
 
-        if(!is_null($language)) {
+        // Check to see if the request has the locale set in the request
+        if (!empty($request->query('lang'))) {
+            $language = $request->query('lang');
+        }
+
+        if (!is_null($language)) {
             // Set the app locale
             App::setLocale($language);
 
