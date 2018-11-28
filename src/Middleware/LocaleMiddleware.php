@@ -6,10 +6,10 @@ use App;
 use Carbon\Carbon;
 use Closure;
 use Session;
+use PHPLocale\HttpAcceptLanguage;
 
 class LocaleMiddleware
 {
-    // private $languageHeader = 'Accept-Language';
     /**
      * Handle an incoming request.
      *
@@ -23,9 +23,10 @@ class LocaleMiddleware
         $language = App::getLocale();
 
         // Check the 'Accept-Language' header and set the locale to use that.
-        // if($request->hasHeader($this->languageHeader)) {
-        //     $language = $request->header($this->languageHeader);
-        // }
+        if ($request->server('HTTP_ACCEPT_LANGUAGE')) {
+            $language = str_before((new HttpAcceptLanguage)->getLanguage(), '-');
+        }
+        
         // explode(',', $language)
 
         // Next check the domain, and override the language
@@ -45,7 +46,11 @@ class LocaleMiddleware
             $language = $request->query('lang');
         }
 
-        if (!is_null($language)) {
+        if (!is_null($language) && !Session::has('locale')) {
+
+            // Save the locale in the session
+            Session::put('locale', $language);
+
             // Set the app locale
             App::setLocale($language);
 
