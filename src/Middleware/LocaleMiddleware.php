@@ -27,10 +27,8 @@ class LocaleMiddleware
             $language = str_before((new HttpAcceptLanguage)->getLanguage(), '-');
         }
         
-        // explode(',', $language)
-
         // Next check the domain, and override the language
-        foreach (config('language.domains') as $localeKey => $localeDomain) {
+        foreach (config('language.domains', []) as $localeKey => $localeDomain) {
             if ($localeDomain == $domain) {
                 $language = $localeKey;
             }
@@ -46,20 +44,17 @@ class LocaleMiddleware
             $language = $request->query('lang');
         }
 
-        if (!is_null($language) && !Session::has('locale')) {
+        // Save the locale in the session
+        Session::put('locale', $language);
 
-            // Save the locale in the session
-            Session::put('locale', $language);
+        // Set the app locale
+        App::setLocale($language);
 
-            // Set the app locale
-            App::setLocale($language);
+        // Set the Carbon locale
+        Carbon::setLocale($language); 
 
-            // Set the Carbon locale
-            Carbon::setLocale($language); 
-
-            // Set the PHP locale accord to the app locale setting
-            setlocale(LC_ALL, config('language.lc_all.'.$language));
-        }
+        // Set the PHP locale accord to the app locale setting
+        setlocale(LC_ALL, config('language.lc_all.'.$language));
 
         return $next($request);
     }
