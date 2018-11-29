@@ -276,7 +276,7 @@ class ContentController extends Controller
 
         return View::make($this->view('create'), $this->params([
             // This needs to be updated as it returns everything in the content table, this should return the list of objects of that type
-            $this->names['plural'] => $model::select('id', 'status', 'revision', 'language', 'title')->get(),
+            $this->names['plural'] => $model::select('contents.id', 'contents.status', 'contents.revision', 'contents.language', 'contents.title')->get(),
             // Create a blank instance of our model used for the view
             $this->names['singular'] => $model,
             // Get the relationship types
