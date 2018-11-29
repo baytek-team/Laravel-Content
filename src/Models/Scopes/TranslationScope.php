@@ -20,28 +20,31 @@ class TranslationScope implements Scope
         $prefix = $builder->getQuery()->grammar->getTablePrefix();
         $context = $builder->getModel()->getTable();
 
-        $query = $builder
-            ->select(
-                \DB::raw("
-                    $prefix$context.id,
-                    $prefix$context.created_at,
-                    $prefix$context.updated_at,
-                    $prefix$context.key,
-                    $prefix$context.status,
-                    $prefix$context.revision,
-                    IFNULL(${prefix}language.language, $prefix$context.language) as language,
-                    IFNULL(${prefix}language.title, $prefix$context.title) as title,
-                    IFNULL(${prefix}language.content, $prefix$context.content) as content
-                ")
-            )
-            ->leftJoin('content_relations AS languages', function ($join) use ($context) {
-                $join->on($context . '.id', '=', 'languages.content_id')
-                     ->where('languages.relation_type_id', 5);
-            })
-            ->leftJoin('contents AS language', function ($join) {
-                $join->on('language.id', '=', 'languages.relation_id')
-                     ->where('language.language', \App::getLocale());
-            });
+        $query = $builder->select(
+            \DB::raw("
+                $prefix$context.id,
+                $prefix$context.created_at,
+                $prefix$context.updated_at,
+                $prefix$context.key,
+                $prefix$context.status,
+                $prefix$context.revision,
+                IFNULL(${prefix}language.language, $prefix$context.language) as language,
+                IFNULL(${prefix}language.title, $prefix$context.title) as title,
+                IFNULL(${prefix}language.content, $prefix$context.content) as content
+            ")
+        )
+        ->leftJoin('content_relations AS languages', function ($join) use ($context) {
+            $join->on($context . '.id', '=', 'languages.content_id')
+                    ->where('languages.relation_type_id', 5);
+        })
+        ->leftJoin('contents AS language', function ($join) {
+            $join->on('language.id', '=', 'languages.relation_id')
+                    ->where('language.language', \App::getLocale());
+        });
+
+        if (!config('language.show_without_translation', true)) {
+            $query->where('contents.language', \App::getLocale());
+        }
 
         return $query;
     }

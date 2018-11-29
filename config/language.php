@@ -13,5 +13,6 @@ return [
 
     'locales' => [
     	'en', 'fr'
-    ]
+    ],
+    'show_without_translation' => true,
 ];
