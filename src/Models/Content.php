@@ -175,9 +175,9 @@ class Content extends Model implements StatusInterface
         // Do a left join to get the content type of the the content
         static::addGlobalScope(new ContentTypeScope);
 
-        if (\App::getLocale() != 'en') {
-            static::addGlobalScope(new TranslationScope);
-        }
+        // if (\App::getLocale() != 'en') {
+        static::addGlobalScope(new TranslationScope);
+        // }
     }
 
     /**

@@ -448,8 +448,7 @@ class ContentController extends Controller
         $content = (new $this->model($request->all()));
         $content->save();
 
-        foreach($orignal->meta as $meta) {
-
+        foreach ($orignal->meta as $meta) {
             $metaRecord = (new ContentMeta([
                 'key' => $meta->key,
                 'value' => $request->meta_value[$meta->id]

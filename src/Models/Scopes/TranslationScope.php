@@ -28,6 +28,7 @@ class TranslationScope implements Scope
                 $prefix$context.key,
                 $prefix$context.status,
                 $prefix$context.revision,
+                IFNULL(${prefix}language.language, $prefix$context.language) as master,
                 IFNULL(${prefix}language.language, $prefix$context.language) as language,
                 IFNULL(${prefix}language.title, $prefix$context.title) as title,
                 IFNULL(${prefix}language.content, $prefix$context.content) as content
@@ -42,10 +43,10 @@ class TranslationScope implements Scope
                     ->where('language.language', \App::getLocale());
         });
 
-        if (!config('language.show_without_translation', true)) {
-            $query->where('contents.language', \App::getLocale());
-        }
-
+        // if (!config('language.show_without_translation', true)) {
+        //     $query->where("$context.language", \App::getLocale());
+        // }
+        
         return $query;
     }
 }
