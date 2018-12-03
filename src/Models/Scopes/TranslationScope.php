@@ -43,11 +43,14 @@ class TranslationScope implements Scope
                 ->where('language.language', \App::getLocale());
         });
 
-        // if (stripos(request()->path(), 'api/') === 0) {
-        //     if (!config('language.show_without_translation', true)) {
-        //         $query->where("$context.language", \App::getLocale());
-        //     }
-        // }
+        if (stripos(request()->path(), 'api/') === 0) {
+            if (!config('language.show_without_translation', true)) {
+                $query->where(function($q) use ($context) {
+                    $q->where('language.language', \App::getLocale())
+                        ->orWhere("$context.language", \App::getLocale());
+                });
+            }
+        }
         
         return $query;
     }

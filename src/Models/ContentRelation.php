@@ -34,16 +34,16 @@ class ContentRelation extends Model
 
     public function content()
     {
-    	return $this->belongsTo(Content::class);
+    	return $this->belongsTo(Content::class)->withoutGlobalScopes();
     }
 
     public function relation()
     {
-    	return $this->belongsTo(Content::class);
+    	return $this->belongsTo(Content::class)->withoutGlobalScopes();
     }
 
     public function relationType()
     {
-    	return $this->belongsTo(Content::class);
+    	return $this->belongsTo(Content::class)->withoutGlobalScopes();
     }
 }
