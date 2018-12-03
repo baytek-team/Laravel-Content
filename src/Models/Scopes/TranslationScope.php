@@ -43,14 +43,23 @@ class TranslationScope implements Scope
                 ->where('language.language', \App::getLocale());
         });
 
-        if (stripos(request()->path(), 'api/') === 0) {
-            if (!config('language.show_without_translation', true)) {
-                $query->where(function($q) use ($context) {
-                    $q->where('language.language', \App::getLocale())
-                        ->orWhere("$context.language", \App::getLocale());
-                });
-            }
-        }
+        /**
+         * This was our attempt at limiting the results returned to a specific language,
+         * i.e. if viewing French, only show content that was written in French or has
+         * a French translation
+         *
+         * It only partially works, due to everything in the database being content but
+         * content types and relations not having translations
+         */
+
+        // if (stripos(request()->path(), 'api/') === 0) {
+        //     if (!config('language.show_without_translation', true)) {
+        //         $query->where(function($q) use ($context) {
+        //             $q->where('language.language', \App::getLocale())
+        //                 ->orWhere("$context.language", \App::getLocale());
+        //         });
+        //     }
+        // }
         
         return $query;
     }

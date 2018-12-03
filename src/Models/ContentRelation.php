@@ -32,18 +32,25 @@ class ContentRelation extends Model
 		'relation_type_id',
 	];
 
+    /**
+     * In order for the relationships to be queried while restricting the
+     * content language, the following must be queried withoutGlobalScopes.
+     * This is because the relation types themselves are content with a
+     * specific language
+     */
+
     public function content()
     {
-    	return $this->belongsTo(Content::class)->withoutGlobalScopes();
+    	return $this->belongsTo(Content::class);
     }
 
     public function relation()
     {
-    	return $this->belongsTo(Content::class)->withoutGlobalScopes();
+    	return $this->belongsTo(Content::class);
     }
 
     public function relationType()
     {
-    	return $this->belongsTo(Content::class)->withoutGlobalScopes();
+    	return $this->belongsTo(Content::class);
     }
 }
