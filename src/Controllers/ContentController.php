@@ -437,6 +437,19 @@ class ContentController extends Controller
      * @param  int  $contentID
      * @return \Illuminate\Http\Response
      */
+    public function translationCreate(Request $request, $contentID)
+    {
+        $this->views['edit'] = 'translate.create';
+        return $this->contentEdit($contentID);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $contentID
+     * @return \Illuminate\Http\Response
+     */
     public function translate(Request $request, $contentID)
     {
         // Check to see if the translation exists if it does, we cannot save, this is not the way to translate stuff

@@ -36,15 +36,17 @@ class TranslationScope implements Scope
         )
         ->leftJoin('content_relations AS languages', function ($join) use ($context) {
             $join->on($context . '.id', '=', 'languages.content_id')
-                    ->where('languages.relation_type_id', 5);
+                ->where('languages.relation_type_id', 5);
         })
         ->leftJoin('contents AS language', function ($join) {
             $join->on('language.id', '=', 'languages.relation_id')
-                    ->where('language.language', \App::getLocale());
+                ->where('language.language', \App::getLocale());
         });
 
-        // if (!config('language.show_without_translation', true)) {
-        //     $query->where("$context.language", \App::getLocale());
+        // if (stripos(request()->path(), 'api/') === 0) {
+        //     if (!config('language.show_without_translation', true)) {
+        //         $query->where("$context.language", \App::getLocale());
+        //     }
         // }
         
         return $query;
