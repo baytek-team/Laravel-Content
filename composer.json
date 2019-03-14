@@ -36,7 +36,7 @@
         "baytek/laravel-menu": "~1.1.0",
         "baytek/laravel-settings": "~1.1.0",
         "baytek/laravel-statusbit": "~1.3.0",
-        "rocketip/phplocale": "dev-master"
+        "rocketip/phplocale": "~1.0.0"
     },
     "post-install-cmd": [
         "php artisan install:content"
