@@ -31,7 +31,7 @@ if (! function_exists('content')) {
             }
             else {
                 return $hydrate ?
-                    hydrate(Content::withPath($value)->first()) :
+                    hydrate(Content::withPath($value)->first(), $model) :
                     content_id($value);
             }
         }
@@ -135,8 +135,10 @@ if (! function_exists('hydrate')) {
     {
         if (isset($record->content_type) && $record->content_type) {
             return (new $record->content_type)::find($record->id);
-        } else if ($record instanceof Illuminate\Database\Eloquent\Builder) {
+        } else if (isset($record->content_type) && $record instanceof Illuminate\Database\Eloquent\Builder) {
             return (new $record->content_type)->newFromBuilder($record);
+        } else {
+            return (new $model)::find($record->id);
         }
 
         return $record;
