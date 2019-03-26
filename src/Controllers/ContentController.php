@@ -256,9 +256,9 @@ class ContentController extends Controller
 
         $params = $this->params($params, $this->viewData['index']);
 
-        if(!isset($params['plural'])) {
-            $params['plural'] = $model->with($model::$eager)->get()->keyBy('id');
-        }
+        // if(!isset($params['plural'])) {
+        //     $params['plural'] = $model->with($model::$eager)->get()->keyBy('id');
+        // }
 
         return View::make($view, $params);
     }
