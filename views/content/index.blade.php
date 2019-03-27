@@ -100,26 +100,29 @@
             $close = false;
         @endphp
 
+        <div class="ui hidden divider"></div>
+            <div class="ui hidden divider"></div>
+            <table class="ui very basic content table">
+
+
         @foreach($contents as $content)
-            @if($content->relation_type_id != $type)
-                @if($type != 0)
+            {{-- @if($content->relation_type_id != $type) --}}
+                {{-- @if($type != 0)
                     </tbody>
                 </table>
-                @endif
+                @endif --}}
                 @php
                     $type = $content->relation_type_id;
                 @endphp
-            <div class="ui hidden divider"></div>
-            <div class="ui hidden divider"></div>
-            <table class="ui very basic content table">
-                <thead>
+
+            {{-- @endif --}}
+                {{-- <thead>
                     <tr>
-                        <th>{{ content($content->relation_type_id)->title }}</th>
+                        <th>{{ $content->relation_type_id }}</th>
                         <th class="center aligned collapsing">{{ ___('Actions') }}</th>
                     </tr>
-                </thead>
-                <tbody>
-            @endif
+                </thead> --}}
+                {{-- <tbody> --}}
 
 
             <tr @if($contents->first() == $content) class="row-template" data-original-id="{{ $content->id }}" @endif data-depth="0" data-expanded="" >
@@ -145,8 +148,9 @@
                     </div>
                 </td>
             </tr>
+            {{-- </tbody> --}}
         @endforeach
-        </tbody>
+
         </table>
 
     {{-- {{ $contents->links('pagination.default') }} --}}

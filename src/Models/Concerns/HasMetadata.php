@@ -164,7 +164,12 @@ trait HasMetadata
                             // throw new \Exception('Content relationship is not plural, but has many relations.');
                         }
 
-                        $attributes['relationships'][$newKey] = $relation->relations['relation']->key;
+                        if(is_null($relation->relations['relation'])) {
+                            $attributes['relationships'][$newKey] = null;
+                        }
+                        else {
+                            $attributes['relationships'][$newKey] = $relation->relations['relation']->key;
+                        }
                     }
                 }
             }

@@ -11,7 +11,9 @@
     <title>{{ config('app.name', 'Pretzel CAS :: Content Authoring System') }}</title>
 
     <!-- Styles -->
+    <link href="/css/admin.css" rel="stylesheet">
     <link href="/css/app.css" rel="stylesheet">
+    <link href="/fontawesome-pro/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/css/daterangepicker.min.css">
     <link rel="stylesheet" href="/admin-ui/semantic.css"/>
 
@@ -88,7 +90,7 @@
                                     @link(___('Contentinator'), [
                                         'location' => 'content.index',
                                         'append' => '</span>',
-                                        'prepend' => '<i class="heartbeat icon"></i><span class="collapseable-text">',
+                                        'prepend' => '<i class="fas fa-tachometer-alt icon"></i><span class="collapseable-text">',
                                         'type' => 'route',
                                         'class' => 'item'
                                     ])

@@ -2,7 +2,7 @@
 	<i class="users icon"></i>
 	{{ ___('Relations') }}
 </h4>
-
+asdfasdf
 <table class="ui very basic table">
 	<tbody>
 		@foreach($content->relations as $relation)

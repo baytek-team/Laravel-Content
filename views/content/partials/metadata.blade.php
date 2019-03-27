@@ -5,9 +5,6 @@
 
 <table class="ui very basic table">
 	<tbody>
-        @php
-        dd($content->meta);
-        @endphp
 		@foreach($content->meta as $meta)
 			<tr>
 				<td>{{ $meta->key }}</td>
