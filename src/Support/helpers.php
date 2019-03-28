@@ -137,7 +137,7 @@ if (! function_exists('hydrate')) {
             return (new $record->content_type)::find($record->id);
         } else if (isset($record->content_type) && $record instanceof Illuminate\Database\Eloquent\Builder) {
             return (new $record->content_type)->newFromBuilder($record);
-        } else {
+        } else if($record) {
             return (new $model)::find($record->id);
         }
 
