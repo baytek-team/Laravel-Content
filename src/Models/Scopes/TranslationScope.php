@@ -20,7 +20,7 @@ class TranslationScope implements Scope
         $prefix = $builder->getQuery()->grammar->getTablePrefix();
         $context = $builder->getModel()->getTable();
 
-        $query = $builder->select(
+        $query = $builder->addSelect(
             \DB::raw("
                 $prefix$context.id,
                 $prefix$context.created_at,
@@ -60,7 +60,7 @@ class TranslationScope implements Scope
         //         });
         //     }
         // }
-        
+
         return $query;
     }
 }
