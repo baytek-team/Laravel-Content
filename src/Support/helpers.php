@@ -170,12 +170,8 @@ if (! function_exists('getChildrenAndDelete')) {
     {
         //Delete items and their contents, but status bit other content types
         if ($item->relationships()->get('content_type') == 'file') {
-            //Set the status to deleted, even though we are also doing a laravel delete
-            $item->offBit(Content::APPROVED)->onBit(Content::DELETED)->update();
-
-            //\Storage::delete($file->content);
             \Storage::delete($item->getMeta('file'));
-            $item->delete();
+            $item->forceDelete();
         }
         else {
             $children = Content::childrenOf($item->id)->withoutGlobalScopes()->withRelationships()->get();
@@ -187,6 +183,10 @@ if (! function_exists('getChildrenAndDelete')) {
             }
 
             $item->offBit(Content::APPROVED)->onBit(Content::DELETED)->update();
+
+            if ($item->relationships()->get('content_type') == 'folder') {
+                $item->forceDelete();
+            }
         }
     }
 }
