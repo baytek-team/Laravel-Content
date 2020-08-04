@@ -393,11 +393,12 @@ class ContentController extends Controller
 
         $this->authorize('update', $content);
 
-        DB::table($this->historyTable)->insert([
-            'content_id' => $content->id,
-            'user_id' => Auth::id(),
-            'content' => serialize($content->load(Content::$eager)),
-        ]);
+        // No longer need to save content history
+        // DB::table($this->historyTable)->insert([
+        //     'content_id' => $content->id,
+        //     'user_id' => Auth::id(),
+        //     'content' => serialize($content->load(Content::$eager)),
+        // ]);
 
         $request->merge([
             //'language' => App::getLocale(),
