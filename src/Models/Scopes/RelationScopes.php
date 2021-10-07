@@ -595,14 +595,20 @@ trait RelationScopes
 
     public function scopeSortAlphabetical($builder)
     {
-        $prefix = explode('.', $builder->getQuery()->columns[0])[0] ?: 'contents';
+        // $prefix = explode('.', $builder->getQuery()->columns[0])[0] ?: 'contents';
+
+        $columns = $builder->getQuery()->columns;
+        $prefix = isset($columns[0]) ? explode('.', $columns[0])[0] : 'contents';
 
         return $builder->orderBy($prefix.'.title', 'asc');
     }
 
     public function scopeSortNewest($builder)
     {
-        $prefix = explode('.', $builder->getQuery()->columns[0])[0] ?: 'contents';
+        // $prefix = explode('.', $builder->getQuery()->columns[0])[0] ?: 'contents';
+
+        $columns = $builder->getQuery()->columns;
+        $prefix = isset($columns[0]) ? explode('.', $columns[0])[0] : 'contents';
 
         return $builder->orderBy($prefix.'.created_at', 'desc');
     }
@@ -614,7 +620,10 @@ trait RelationScopes
 
     public function scopeWithContents($builder)
     {
-        return $builder->select( (explode('.', $builder->getQuery()->columns[0])[0] ?: 'contents')  .'.*');
+        $columns = $builder->getQuery()->columns;
+        $select = isset($columns[0]) ? explode('.', $columns[0])[0] : 'contents';
+
+        return $builder->select($select .'.*');
     }
 
     /**
