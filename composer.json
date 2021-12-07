@@ -27,12 +27,12 @@
         }
     },
     "require": {
-        "php": ">=7.0.0",
-        "laravel/framework": "5.5.*",
-        "laracasts/flash":"^3.0.0",
+        "php": ">=7.2.0",
+        "laravel/framework": "^6.0",
+        "laracasts/flash":"^3.2",
         "JBlond/php-diff": "^1.1",
         "laravelcollective/html":"^5.3.0",
-        "baytek/laravel-user": "~1.1.0",
+        "baytek/laravel-user": "^1.1",
         "baytek/laravel-menu": "~1.1.0",
         "baytek/laravel-settings": "~1.1.0",
         "baytek/laravel-statusbit": "~1.3.0",
