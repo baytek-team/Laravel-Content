@@ -12,22 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ContentMeta extends Model implements StatusInterface
 {
-	use HasCompositePrimaryKey,
-		Statusable;
-	/**
-	 * primaryKey
-	 *
-	 * @var integer
-	 * @access protected
-	 */
-	protected $primaryKey = ['content_id', 'key', 'language'];
-
-	/**
-	 * Indicates if the IDs are auto-incrementing.
-	 *
-	 * @var bool
-	 */
-	public $incrementing = false;
+	use Statusable;
 
 	/**
      * Set the user meta table
