@@ -4,15 +4,15 @@
     <h1 class="ui header">
         <i class="world icon"></i>
         <div class="content">
-            {{ ___('Content Management') }}
-            <div class="sub header">{{ ___('Manage the content content type.') }}</div>
+            {{ __('Content Management') }}
+            <div class="sub header">{{ __('Manage the content content type.') }}</div>
         </div>
     </h1>
 @endsection
 
 @section('page.head.menu')
     <a class="ui primary button" href="{{ route('content.create') }}">
-        <i class="add icon"></i> {{ ___('Add content') }}
+        <i class="add icon"></i> {{ __('Add content') }}
     </a>
 @endsection
 
@@ -33,10 +33,10 @@
     <table class="ui selectable compact table">
         <thead>
             <tr>
-                {{-- <th class="center aligned collapsing">{{ ___('ID') }}</th> --}}
-                <!-- <th class="center aligned collapsing">{{ ___('Key') }}</th> -->
-                <th>{{ ___('Title') }}</th>
-                <th class="center aligned collapsing">{{ ___('Actions') }}</th>
+                {{-- <th class="center aligned collapsing">{{ __('ID') }}</th> --}}
+                <!-- <th class="center aligned collapsing">{{ __('Key') }}</th> -->
+                <th>{{ __('Title') }}</th>
+                <th class="center aligned collapsing">{{ __('Actions') }}</th>
             </tr>
         </thead>
         <tbody>
@@ -58,10 +58,10 @@
                         <div class="ui text compact menu">
                             {{-- <a href="{{ url($content->getUrl()) }}" class="item"><i class="world icon"></i>Visit</a> --}}
                             <a href="{{ route('content.edit', $content->id) }}" class="item">
-                                <i class="pencil icon"></i> {{ ___('Edit') }}
+                                <i class="pencil icon"></i> {{ __('Edit') }}
                             </a>
                             <a href="{{ route('content.destroy', $content->id) }}" class="item">
-                                <i class="delete icon"></i> {{ ___('Delete') }}
+                                <i class="delete icon"></i> {{ __('Delete') }}
                             </a>
                         </div>
                     </td>

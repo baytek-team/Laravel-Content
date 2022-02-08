@@ -4,7 +4,7 @@
     <h1 class="ui header">
         <div class="content">
             Create Content
-            <div class="sub header">{{ ___('Create the content for the application.') }}</div>
+            <div class="sub header">{{ __('Create the content for the application.') }}</div>
         </div>
     </h1>
 @endsection
@@ -18,9 +18,9 @@
             @include('Content::content.form')
 
             <div class="field actions">
-	            <a class="ui button" href="{{  route('content.index') }}">{{ ___('Cancel') }}</a>
+	            <a class="ui button" href="{{  route('content.index') }}">{{ __('Cancel') }}</a>
 	            <button type="submit" class="ui right floated primary button">
-	            	{{ ___('Save all the things') }}
+	            	{{ __('Save all the things') }}
             	</button>
             </div>
         </form>

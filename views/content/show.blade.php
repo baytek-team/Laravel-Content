@@ -5,14 +5,14 @@
         {{-- <i class="content icon"></i> --}}
         <div class="content">
             {{ $content->title }}
-            {{-- <div class="sub header">{{ ___('Manage the content content type.') }}</div> --}}
+            {{-- <div class="sub header">{{ __('Manage the content content type.') }}</div> --}}
         </div>
     </h1>
 @endsection
 
 @section('page.head.menu')
     <a class="ui button" href="{{ route('content.edit', $content) }}">
-        <i class="pencil icon"></i> {{ ___('Edit content') }}
+        <i class="pencil icon"></i> {{ __('Edit content') }}
     </a>
 @endsection
 
@@ -42,7 +42,7 @@
 	@if(!empty($content->content))
 		<h4 class="ui horizontal divider header">
 			<i class="globe icon"></i>
-			{{ ___('Content') }}
+			{{ __('Content') }}
 		</h4>
 
 		<div class="ui basic segment" style='max-height: 400px; overflow: auto'>
@@ -57,14 +57,14 @@
 	@if($content->meta->count())
 		<h4 class="ui horizontal divider header">
 			<i class="tags icon"></i>
-			{{ ___('Metadata') }}
+			{{ __('Metadata') }}
 		</h4>
 
 		<table class="ui celled table">
 			<thead>
 				<tr>
-					<th>{{ ___('Meta Key') }}</th>
-					<th>{{ ___('Meta Value') }}</th>
+					<th>{{ __('Meta Key') }}</th>
+					<th>{{ __('Meta Value') }}</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -81,14 +81,14 @@
 	@if($content->relations->count())
 		<h4 class="ui horizontal divider header">
 			<i class="users icon"></i>
-			{{ ___('Relationships') }}
+			{{ __('Relationships') }}
 		</h4>
 
 		<table class="ui celled table">
 			<thead>
 				<tr>
-					<th>{{ ___('Relation Type') }}</th>
-					<th>{{ ___('Relation') }}</th>
+					<th>{{ __('Relation Type') }}</th>
+					<th>{{ __('Relation') }}</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -105,7 +105,7 @@
 	@if(!empty(config('cms.content.content')))
 		<h4 class="ui horizontal divider header">
 			<i class="settings icon"></i>
-			{{ ___('Settings') }}
+			{{ __('Settings') }}
 		</h4>
 		<div class="ui segment">
 			@php
@@ -121,7 +121,7 @@
 	@if($content->revision)
 		<h4 class="ui horizontal divider header">
 			<i class="settings icon"></i>
-			{{ ___('Revisions') }}
+			{{ __('Revisions') }}
 		</h4>
 		<div class="ui segment">
 			@php

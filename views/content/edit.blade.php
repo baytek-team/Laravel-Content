@@ -5,7 +5,7 @@
         {{-- <i class="content icon"></i> --}}
         <div class="content">
             <small>Editing:</small> {{ $content->title }}
-            {{-- <div class="sub header">{{ ___('Manage the content content type.') }}</div> --}}
+            {{-- <div class="sub header">{{ __('Manage the content content type.') }}</div> --}}
         </div>
     </h1>
 @endsection
@@ -24,9 +24,9 @@
 
         <div class="ui error message"></div>
         <div class="field actions">
-            <a class="ui button" href="{{ route('content.index') }}">{{ ___('Cancel') }}</a>
+            <a class="ui button" href="{{ route('content.index') }}">{{ __('Cancel') }}</a>
             <button type="submit" class="ui right floated primary button">
-                {{ ___('Update Content') }}
+                {{ __('Update Content') }}
             </button>
         </div>
     </form>

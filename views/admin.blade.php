@@ -45,7 +45,7 @@
                         <i class="content icon"></i>
                     </a>
 
-                    @link(___('Site Index') , [
+                    @link(__('Site Index') , [
                         'class' => 'item collapsable',
                         'prepend' => '<i class="globe icon"></i>',
                         'location' => '/app'
@@ -53,31 +53,31 @@
 
                     {{-- <a class="item collapsable">
                         <i class="globe icon"></i>
-                        {{ ___('Site Index') }}
+                        {{ __('Site Index') }}
                     </a> --}}
                     <div class="item collapsable">
                         <div class="ui icon input">
-                            <input type="text" placeholder="{{ ___('Search...') }}">
+                            <input type="text" placeholder="{{ __('Search...') }}">
                             <i class="search icon"></i>
                         </div>
                     </div>
                     <div class="right menu collapsable">
-                        <a class="item" href="/{{ strtolower( ___('Fr') ) }}">
+                        <a class="item" href="/{{ strtolower( __('Fr') ) }}">
                             <i class="random icon"></i>
-                            {{ ___('Switch Language') }}
+                            {{ __('Switch Language') }}
                         </a>
                         @if(\Auth::user())
                             <div class="ui dropdown item">
                                 <i class="user icon"></i>
-                                {{ ___('My Profile') }}
+                                {{ __('My Profile') }}
                                 <i class="dropdown icon"></i>
                                 <div class="menu">
 
                                     <a class="item" href="{{ route('user.edit', \Auth::user()->id) }}">
                                         <i class="user icon"></i>
-                                        {{ ___('Edit Profile') }}
+                                        {{ __('Edit Profile') }}
                                     </a>
-                                    @link(___('Logout'), [
+                                    @link(__('Logout'), [
                                         'method' => 'post',
                                         'location' => 'logout',
                                         'type' => 'route',
@@ -95,7 +95,7 @@
             <div id="secondary-navigation" class="three wide column">
                 <div class="ui left vertical fluid pointing stackable menu">
                     @if( Auth::user() )
-                        @link(___('Dashboard'), [
+                        @link(__('Dashboard'), [
                             'location' => 'admin.index',
                             'append' => '<i class="dashboard icon"></i>',
                             'type' => 'route',
@@ -105,14 +105,14 @@
                         @if(Auth::user()->hasRole( \Baytek\Laravel\Users\Roles\Root::ROLE ))
                             <div class="item" href="{{ route('webpage.index') }}">
                                 <i class="world icon"></i>
-                                {{ ___('Webpages') }}
+                                {{ __('Webpages') }}
                                 <div class="menu">
-                                    @link(___('Create Webpage'), [
+                                    @link(__('Create Webpage'), [
                                         'location' => 'webpage.create',
                                         'type' => 'route',
                                         'class' => 'item'
                                     ])
-                                    @link(___('Manage Webpages'), [
+                                    @link(__('Manage Webpages'), [
                                         'location' => 'webpage.index',
                                         'type' => 'route',
                                         'class' => 'item'
@@ -121,14 +121,14 @@
                             </div>
                             <div class="item" href="{{ route('menu.index') }}">
                                 <i class="sitemap icon"></i>
-                                {{ ___('Menus') }}
+                                {{ __('Menus') }}
                                 <div class="menu">
-                                    @link(___('Create Menu'), [
+                                    @link(__('Create Menu'), [
                                         'location' => 'menu.create',
                                         'type' => 'route',
                                         'class' => 'item'
                                     ])
-                                    @link(___('Manage Menus'), [
+                                    @link(__('Manage Menus'), [
                                         'location' => 'menu.index',
                                         'type' => 'route',
                                         'class' => 'item'
@@ -137,9 +137,9 @@
                             </div>
                             <div class="item" href="{{ route('settings.index') }}">
                                 <i class="settings icon"></i>
-                                {{ ___('Settings') }}
+                                {{ __('Settings') }}
                                 <div class="menu">
-                                    @link(___('General Settings'), [
+                                    @link(__('General Settings'), [
                                         'location' => 'settings.index',
                                         'type' => 'route',
                                         'class' => 'item'
@@ -148,11 +148,11 @@
                             </div>
                             <div class="item">
                                 <i class="configure icon"></i>
-                                {{ ___('Tools') }}
+                                {{ __('Tools') }}
 
                                 <div class="menu">
                                     @can('create', \Baytek\Laravel\Content\Models\Content::class)
-                                        @link(___('Content Navigator'), [
+                                        @link(__('Content Navigator'), [
                                             'location' => 'content.index',
                                             'type' => 'route',
                                             'class' => 'item'
@@ -164,24 +164,24 @@
                             @if(Auth::user()->hasRole( \Baytek\Laravel\Users\Roles\Root::ROLE ))
                                 <div class="item">
                                     <i class="user icon"></i>
-                                    {{ ___('Users') }}
+                                    {{ __('Users') }}
                                     <div class="menu">
-                                        @link(___('Manage Users'), [
+                                        @link(__('Manage Users'), [
                                             'location' => 'user.index',
                                             'type' => 'route',
                                             'class' => 'item'
                                         ])
-                                        @link(___('Roles'), [
+                                        @link(__('Roles'), [
                                             'location' => 'role.index',
                                             'type' => 'route',
                                             'class' => 'item'
                                         ])
-                                        @link(___('Permissions'), [
+                                        @link(__('Permissions'), [
                                             'location' => 'permission.index',
                                             'type' => 'route',
                                             'class' => 'item'
                                         ])
-                                        @link(___('Permission Matrix'), [
+                                        @link(__('Permission Matrix'), [
                                             'location' => 'user.role.index',
                                             'type' => 'route',
                                             'class' => 'item'
@@ -192,8 +192,8 @@
                         @endif
 
                     @else
-                        <a class="item" href="{{ route('login') }}">{{ ___('Login') }}</a>
-                        <a class="item" href="{{ route('register') }}">{{ ___('Register') }}</a>
+                        <a class="item" href="{{ route('login') }}">{{ __('Login') }}</a>
+                        <a class="item" href="{{ route('register') }}">{{ __('Register') }}</a>
                     @endif
                 </div>
             </div>
@@ -228,7 +228,7 @@
                                 <div class="ui icon message error">
                                     <i class="exclamation circle icon"></i>
                                     <div class="content">
-                                        <div class="header">{{ ___('Application Level Error') }}</div>
+                                        <div class="header">{{ __('Application Level Error') }}</div>
                                         @foreach ($errors->all() as $error)
                                             <li>{{ $error }}</li>
                                         @endforeach
@@ -244,7 +244,7 @@
                             <div class="ui icon message">
                                 <i class="exclamation circle icon"></i>
                                 <div class="content">
-                                    <div class="header">{{ ___('Notifications') }}</div>
+                                    <div class="header">{{ __('Notifications') }}</div>
                                     @if (isset($notifications) && $notifications->count() > 0)
                                         @foreach ($notifications as $notification)
                                             <li>{!! $notification->data['message'] !!}</li>
@@ -290,11 +290,11 @@
         <div class="actions">
             <div class="ui red basic inverted cancel button">
                 <i class="remove icon"></i>
-                <span class="message">{{ ___('Cancel') }}</span>
+                <span class="message">{{ __('Cancel') }}</span>
             </div>
             <div class="ui primary ok button">
                 <i class="checkmark icon"></i>
-                <span class="message">{{ ___('Yes') }}</span>
+                <span class="message">{{ __('Yes') }}</span>
             </div>
         </div>
     </div>
