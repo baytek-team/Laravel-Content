@@ -21,6 +21,8 @@ use ReflectionClass;
 use Route;
 use View;
 
+use Illuminate\Support\Str;
+
 /**
  * The Content Controller is suppose to act as an abstract class that facilitates
  * rendering and saving of common resource tables.
@@ -148,8 +150,8 @@ class ContentController extends Controller
 
         $this->instance = new $this->model;
         $this->names['class'] = (new ReflectionClass($this->instance))->getShortName();
-        $this->names['singular'] = strtolower(str_singular($this->names['class']));
-        $this->names['plural'] = strtolower(str_plural($this->names['class']));
+        $this->names['singular'] = strtolower(Str::singular($this->names['class']));
+        $this->names['plural'] = strtolower(Str::plural($this->names['class']));
 
         // $settings->resolve(strtolower($this->names['class']));
     }
