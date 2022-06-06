@@ -235,7 +235,7 @@ trait RelationScopes
             $query .= "AND level${x}c.`key` = '$parts[$x]' ";
         }
 
-        $result = DB::select($query, [$path]);
+        $result = DB::select($query);
 
         $collection = static::hydrate($result);
 
