@@ -186,7 +186,9 @@ trait RelationScopes
 
     public function countChildrenOfTypeById($id, $type)
     {
-        $prefix = env('DB_PREFIX');
+        // Retrieve the database prefix from config rather than env
+        // $prefix = env('DB_PREFIX');
+        $prefix = config('database.connections.'.config('database.default').'.prefix', '');
         $language = \App::getLocale();
 
         return DB::select("SELECT COUNT(resource.key) resource_count
@@ -239,7 +241,9 @@ trait RelationScopes
         throw new \Exception('This method has been deprecated. Please discontinue use. Use `content()` or `Content::withPath()` instead');
         $parts = array_reverse(explode('/', $path));
 
-        $prefix = env('DB_PREFIX');
+        // Retrieve the database prefix from config rather than env
+        // $prefix = env('DB_PREFIX');
+        $prefix = config('database.connections.'.config('database.default').'.prefix', '');
         $builder = "SELECT level0c.id, level0c.created_at, level0c.updated_at, level0c.status, level0c.revision, level0c.language, level0c.key, level0c.title
 
         -- get all content
@@ -327,7 +331,9 @@ trait RelationScopes
 
     public function getParentsOf($id)
     {
-        $prefix = env('DB_PREFIX');
+        // Retrieve the database prefix from config rather than env
+        // $prefix = env('DB_PREFIX');
+        $prefix = config('database.connections.'.config('database.default').'.prefix', '');
 
         $result = DB::select("SELECT T2.id, T2.created_at, T2.updated_at, T2.status, T2.revision, T2.language, T2.key, T2.title
             FROM (
@@ -449,7 +455,9 @@ trait RelationScopes
     //Must use ID since we don't have unique keys
     public function scopeDescendentsOfType($builder, $id, $type)
     {
-        $prefix = env('DB_PREFIX');
+        // Retrieve the database prefix from config rather than env
+        // $prefix = env('DB_PREFIX');
+        $prefix = config('database.connections.'.config('database.default').'.prefix', '');
         $language = \App::getLocale();
 
         $result = DB::select("SELECT resource.id, resource.created_at, resource.updated_at, resource.status, resource.revision, resource.language, resource.title, resource.key
