@@ -329,4 +329,12 @@ class Content extends Model implements StatusInterface
     {
         return ($this->alias ?: parent::getTable());
     }
+
+    /**
+     * Adding back deprecated method from Laravel 7
+     */
+    protected function removeTableFromKey($key)
+    {
+        return str_contains($key, '.') ? last(explode('.', $key)) : $key;
+    }
 }
