@@ -31,7 +31,6 @@
         "laravel/framework": ">=7.0",
         "laracasts/flash":"^3.2",
         "JBlond/php-diff": "^1.1",
-        "laravelcollective/html":"^6.2.1",
         "baytek/laravel-user": "^1.1",
         "baytek/laravel-menu": "~1.1.0",
         "baytek/laravel-settings": "~1.1.0",

@@ -50,7 +50,6 @@ class ContentServiceProvider extends AuthServiceProvider
      */
     public function boot(Router $router)
     {
-        // AliasLoader::getInstance()->alias('Form', 'Collective\Html\FormFacade');
         $this->registerPolicies();
         $this->loadViewsFrom(__DIR__.'/../views', 'contents');
 
@@ -163,6 +162,6 @@ EOS;
         // $this->app->register(\Baytek\Laravel\StatusBit\StatusBitServiceProvider::class);
         // $this->app->register(\Baytek\Laravel\Users\ServiceProvider::class);
         // $this->app->register(\Baytek\Laravel\Menu\MenuServiceProvider::class);
-        $this->app->register(\Collective\Html\HtmlServiceProvider::class);
+        // $this->app->register(\Collective\Html\HtmlServiceProvider::class);
     }
 }
