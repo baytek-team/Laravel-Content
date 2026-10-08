@@ -28,7 +28,7 @@
     },
     "require": {
         "php": ">=7.2.0",
-        "laravel/framework": "^6.0",
+        "laravel/framework": ">=7.0",
         "laracasts/flash":"^3.2",
         "JBlond/php-diff": "^1.1",
         "laravelcollective/html":"^6.2.1",
